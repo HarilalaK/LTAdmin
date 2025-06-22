@@ -1,16 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.Pos?>
 
-<?import javafx.scene.control.Button?>
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.admin.admin.HelloController">
-    <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-    </padding>
+<BorderPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.admin.admin.controller.HelloController"
+            styleClass="dashboard-root">
 
-    <Label fx:id="welcomeText"/>
-    <Button text="Hello!" onAction="#onHelloButtonClick"/>
-</VBox>
+    <!-- Barre latérale gauche -->
+    <left>
+        <VBox spacing="10" styleClass="sidebar" alignment="TOP_CENTER">
+            <Label text="MonDashboard" styleClass="sidebar-title"/>
+            <Button text="Accueil" styleClass="sidebar-btn"/>
+            <Button text="Utilisateurs" styleClass="sidebar-btn"/>
+            <Button text="Statistiques" styleClass="sidebar-btn"/>
+            <Button text="Paramètres" styleClass="sidebar-btn"/>
+        </VBox>
+    </left>
+
+
+
+    <!-- Contenu central -->
+    <center>
+        <VBox alignment="TOP_CENTER" spacing="20" styleClass="content">
+            <Label fx:id="welcomeText" text="Bienvenue sur le tableau de bord !" styleClass="dashboard-title"/>
+
+            <HBox spacing="20" alignment="CENTER">
+                <Button text="Hello!" onAction="#onHelloButtonClick" styleClass="action-btn"/>
+                <Button text="Déconnexion" styleClass="action-btn logout"/>
+            </HBox>
+        </VBox>
+    </center>
+
+</BorderPane>

@@ -13,4 +13,6 @@ module com.admin.admin {
 
     opens com.admin.admin to javafx.fxml;
     exports com.admin.admin;
+    exports com.admin.admin.controller;
+    opens com.admin.admin.controller to javafx.fxml;
 }
