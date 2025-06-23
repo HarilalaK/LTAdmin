@@ -21,7 +21,6 @@
     </left>
 
 
-
     <!-- Contenu central -->
     <center>
         <VBox alignment="TOP_CENTER" spacing="20" styleClass="content">

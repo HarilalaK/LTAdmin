@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+
+<VBox spacing="15" alignment="CENTER" xmlns:fx="http://javafx.com/fxml" fx:controller="com.admin.admin.controller.TestConnexionController">
+    <Label text="Test de connexion à la base" />
+    <Button text="Tester la connexion" onAction="#testerConnexion" />
+    <Label fx:id="labelResultat" />
+</VBox>
