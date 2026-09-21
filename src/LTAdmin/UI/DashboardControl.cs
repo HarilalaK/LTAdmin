@@ -1,30 +1,33 @@
-using System.Data;
-using LTAdmin.Data;
-using LTAdmin.Models;
+using LTAdmin.Services;
 
 namespace LTAdmin.UI;
 
-public sealed class DashboardControl : UserControl
+public sealed class DashboardControl : UserControl, IRefreshableView
 {
-    private readonly AccessDatabase _database;
-    private readonly DatabaseRepository _repository;
+    private readonly AppComposition _app;
     private readonly FlowLayoutPanel _cards;
     private readonly Label _updated = new();
+    private readonly Label _subtitle = new();
     private readonly Panel _recentHost;
     private readonly Action<string> _openTable;
+    private readonly Action<string> _openModule;
 
-    public DashboardControl(AccessDatabase database, Action<string> openTable)
+    public DashboardControl(AppComposition app, Action<string> openTable, Action<string> openModule)
     {
-        _database = database;
-        _repository = new DatabaseRepository(database);
+        _app = app;
         _openTable = openTable;
+        _openModule = openModule;
         Dock = DockStyle.Fill;
         BackColor = Theme.Background;
         Padding = new Padding(30, 24, 30, 24);
 
         var heading = new Panel { Dock = DockStyle.Top, Height = 74 };
         heading.Controls.Add(new Label { Text = "Tableau de bord", AutoSize = true, Font = Theme.Heading, ForeColor = Theme.Text, Location = new Point(0, 0) });
-        heading.Controls.Add(new Label { Text = "Pilotez votre gestion scolaire depuis un seul espace.", AutoSize = true, ForeColor = Theme.MutedText, Location = new Point(2, 39) });
+        _subtitle.Text = "Pilotez votre gestion scolaire depuis un seul espace.";
+        _subtitle.AutoSize = true;
+        _subtitle.ForeColor = Theme.MutedText;
+        _subtitle.Location = new Point(2, 39);
+        heading.Controls.Add(_subtitle);
         _updated.Text = "";
         _updated.AutoSize = true;
         _updated.Anchor = AnchorStyles.Top | AnchorStyles.Right;
@@ -57,12 +60,20 @@ public sealed class DashboardControl : UserControl
     {
         try
         {
-            var tables = _repository.GetTables();
+            var stats = _app.Statistiques.GetDashboard();
+            _subtitle.Text = string.IsNullOrWhiteSpace(stats.AnneeLibelle)
+                ? "Aucune année scolaire active : déclarez-la dans Administration → Années scolaires."
+                : $"Année scolaire active : {stats.AnneeLibelle} · {stats.NbClasses} classe(s)";
             _cards.Controls.Clear();
-            AddCard("Étudiants", FindCount(tables, "ETUDIANT"), "Dossiers enregistrés", Theme.Primary, "ETUDIANT");
-            AddCard("Formateurs", FindCount(tables, "FORMATEUR"), "Personnel enseignant", Theme.Success, "FORMATEUR");
-            AddCard("Paiements", FindCount(tables, "PAIEMENT"), "Opérations d’écolage", Color.FromArgb(124, 58, 237), "PAIEMENT");
-            AddCard("Tables actives", tables.Count, "Modules disponibles", Theme.Warning, null);
+            AddCard("Étudiants", stats.NbEtudiants.ToString("N0"), "Dossiers enregistrés", Theme.Primary, () => _openModule("Étudiants"));
+            AddCard("Inscriptions", stats.NbInscriptions.ToString("N0"), "Inscrits de l’année", Theme.Success, () => _openModule("Inscriptions"));
+            AddCard("Recouvrement", stats.TauxRecouvrement.ToString("N1") + " %",
+                $"{stats.TotalPaye:N0} / {stats.TotalDu:N0} {_app.Parametres.Devise}",
+                Color.FromArgb(124, 58, 237), () => _openModule("Caisse / paiements"));
+            var alertes = stats.NbEcheancesEchues + stats.NbAlertesAbsence;
+            AddCard("Alertes", alertes.ToString("N0"),
+                $"{stats.NbEcheancesEchues} échéance(s) échue(s) · {stats.NbAlertesAbsence} seuil(s) d’absence",
+                Theme.Warning, null);
             _updated.Text = "Actualisé à " + DateTime.Now.ToString("HH:mm");
             LayoutRecent();
         }
@@ -73,18 +84,19 @@ public sealed class DashboardControl : UserControl
         }
     }
 
-    private void AddCard(string title, int count, string caption, Color accent, string? tableName)
+    private void AddCard(string title, string value, string caption, Color accent, Action? onClick)
     {
         var card = Theme.Card();
-        card.Width = 205;
+        card.Width = 225;
         card.Height = 98;
         card.Margin = new Padding(0, 0, 14, 0);
-        card.Cursor = tableName is null ? Cursors.Default : Cursors.Hand;
+        card.Cursor = onClick is null ? Cursors.Default : Cursors.Hand;
         card.Controls.Add(new Panel { BackColor = accent, Width = 4, Height = 58, Location = new Point(0, 20) });
-        card.Controls.Add(new Label { Text = title, AutoSize = true, ForeColor = Theme.MutedText, Font = Theme.Small, Location = new Point(20, 17) });
-        card.Controls.Add(new Label { Text = count.ToString("N0"), AutoSize = true, ForeColor = Theme.Text, Font = new Font("Segoe UI", 18, FontStyle.Bold), Location = new Point(20, 35) });
-        card.Controls.Add(new Label { Text = caption, AutoSize = true, ForeColor = Theme.MutedText, Font = new Font("Segoe UI", 8f), Location = new Point(86, 48) });
-        if (tableName is not null) card.Click += (_, _) => _openTable(tableName);
+        card.Controls.Add(new Label { Text = title, AutoSize = true, ForeColor = Theme.MutedText, Font = Theme.Small, Location = new Point(20, 15) });
+        card.Controls.Add(new Label { Text = value, AutoSize = true, ForeColor = Theme.Text, Font = new Font("Segoe UI", 18, FontStyle.Bold), Location = new Point(20, 33) });
+        var captionLabel = new Label { Text = caption, AutoSize = false, Width = 190, Height = 26, ForeColor = Theme.MutedText, Font = new Font("Segoe UI", 8f), Location = new Point(20, 62) };
+        card.Controls.Add(captionLabel);
+        if (onClick is not null) card.Click += (_, _) => onClick();
         _cards.Controls.Add(card);
     }
 
@@ -99,18 +111,18 @@ public sealed class DashboardControl : UserControl
 
         var shortcuts = new[]
         {
-            ("Étudiants", "ETUDIANT", "Dossiers et identité"),
-            ("Inscriptions", "INSCRIPTION", "Année scolaire et classe"),
-            ("Notes", "NOTE", "Saisie des résultats"),
-            ("Paiements", "PAIEMENT", "Écolage et reçus"),
-            ("Absences", "ABSENCE", "Suivi des présences")
+            ("Étudiants", "Dossiers et identité", (Action)(() => _openModule("Étudiants"))),
+            ("Inscriptions", "Année scolaire et classe", (Action)(() => _openModule("Inscriptions"))),
+            ("Saisie des notes", "Résultats du contrôle continu", (Action)(() => _openModule("Saisie des notes"))),
+            ("Caisse / paiements", "Écolage et reçus", (Action)(() => _openModule("Caisse / paiements"))),
+            ("Absences", "Suivi des présences", (Action)(() => _openTable("ABSENCE")))
         };
         var left = 20;
         foreach (var shortcut in shortcuts)
         {
             var button = new Button
             {
-                Text = shortcut.Item1 + Environment.NewLine + shortcut.Item3,
+                Text = shortcut.Item1 + Environment.NewLine + shortcut.Item2,
                 Width = 170,
                 Height = 56,
                 Location = new Point(left, 78),
@@ -123,16 +135,10 @@ public sealed class DashboardControl : UserControl
                 Cursor = Cursors.Hand
             };
             button.FlatAppearance.BorderColor = Theme.Border;
-            button.Click += (_, _) => _openTable(shortcut.Item2);
+            button.Click += (_, _) => shortcut.Item3();
             _recentHost.Controls.Add(button);
             left += 184;
             if (left + 170 > _recentHost.Width) break;
         }
-    }
-
-    private int FindCount(IReadOnlyList<DbTableInfo> tables, string name)
-    {
-        var table = tables.FirstOrDefault(t => string.Equals(t.Name, name, StringComparison.OrdinalIgnoreCase));
-        return table is null ? 0 : _repository.Count(table);
     }
 }

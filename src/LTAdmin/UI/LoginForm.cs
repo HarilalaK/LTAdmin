@@ -1,6 +1,6 @@
-using LTAdmin.Data;
 using LTAdmin.Models;
 using LTAdmin.Services;
+using LTAdmin.Services.Auth;
 
 namespace LTAdmin.UI;
 
@@ -12,9 +12,9 @@ public sealed class LoginForm : Form
     private readonly Label _error = new();
     private readonly Button _submit;
 
-    public LoginForm(AccessDatabase database)
+    public LoginForm(AppComposition app)
     {
-        _authentication = new AuthenticationService(database);
+        _authentication = app.Auth;
 
         Text = "LTAdmin — Connexion";
         StartPosition = FormStartPosition.CenterScreen;
@@ -230,15 +230,14 @@ public sealed class LoginForm : Form
         {
             Cursor = Cursors.WaitCursor;
 
-            Session = _authentication.Authenticate(
+            var result = _authentication.Authenticate(
                 _login.Text,
                 _password.Text
             );
 
-            if (Session is null)
+            if (result.IsFailure || result.Value is null)
             {
-                _error.Text =
-                    "Identifiant ou mot de passe incorrect.";
+                _error.Text = result.FullMessage();
 
                 _password.SelectAll();
                 _password.Focus();
@@ -246,6 +245,7 @@ public sealed class LoginForm : Form
                 return;
             }
 
+            Session = result.Value;
             DialogResult = DialogResult.OK;
             Close();
         }

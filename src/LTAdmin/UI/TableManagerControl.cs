@@ -1,11 +1,16 @@
 using System.Data;
 using LTAdmin.Data;
 using LTAdmin.Models;
-using LTAdmin.Services;
+using LTAdmin.Services.Reports;
 
 namespace LTAdmin.UI;
 
-public sealed class TableManagerControl : UserControl
+/// <summary>
+/// Maintenance générique des tables (réservée aux profils habilités) :
+/// recherche, ajout, modification, suppression, export CSV.
+/// Les écrans métier (vues) utilisent les services et non ce contrôle.
+/// </summary>
+public sealed class TableManagerControl : UserControl, IRefreshableView
 {
     private readonly AccessDatabase _database;
     private readonly DatabaseRepository _repository;

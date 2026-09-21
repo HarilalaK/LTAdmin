@@ -1,5 +1,5 @@
-using LTAdmin.Data;
 using LTAdmin.Services;
+using LTAdmin.Services.Infrastructure;
 using LTAdmin.UI;
 
 namespace LTAdmin;
@@ -30,11 +30,12 @@ internal static class Program
 
         try
         {
-            using var database = new AccessDatabase(databasePath);
-            database.Open();
-            using var login = new LoginForm(database);
+            using var app = new AppComposition(databasePath);
+            app.Database.Open();
+            app.Logger.Info("Démarrage de LTAdmin sur " + databasePath);
+            using var login = new LoginForm(app);
             if (login.ShowDialog() != DialogResult.OK || login.Session is null) return;
-            Application.Run(new MainForm(database, login.Session));
+            Application.Run(new MainForm(app, login.Session));
         }
         catch (Exception ex)
         {
