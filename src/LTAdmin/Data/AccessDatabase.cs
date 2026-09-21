@@ -1,12 +1,16 @@
 using System.Data;
 using System.Data.OleDb;
+using System.Globalization;
 using LTAdmin.Models;
 
 namespace LTAdmin.Data;
 
 /// <summary>
-/// Small Access/ACE adapter. The database remains the existing LTA_ADM.accdb file; no migration or
-/// replacement database is created. All identifiers are obtained from Access metadata and quoted.
+/// Adaptateur Access/ACE. La base reste le fichier LTA_ADM.accdb existant :
+/// aucune migration, aucune recréation de table, aucune modification de données
+/// sans action explicite d'un service. Tous les identifiants sont lus depuis
+/// les métadonnées Access et protégés par des crochets ; toutes les valeurs
+/// passent par des paramètres positionnels OleDb (jamais de concaténation).
 /// </summary>
 public sealed class AccessDatabase : IDisposable
 {
@@ -22,6 +26,11 @@ public sealed class AccessDatabase : IDisposable
     public bool IsOpen => _connection?.State == ConnectionState.Open;
     public OleDbConnection Connection => EnsureConnection();
 
+    /// <summary>Transaction en cours, ou null hors transaction.</summary>
+    public OleDbTransaction? CurrentTransaction { get; private set; }
+
+    public bool InTransaction => CurrentTransaction is not null;
+
     public void Open()
     {
         ThrowIfDisposed();
@@ -31,7 +40,7 @@ public sealed class AccessDatabase : IDisposable
             throw new FileNotFoundException("La base Access est introuvable.", DatabasePath);
 
         var errors = new List<string>();
-        // ACE 16 is installed with recent Office versions, ACE 12 with older Office/Access Runtime.
+        // ACE 16 est installé avec les versions récentes d'Office, ACE 12 avec les anciennes.
         foreach (var provider in new[] { "Microsoft.ACE.OLEDB.16.0", "Microsoft.ACE.OLEDB.12.0" })
         {
             OleDbConnection? candidate = null;
@@ -57,9 +66,44 @@ public sealed class AccessDatabase : IDisposable
 
     public void Close()
     {
+        if (InTransaction)
+            throw new InvalidOperationException("Impossible de fermer la connexion pendant une transaction. Validez ou annulez d’abord la transaction.");
         if (_connection is null) return;
         try { _connection.Close(); }
         finally { _connection.Dispose(); _connection = null; }
+    }
+
+    /// <summary>Démarre une transaction. Validez avec Complete(), sinon rollback automatique.</summary>
+    public AccessTransaction BeginTransaction() => new(this);
+
+    internal void BeginTransactionInternal()
+    {
+        ThrowIfDisposed();
+        if (InTransaction)
+            throw new InvalidOperationException("Une transaction est déjà en cours. Les transactions imbriquées ne sont pas prises en charge.");
+        CurrentTransaction = EnsureConnection().BeginTransaction();
+    }
+
+    internal void CommitInternal()
+    {
+        try { CurrentTransaction?.Commit(); }
+        finally
+        {
+            CurrentTransaction?.Dispose();
+            CurrentTransaction = null;
+        }
+    }
+
+    internal void RollbackInternal()
+    {
+        try { CurrentTransaction?.Rollback(); }
+        catch { /* Un rollback en échec ne doit pas masquer l'erreur d'origine. */ }
+        finally
+        {
+            try { CurrentTransaction?.Dispose(); }
+            catch { /* Ignoré volontairement. */ }
+            CurrentTransaction = null;
+        }
     }
 
     public DataTable Query(string sql, IEnumerable<OleDbParameter>? parameters = null)
@@ -84,9 +128,26 @@ public sealed class AccessDatabase : IDisposable
         return command.ExecuteNonQuery();
     }
 
+    /// <summary>
+    /// Exécute un INSERT puis retourne la valeur AutoNumber générée (SELECT @@IDENTITY
+    /// sur la même connexion). Retourne 0 si l'identité est indisponible.
+    /// </summary>
+    public int InsertAndGetId(string sql, IEnumerable<OleDbParameter>? parameters = null)
+    {
+        using var command = CreateCommand(sql, parameters);
+        command.ExecuteNonQuery();
+        command.CommandText = "SELECT @@IDENTITY";
+        command.Parameters.Clear();
+        var value = command.ExecuteScalar();
+        if (value is null or DBNull) return 0;
+        return Convert.ToInt32(value, CultureInfo.InvariantCulture);
+    }
+
     public OleDbCommand CreateCommand(string sql, IEnumerable<OleDbParameter>? parameters = null)
     {
         var command = new OleDbCommand(sql, EnsureConnection());
+        if (CurrentTransaction is not null)
+            command.Transaction = CurrentTransaction;
         if (parameters is not null)
             foreach (var parameter in parameters) command.Parameters.Add(parameter);
         return command;
@@ -106,7 +167,7 @@ public sealed class AccessDatabase : IDisposable
             var name = row["TABLE_NAME"]?.ToString();
             if (string.IsNullOrWhiteSpace(name) || IsSystemTable(name)) continue;
             try { tables.Add(GetTable(name)); }
-            catch { /* One malformed/system object must not hide all other tables. */ }
+            catch { /* Un objet système mal formé ne doit pas masquer les autres tables. */ }
         }
 
         return tables.OrderBy(t => TableOrder(t.Name)).ThenBy(t => t.Name).ToList();
@@ -144,6 +205,8 @@ public sealed class AccessDatabase : IDisposable
     public string CreateBackup()
     {
         ThrowIfDisposed();
+        if (InTransaction)
+            throw new InvalidOperationException("Impossible de sauvegarder pendant une transaction.");
         var folder = Path.Combine(Path.GetDirectoryName(DatabasePath) ?? AppContext.BaseDirectory, "Sauvegardes");
         Directory.CreateDirectory(folder);
         var destination = Path.Combine(folder, $"LTA_ADM_{DateTime.Now:yyyyMMdd_HHmmss}.accdb");
@@ -196,10 +259,10 @@ public sealed class AccessDatabase : IDisposable
         }
         catch
         {
-            // Some ACE versions do not expose Primary_Keys. The UI still works with row-value matching.
+            // Certaines versions d'ACE n'exposent pas Primary_Keys. L'interface reste utilisable.
         }
 
-        // A fallback for databases whose primary-key schema is not exposed by the installed ACE provider.
+        // Repli pour les bases dont le schéma de clés primaires n'est pas exposé.
         if (!table.Columns.Any(c => c.IsPrimaryKey))
         {
             var likely = table.Columns.FirstOrDefault(c =>
@@ -208,7 +271,7 @@ public sealed class AccessDatabase : IDisposable
             if (likely is not null) likely.IsPrimaryKey = true;
         }
 
-        // Access sometimes omits IS_AUTOINCREMENT for an AutoNumber primary key.
+        // Access omet parfois IS_AUTOINCREMENT pour une clé primaire AutoNumber.
         foreach (var column in table.Columns.Where(c => c.IsPrimaryKey && c.Name.StartsWith("ID_", StringComparison.OrdinalIgnoreCase)))
         {
             if (column.DataType is OleDbType.Integer or OleDbType.BigInt or OleDbType.SmallInt)
@@ -266,6 +329,7 @@ public sealed class AccessDatabase : IDisposable
     public void Dispose()
     {
         if (_disposed) return;
+        if (InTransaction) RollbackInternal();
         Close();
         _disposed = true;
     }

@@ -9,5 +9,10 @@
 Sauvegardes/
 **/Sauvegardes/
 
+# Application logs
+logs/
+**/logs/
+*.log
+
 # Local publish output
 publish/
