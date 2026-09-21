@@ -4,7 +4,7 @@ Application desktop Windows WinForms (.NET 8) branchée directement sur la base 
 
 ## Ce qui est livré
 
-- connexion sécurisée par la table `UTILISATEUR` (`CODE_UTR`, `MOT_PASSE`, `PROFIL`) ;
+- connexion par la table `UTILISATEUR` (`CODE_UTR`, `MOT_PASSE`, `PROFIL`) ;
 - tableau de bord avec indicateurs étudiants, formateurs, paiements et tables disponibles ;
 - navigation métier en français : scolarité, référentiel, pédagogie, planning, examens, bulletins, finances et administration ;
 - écran générique de gestion pour **toutes les tables Access** : recherche, affichage, ajout, modification, suppression, export CSV ;
