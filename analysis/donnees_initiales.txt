@@ -1,0 +1,114 @@
+=== DONNÉES INITIALES PRÉSENTES DANS LTA_ADM.accdb ===
+
+Tables vides : ABSENCE, BULLETIN, BULLETIN_LIGNE, ECHEANCIER, EMPLOI_DU_TEMPS, EPREUVE, ETUDIANT, EVALUATION, FORMATEUR, INSCRIPTION, JOURNAL, NOTE, NOTE_EXAMEN, PAIEMENT, PAIE_FORMATEUR, PROGRAMME, RESULTAT_FINAL, SEANCE, SESSION_EXAM, TARIF
+Tables peuplées : ANNEE_SCOLAIRE(1), CLASSE(4), CRENEAU(4), ETABLISSEMENT(1), FILIERE(2), GRILLE_MENTION(5), MATIERE(17), MODULE_FORMATION(4), NIVEAU(2), PARAMETRE(7), PERIODE_EVAL(3), SALLE(5), UTILISATEUR(3)
+
+----------------------------------------------------------------------------------------------------
+### ANNEE_SCOLAIRE — 1 ligne(s)
+ID_ANNEE,LIBELLE,DATE_DEBUT,DATE_FIN,ACTIVE
+1,2025-2026,2025-10-01 00:00:00,2026-07-31 00:00:00,True
+
+----------------------------------------------------------------------------------------------------
+### CLASSE — 4 ligne(s)
+ID_CLASSE,LIBELLE,ID_ANNEE,CODE_FILIERE,CODE_NIVEAU,ID_SALLE,EFFECTIF_MAX,ID_RESPONSABLE
+1,BTS1 Hotellerie,1,HOT,BTS1,1,35,
+2,BTS2 Hotellerie,1,HOT,BTS2,2,35,
+3,BTS1 Tourisme,1,TOU,BTS1,1,35,
+4,BTS2 Tourisme,1,TOU,BTS2,2,35,
+
+----------------------------------------------------------------------------------------------------
+### CRENEAU — 4 ligne(s)
+ID_CRENEAU,LIBELLE,HEURE_DEBUT,HEURE_FIN,ORDRE_CRE
+1,C1,07:30,09:30,1
+2,C2,09:45,11:45,2
+3,C3,13:30,15:30,3
+4,C4,15:45,17:45,4
+
+----------------------------------------------------------------------------------------------------
+### ETABLISSEMENT — 1 ligne(s)
+CODE_ETAB,NOM_ETAB,SIGLE,ADRESSE,TEL,EMAIL,SITE_WEB,DIRECTEUR,LOGO
+LTA,Lycee Technique / Institut LTA,LTA,Antananarivo,,,,,
+
+----------------------------------------------------------------------------------------------------
+### FILIERE — 2 ligne(s)
+CODE_FILIERE,FILIERE,DIPLOME,DUREE_ANS,ACTIVE
+HOT,Hotellerie - Restauration,BTS,2,True
+TOU,Tourisme - Agence de voyage,BTS,2,True
+
+----------------------------------------------------------------------------------------------------
+### GRILLE_MENTION — 5 ligne(s)
+ID_MENTION,INF,SUP,MENTION,ADMIS
+1,16.0,20.0,Tres Bien,True
+2,14.0,16.0,Bien,True
+3,12.0,14.0,Assez Bien,True
+4,10.0,12.0,Passable,True
+5,0.0,10.0,Ajourne,False
+
+----------------------------------------------------------------------------------------------------
+### MATIERE — 17 ligne(s)
+CODE_MATIERE,MATIERE,CODE_MODULE,NATURE,ORDRE_MAT
+FRA,Francais professionnel,GEN,Theorie,1
+ANG,Anglais,GEN,Theorie,2
+ALL,Allemand / 3eme langue,GEN,Theorie,3
+BUR,Bureautique,TRAN,Pratique,4
+COM,Communication et accueil,TRAN,Theorie,5
+COMPT,Comptabilite et gestion,TRAN,Theorie,6
+DRO,Droit et legislation,TRAN,Theorie,7
+CUI,Techniques culinaires,PROH,Pratique,8
+RES,Service en restaurant,PROH,Pratique,9
+HEB,Hebergement et etages,PROH,Pratique,10
+HYG,Hygiene et securite alimentaire,PROH,Theorie,11
+GEO,Geographie touristique,PROT,Theorie,12
+BIL,Billetterie et transport,PROT,Pratique,13
+GUI,Techniques de guidage,PROT,Pratique,14
+PACK,Conception de produits touristiques,PROT,Pratique,15
+MKT,Marketing et vente,TRAN,Theorie,16
+STA,Stage et rapport,TRAN,Pratique,17
+
+----------------------------------------------------------------------------------------------------
+### MODULE_FORMATION — 4 ligne(s)
+CODE_MODULE,MODULE_LIB,CODE_FILIERE
+GEN,Enseignement general,
+PROH,Professionnel Hotellerie,HOT
+PROT,Professionnel Tourisme,TOU
+TRAN,Modules transversaux,
+
+----------------------------------------------------------------------------------------------------
+### NIVEAU — 2 ligne(s)
+CODE_NIVEAU,NIVEAU,ORDRE_NIV
+BTS1,Premiere annee BTS,1
+BTS2,Deuxieme annee BTS,2
+
+----------------------------------------------------------------------------------------------------
+### PARAMETRE — 7 ligne(s)
+CLE,VALEUR,DESCRIPTION_P
+BAREME_DEFAUT,20,Bareme des notes
+MOY_ADMISSION,10,Moyenne minimale de passage
+NOTE_ELIMINATOIRE,5,Note eliminatoire par defaut
+POIDS_CC,40,Poids du controle continu en pourcentage
+POIDS_EXAMEN,60,Poids de l examen final en pourcentage
+SEUIL_ABSENCE,30,Heures d absence avant exclusion examen
+DEVISE,MGA,Devise des ecolages
+
+----------------------------------------------------------------------------------------------------
+### PERIODE_EVAL — 3 ligne(s)
+ID_PERIODE,ID_ANNEE,CODE_PERIODE,LIBELLE,ORDRE_PER,PONDERATION,DATE_DEBUT,DATE_FIN,CLOTUREE
+1,1,EV1,1ere Evaluation,1,1.0,,,False
+2,1,EV2,2eme Evaluation,2,1.0,,,False
+3,1,EXB,Examen blanc,3,1.0,,,False
+
+----------------------------------------------------------------------------------------------------
+### SALLE — 5 ligne(s)
+ID_SALLE,NOM_SALLE,CAPACITE,NATURE_SALLE,DISPONIBLE
+1,Salle A1,40,Cours,True
+2,Salle A2,40,Cours,True
+3,Labo Informatique,25,Informatique,True
+4,Cuisine pedagogique,20,Atelier,True
+5,Restaurant d application,30,Atelier,True
+
+----------------------------------------------------------------------------------------------------
+### UTILISATEUR — 3 ligne(s)
+CODE_UTR,NOM_UTR,MOT_PASSE,PROFIL,ACTIF
+ADMIN,Administrateur,admin,ADMIN,True
+SCOL,Scolarite,scol,SCOLARITE,True
+CAISSE,Caissier,caisse,FINANCE,True

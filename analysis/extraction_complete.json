@@ -1,0 +1,5821 @@
+{
+ "schema": {
+  "ABSENCE": {
+   "table": "ABSENCE",
+   "rows_header": 0,
+   "autonumber_seed": 0,
+   "autonumber_increment": 1,
+   "primary_keys": [
+    "ID_ABSENCE"
+   ],
+   "columns": [
+    {
+     "name": "ID_ABSENCE",
+     "col_id": 0,
+     "order": 0,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": true,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "ID_SEANCE",
+     "col_id": 1,
+     "order": 1,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "ID_INSCRIPTION",
+     "col_id": 2,
+     "order": 2,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "NATURE",
+     "col_id": 3,
+     "order": 3,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 30,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "NB_HEURES",
+     "col_id": 4,
+     "order": 4,
+     "type": "DOUBLE (Réel double)",
+     "type_code": 7,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "JUSTIFIEE",
+     "col_id": 5,
+     "order": 5,
+     "type": "BOOLEAN (Oui/Non)",
+     "type_code": 1,
+     "length": 1,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "MOTIF",
+     "col_id": 6,
+     "order": 6,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 300,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "DATE_SAISIE",
+     "col_id": 7,
+     "order": 7,
+     "type": "DATETIME (Date/Heure)",
+     "type_code": 8,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    }
+   ],
+   "indexes": [
+    {
+     "name": "FK_ABS_INS",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 132,
+     "refs_table": "INSCRIPTION",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_INSCRIPTION"
+     ]
+    },
+    {
+     "name": "FK_ABS_SEA",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 177,
+     "refs_table": "SEANCE",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_SEANCE"
+     ]
+    },
+    {
+     "name": "IX_ABS_INS",
+     "idx_type": 0,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "ID_INSCRIPTION"
+     ]
+    },
+    {
+     "name": "PK_ABS",
+     "idx_type": 1,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "ID_ABSENCE"
+     ]
+    }
+   ],
+   "row_count": 0
+  },
+  "ANNEE_SCOLAIRE": {
+   "table": "ANNEE_SCOLAIRE",
+   "rows_header": 1,
+   "autonumber_seed": 1,
+   "autonumber_increment": 1,
+   "primary_keys": [
+    "ID_ANNEE"
+   ],
+   "columns": [
+    {
+     "name": "ID_ANNEE",
+     "col_id": 0,
+     "order": 0,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": true,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "LIBELLE",
+     "col_id": 1,
+     "order": 1,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 40,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "DATE_DEBUT",
+     "col_id": 2,
+     "order": 2,
+     "type": "DATETIME (Date/Heure)",
+     "type_code": 8,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "DATE_FIN",
+     "col_id": 3,
+     "order": 3,
+     "type": "DATETIME (Date/Heure)",
+     "type_code": 8,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "ACTIVE",
+     "col_id": 4,
+     "order": 4,
+     "type": "BOOLEAN (Oui/Non)",
+     "type_code": 1,
+     "length": 1,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    }
+   ],
+   "indexes": [
+    {
+     "name": ".rB",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 103,
+     "refs_table": "CLASSE",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_ANNEE"
+     ]
+    },
+    {
+     "name": ".rC",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 137,
+     "refs_table": "PERIODE_EVAL",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_ANNEE"
+     ]
+    },
+    {
+     "name": ".rD",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 151,
+     "refs_table": "SESSION_EXAM",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_ANNEE"
+     ]
+    },
+    {
+     "name": "PK_ANNEE",
+     "idx_type": 1,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "ID_ANNEE"
+     ]
+    }
+   ],
+   "row_count": 1
+  },
+  "BULLETIN": {
+   "table": "BULLETIN",
+   "rows_header": 0,
+   "autonumber_seed": 0,
+   "autonumber_increment": 1,
+   "primary_keys": [
+    "ID_BULLETIN"
+   ],
+   "columns": [
+    {
+     "name": "ID_BULLETIN",
+     "col_id": 0,
+     "order": 0,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": true,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "ID_INSCRIPTION",
+     "col_id": 1,
+     "order": 1,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "ID_PERIODE",
+     "col_id": 2,
+     "order": 2,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "MOYENNE",
+     "col_id": 3,
+     "order": 3,
+     "type": "DOUBLE (Réel double)",
+     "type_code": 7,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "TOTAL_POINTS",
+     "col_id": 4,
+     "order": 4,
+     "type": "DOUBLE (Réel double)",
+     "type_code": 7,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "TOTAL_COEF",
+     "col_id": 5,
+     "order": 5,
+     "type": "DOUBLE (Réel double)",
+     "type_code": 7,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "RANG",
+     "col_id": 6,
+     "order": 6,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "EFFECTIF",
+     "col_id": 7,
+     "order": 7,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "MOY_CLASSE",
+     "col_id": 8,
+     "order": 8,
+     "type": "DOUBLE (Réel double)",
+     "type_code": 7,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "NB_ABSENCE",
+     "col_id": 9,
+     "order": 9,
+     "type": "DOUBLE (Réel double)",
+     "type_code": 7,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "APPRECIATION",
+     "col_id": 10,
+     "order": 10,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 510,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "DECISION",
+     "col_id": 11,
+     "order": 11,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 80,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "DATE_EDITION",
+     "col_id": 12,
+     "order": 12,
+     "type": "DATETIME (Date/Heure)",
+     "type_code": 8,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    }
+   ],
+   "indexes": [
+    {
+     "name": ".rD",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 193,
+     "refs_table": "BULLETIN_LIGNE",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_BULLETIN"
+     ]
+    },
+    {
+     "name": "FK_BUL_INS",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 132,
+     "refs_table": "INSCRIPTION",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_INSCRIPTION"
+     ]
+    },
+    {
+     "name": "FK_BUL_PER",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 137,
+     "refs_table": "PERIODE_EVAL",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_PERIODE"
+     ]
+    },
+    {
+     "name": "IX_BUL_UNI",
+     "idx_type": 0,
+     "flag_byte": 129,
+     "unique": true,
+     "is_pk": false,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "ID_INSCRIPTION",
+      "ID_PERIODE"
+     ]
+    },
+    {
+     "name": "PK_BUL",
+     "idx_type": 1,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "ID_BULLETIN"
+     ]
+    }
+   ],
+   "row_count": 0
+  },
+  "BULLETIN_LIGNE": {
+   "table": "BULLETIN_LIGNE",
+   "rows_header": 0,
+   "autonumber_seed": 0,
+   "autonumber_increment": 1,
+   "primary_keys": [
+    "ID_LIGNE"
+   ],
+   "columns": [
+    {
+     "name": "ID_LIGNE",
+     "col_id": 0,
+     "order": 0,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": true,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "ID_BULLETIN",
+     "col_id": 1,
+     "order": 1,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "CODE_MATIERE",
+     "col_id": 2,
+     "order": 2,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 20,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "MOYENNE_MAT",
+     "col_id": 3,
+     "order": 3,
+     "type": "DOUBLE (Réel double)",
+     "type_code": 7,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "COEFFICIENT",
+     "col_id": 4,
+     "order": 4,
+     "type": "DOUBLE (Réel double)",
+     "type_code": 7,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "POINTS",
+     "col_id": 5,
+     "order": 5,
+     "type": "DOUBLE (Réel double)",
+     "type_code": 7,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "RANG_MAT",
+     "col_id": 6,
+     "order": 6,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "MOY_MIN",
+     "col_id": 7,
+     "order": 7,
+     "type": "DOUBLE (Réel double)",
+     "type_code": 7,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "MOY_MAX",
+     "col_id": 8,
+     "order": 8,
+     "type": "DOUBLE (Réel double)",
+     "type_code": 7,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "APPRECIATION",
+     "col_id": 9,
+     "order": 9,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 300,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "ID_FORMATEUR",
+     "col_id": 10,
+     "order": 10,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    }
+   ],
+   "indexes": [
+    {
+     "name": "FK_BLI_BUL",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 187,
+     "refs_table": "BULLETIN",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_BULLETIN"
+     ]
+    },
+    {
+     "name": "FK_BLI_FORM",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 119,
+     "refs_table": "FORMATEUR",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_FORMATEUR"
+     ]
+    },
+    {
+     "name": "FK_BLI_MAT",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 115,
+     "refs_table": "MATIERE",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "CODE_MATIERE"
+     ]
+    },
+    {
+     "name": "PK_BLI",
+     "idx_type": 1,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "ID_LIGNE"
+     ]
+    }
+   ],
+   "row_count": 0
+  },
+  "CLASSE": {
+   "table": "CLASSE",
+   "rows_header": 4,
+   "autonumber_seed": 4,
+   "autonumber_increment": 1,
+   "primary_keys": [
+    "ID_CLASSE"
+   ],
+   "columns": [
+    {
+     "name": "ID_CLASSE",
+     "col_id": 0,
+     "order": 0,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": true,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "LIBELLE",
+     "col_id": 1,
+     "order": 1,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 120,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "ID_ANNEE",
+     "col_id": 2,
+     "order": 2,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "CODE_FILIERE",
+     "col_id": 3,
+     "order": 3,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 20,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "CODE_NIVEAU",
+     "col_id": 4,
+     "order": 4,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 20,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "ID_SALLE",
+     "col_id": 5,
+     "order": 5,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "EFFECTIF_MAX",
+     "col_id": 6,
+     "order": 6,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "ID_RESPONSABLE",
+     "col_id": 7,
+     "order": 7,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    }
+   ],
+   "indexes": [
+    {
+     "name": ".rF",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 122,
+     "refs_table": "PROGRAMME",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_CLASSE"
+     ]
+    },
+    {
+     "name": ".rG",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 132,
+     "refs_table": "INSCRIPTION",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_CLASSE"
+     ]
+    },
+    {
+     "name": ".rH",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 155,
+     "refs_table": "EPREUVE",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_CLASSE"
+     ]
+    },
+    {
+     "name": ".rI",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 206,
+     "refs_table": "TARIF",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_CLASSE"
+     ]
+    },
+    {
+     "name": "FK_CLA_ANNEE",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 91,
+     "refs_table": "ANNEE_SCOLAIRE",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_ANNEE"
+     ]
+    },
+    {
+     "name": "FK_CLA_FIL",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 94,
+     "refs_table": "FILIERE",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "CODE_FILIERE"
+     ]
+    },
+    {
+     "name": "FK_CLA_NIV",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 97,
+     "refs_table": "NIVEAU",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "CODE_NIVEAU"
+     ]
+    },
+    {
+     "name": "FK_CLA_SALLE",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 100,
+     "refs_table": "SALLE",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_SALLE"
+     ]
+    },
+    {
+     "name": "PK_CLASSE",
+     "idx_type": 1,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "ID_CLASSE"
+     ]
+    }
+   ],
+   "row_count": 4
+  },
+  "CRENEAU": {
+   "table": "CRENEAU",
+   "rows_header": 4,
+   "autonumber_seed": 4,
+   "autonumber_increment": 1,
+   "primary_keys": [
+    "ID_CRENEAU"
+   ],
+   "columns": [
+    {
+     "name": "ID_CRENEAU",
+     "col_id": 0,
+     "order": 0,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": true,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "LIBELLE",
+     "col_id": 1,
+     "order": 1,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 60,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "HEURE_DEBUT",
+     "col_id": 2,
+     "order": 2,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 10,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "HEURE_FIN",
+     "col_id": 3,
+     "order": 3,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 10,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "ORDRE_CRE",
+     "col_id": 4,
+     "order": 4,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    }
+   ],
+   "indexes": [
+    {
+     "name": ".rB",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 171,
+     "refs_table": "EMPLOI_DU_TEMPS",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_CRENEAU"
+     ]
+    },
+    {
+     "name": "PK_CRE",
+     "idx_type": 1,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "ID_CRENEAU"
+     ]
+    }
+   ],
+   "row_count": 4
+  },
+  "ECHEANCIER": {
+   "table": "ECHEANCIER",
+   "rows_header": 0,
+   "autonumber_seed": 0,
+   "autonumber_increment": 1,
+   "primary_keys": [
+    "ID_ECHEANCE"
+   ],
+   "columns": [
+    {
+     "name": "ID_ECHEANCE",
+     "col_id": 0,
+     "order": 0,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": true,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "ID_INSCRIPTION",
+     "col_id": 1,
+     "order": 1,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "ID_TARIF",
+     "col_id": 2,
+     "order": 2,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "NUM_TRANCHE",
+     "col_id": 3,
+     "order": 3,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "LIBELLE",
+     "col_id": 4,
+     "order": 4,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 80,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "MONTANT_DU",
+     "col_id": 5,
+     "order": 5,
+     "type": "CURRENCY (Monétaire)",
+     "type_code": 5,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "DATE_ECHEANCE",
+     "col_id": 6,
+     "order": 6,
+     "type": "DATETIME (Date/Heure)",
+     "type_code": 8,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "STATUT",
+     "col_id": 7,
+     "order": 7,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 30,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "REMISE",
+     "col_id": 8,
+     "order": 8,
+     "type": "CURRENCY (Monétaire)",
+     "type_code": 5,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    }
+   ],
+   "indexes": [
+    {
+     "name": ".rD",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 216,
+     "refs_table": "PAIEMENT",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_ECHEANCE"
+     ]
+    },
+    {
+     "name": "FK_ECH_INS",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 132,
+     "refs_table": "INSCRIPTION",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_INSCRIPTION"
+     ]
+    },
+    {
+     "name": "FK_ECH_TAR",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 206,
+     "refs_table": "TARIF",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_TARIF"
+     ]
+    },
+    {
+     "name": "PK_ECH",
+     "idx_type": 1,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "ID_ECHEANCE"
+     ]
+    }
+   ],
+   "row_count": 0
+  },
+  "EMPLOI_DU_TEMPS": {
+   "table": "EMPLOI_DU_TEMPS",
+   "rows_header": 0,
+   "autonumber_seed": 0,
+   "autonumber_increment": 1,
+   "primary_keys": [
+    "ID_EDT"
+   ],
+   "columns": [
+    {
+     "name": "ID_EDT",
+     "col_id": 0,
+     "order": 0,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": true,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "ID_PROG",
+     "col_id": 1,
+     "order": 1,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "ID_CRENEAU",
+     "col_id": 2,
+     "order": 2,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "JOUR",
+     "col_id": 3,
+     "order": 3,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 24,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "ID_SALLE",
+     "col_id": 4,
+     "order": 4,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "DATE_DEBUT",
+     "col_id": 5,
+     "order": 5,
+     "type": "DATETIME (Date/Heure)",
+     "type_code": 8,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "DATE_FIN",
+     "col_id": 6,
+     "order": 6,
+     "type": "DATETIME (Date/Heure)",
+     "type_code": 8,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "ACTIF",
+     "col_id": 7,
+     "order": 7,
+     "type": "BOOLEAN (Oui/Non)",
+     "type_code": 1,
+     "length": 1,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    }
+   ],
+   "indexes": [
+    {
+     "name": ".rE",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 177,
+     "refs_table": "SEANCE",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_EDT"
+     ]
+    },
+    {
+     "name": "FK_EDT_CRE",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 168,
+     "refs_table": "CRENEAU",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_CRENEAU"
+     ]
+    },
+    {
+     "name": "FK_EDT_PRO",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 122,
+     "refs_table": "PROGRAMME",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_PROG"
+     ]
+    },
+    {
+     "name": "FK_EDT_SALLE",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 100,
+     "refs_table": "SALLE",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_SALLE"
+     ]
+    },
+    {
+     "name": "IX_EDT_SLOT",
+     "idx_type": 0,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "JOUR",
+      "ID_CRENEAU",
+      "ID_SALLE"
+     ]
+    },
+    {
+     "name": "PK_EDT",
+     "idx_type": 1,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "ID_EDT"
+     ]
+    }
+   ],
+   "row_count": 0
+  },
+  "EPREUVE": {
+   "table": "EPREUVE",
+   "rows_header": 0,
+   "autonumber_seed": 0,
+   "autonumber_increment": 1,
+   "primary_keys": [
+    "ID_EPREUVE"
+   ],
+   "columns": [
+    {
+     "name": "ID_EPREUVE",
+     "col_id": 0,
+     "order": 0,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": true,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "ID_SESSION",
+     "col_id": 1,
+     "order": 1,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "ID_CLASSE",
+     "col_id": 2,
+     "order": 2,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "CODE_MATIERE",
+     "col_id": 3,
+     "order": 3,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 20,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "DATE_EPREUVE",
+     "col_id": 4,
+     "order": 4,
+     "type": "DATETIME (Date/Heure)",
+     "type_code": 8,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "HEURE_DEBUT",
+     "col_id": 5,
+     "order": 5,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 10,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "DUREE_MN",
+     "col_id": 6,
+     "order": 6,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "COEFFICIENT",
+     "col_id": 7,
+     "order": 7,
+     "type": "DOUBLE (Réel double)",
+     "type_code": 7,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "BAREME",
+     "col_id": 8,
+     "order": 8,
+     "type": "DOUBLE (Réel double)",
+     "type_code": 7,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "ID_SALLE",
+     "col_id": 9,
+     "order": 9,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "SURVEILLANT",
+     "col_id": 10,
+     "order": 10,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 160,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    }
+   ],
+   "indexes": [
+    {
+     "name": ".rF",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 162,
+     "refs_table": "NOTE_EXAMEN",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_EPREUVE"
+     ]
+    },
+    {
+     "name": "FK_EPR_CLA",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 103,
+     "refs_table": "CLASSE",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_CLASSE"
+     ]
+    },
+    {
+     "name": "FK_EPR_MAT",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 115,
+     "refs_table": "MATIERE",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "CODE_MATIERE"
+     ]
+    },
+    {
+     "name": "FK_EPR_SALLE",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 100,
+     "refs_table": "SALLE",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_SALLE"
+     ]
+    },
+    {
+     "name": "FK_EPR_SES",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 151,
+     "refs_table": "SESSION_EXAM",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_SESSION"
+     ]
+    },
+    {
+     "name": "PK_EPR",
+     "idx_type": 1,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "ID_EPREUVE"
+     ]
+    }
+   ],
+   "row_count": 0
+  },
+  "ETABLISSEMENT": {
+   "table": "ETABLISSEMENT",
+   "rows_header": 1,
+   "autonumber_seed": 0,
+   "autonumber_increment": 1,
+   "primary_keys": [
+    "CODE_ETAB"
+   ],
+   "columns": [
+    {
+     "name": "CODE_ETAB",
+     "col_id": 0,
+     "order": 0,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 20,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "NOM_ETAB",
+     "col_id": 1,
+     "order": 1,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 200,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "SIGLE",
+     "col_id": 2,
+     "order": 2,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 40,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "ADRESSE",
+     "col_id": 3,
+     "order": 3,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 300,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "TEL",
+     "col_id": 4,
+     "order": 4,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 80,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "EMAIL",
+     "col_id": 5,
+     "order": 5,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 160,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "SITE_WEB",
+     "col_id": 6,
+     "order": 6,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 160,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "DIRECTEUR",
+     "col_id": 7,
+     "order": 7,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 160,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "LOGO",
+     "col_id": 8,
+     "order": 8,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 510,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    }
+   ],
+   "indexes": [
+    {
+     "name": "PK_ETAB",
+     "idx_type": 1,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "CODE_ETAB"
+     ]
+    }
+   ],
+   "row_count": 1
+  },
+  "ETUDIANT": {
+   "table": "ETUDIANT",
+   "rows_header": 0,
+   "autonumber_seed": 0,
+   "autonumber_increment": 1,
+   "primary_keys": [
+    "ID_ETUDIANT"
+   ],
+   "columns": [
+    {
+     "name": "ID_ETUDIANT",
+     "col_id": 0,
+     "order": 0,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": true,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "MATRICULE",
+     "col_id": 1,
+     "order": 1,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 40,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "NOM",
+     "col_id": 2,
+     "order": 2,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 120,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "PRENOM",
+     "col_id": 3,
+     "order": 3,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 160,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "SEXE",
+     "col_id": 4,
+     "order": 4,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 2,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "DATE_NAISSANCE",
+     "col_id": 5,
+     "order": 5,
+     "type": "DATETIME (Date/Heure)",
+     "type_code": 8,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "LIEU_NAISSANCE",
+     "col_id": 6,
+     "order": 6,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 120,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "CIN",
+     "col_id": 7,
+     "order": 7,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 40,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "NATIONALITE",
+     "col_id": 8,
+     "order": 8,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 80,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "ADRESSE",
+     "col_id": 9,
+     "order": 9,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 300,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "TEL",
+     "col_id": 10,
+     "order": 10,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 80,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "EMAIL",
+     "col_id": 11,
+     "order": 11,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 160,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "NOM_TUTEUR",
+     "col_id": 12,
+     "order": 12,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 160,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "TEL_TUTEUR",
+     "col_id": 13,
+     "order": 13,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 80,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "PROFESSION_TUTEUR",
+     "col_id": 14,
+     "order": 14,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 120,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "SERIE_BACC",
+     "col_id": 15,
+     "order": 15,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 40,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "ANNEE_BACC",
+     "col_id": 16,
+     "order": 16,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "ETAB_ORIGINE",
+     "col_id": 17,
+     "order": 17,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 200,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "PHOTO",
+     "col_id": 18,
+     "order": 18,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 510,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "DATE_CREATION",
+     "col_id": 19,
+     "order": 19,
+     "type": "DATETIME (Date/Heure)",
+     "type_code": 8,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "STATUT",
+     "col_id": 20,
+     "order": 20,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 40,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    }
+   ],
+   "indexes": [
+    {
+     "name": ".rB",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 132,
+     "refs_table": "INSCRIPTION",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_ETUDIANT"
+     ]
+    },
+    {
+     "name": "IX_ETU_MAT",
+     "idx_type": 0,
+     "flag_byte": 129,
+     "unique": true,
+     "is_pk": false,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "MATRICULE"
+     ]
+    },
+    {
+     "name": "PK_ETU",
+     "idx_type": 1,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "ID_ETUDIANT"
+     ]
+    }
+   ],
+   "row_count": 0
+  },
+  "EVALUATION": {
+   "table": "EVALUATION",
+   "rows_header": 0,
+   "autonumber_seed": 0,
+   "autonumber_increment": 1,
+   "primary_keys": [
+    "ID_EVALUATION"
+   ],
+   "columns": [
+    {
+     "name": "ID_EVALUATION",
+     "col_id": 0,
+     "order": 0,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": true,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "ID_PERIODE",
+     "col_id": 1,
+     "order": 1,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "ID_PROG",
+     "col_id": 2,
+     "order": 2,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "INTITULE",
+     "col_id": 3,
+     "order": 3,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 200,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "NATURE",
+     "col_id": 4,
+     "order": 4,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 50,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "DATE_EVAL",
+     "col_id": 5,
+     "order": 5,
+     "type": "DATETIME (Date/Heure)",
+     "type_code": 8,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "BAREME",
+     "col_id": 6,
+     "order": 6,
+     "type": "DOUBLE (Réel double)",
+     "type_code": 7,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "POIDS",
+     "col_id": 7,
+     "order": 7,
+     "type": "DOUBLE (Réel double)",
+     "type_code": 7,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "PUBLIEE",
+     "col_id": 8,
+     "order": 8,
+     "type": "BOOLEAN (Oui/Non)",
+     "type_code": 1,
+     "length": 1,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    }
+   ],
+   "indexes": [
+    {
+     "name": ".rD",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 146,
+     "refs_table": "NOTE",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_EVALUATION"
+     ]
+    },
+    {
+     "name": "FK_EVA_PER",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 137,
+     "refs_table": "PERIODE_EVAL",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_PERIODE"
+     ]
+    },
+    {
+     "name": "FK_EVA_PRO",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 122,
+     "refs_table": "PROGRAMME",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_PROG"
+     ]
+    },
+    {
+     "name": "PK_EVAL",
+     "idx_type": 1,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "ID_EVALUATION"
+     ]
+    }
+   ],
+   "row_count": 0
+  },
+  "FILIERE": {
+   "table": "FILIERE",
+   "rows_header": 2,
+   "autonumber_seed": 0,
+   "autonumber_increment": 1,
+   "primary_keys": [
+    "CODE_FILIERE"
+   ],
+   "columns": [
+    {
+     "name": "CODE_FILIERE",
+     "col_id": 0,
+     "order": 0,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 20,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "FILIERE",
+     "col_id": 1,
+     "order": 1,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 160,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "DIPLOME",
+     "col_id": 2,
+     "order": 2,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 80,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "DUREE_ANS",
+     "col_id": 3,
+     "order": 3,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "ACTIVE",
+     "col_id": 4,
+     "order": 4,
+     "type": "BOOLEAN (Oui/Non)",
+     "type_code": 1,
+     "length": 1,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    }
+   ],
+   "indexes": [
+    {
+     "name": ".rB",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 103,
+     "refs_table": "CLASSE",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "CODE_FILIERE"
+     ]
+    },
+    {
+     "name": ".rC",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 111,
+     "refs_table": "MODULE_FORMATION",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "CODE_FILIERE"
+     ]
+    },
+    {
+     "name": "PK_FIL",
+     "idx_type": 1,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "CODE_FILIERE"
+     ]
+    }
+   ],
+   "row_count": 2
+  },
+  "FORMATEUR": {
+   "table": "FORMATEUR",
+   "rows_header": 0,
+   "autonumber_seed": 0,
+   "autonumber_increment": 1,
+   "primary_keys": [
+    "ID_FORMATEUR"
+   ],
+   "columns": [
+    {
+     "name": "ID_FORMATEUR",
+     "col_id": 0,
+     "order": 0,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": true,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "MATRICULE",
+     "col_id": 1,
+     "order": 1,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 40,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "NOM",
+     "col_id": 2,
+     "order": 2,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 120,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "PRENOM",
+     "col_id": 3,
+     "order": 3,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 120,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "SEXE",
+     "col_id": 4,
+     "order": 4,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 2,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "DATE_NAISSANCE",
+     "col_id": 5,
+     "order": 5,
+     "type": "DATETIME (Date/Heure)",
+     "type_code": 8,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "CIN",
+     "col_id": 6,
+     "order": 6,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 40,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "ADRESSE",
+     "col_id": 7,
+     "order": 7,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 300,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "TEL",
+     "col_id": 8,
+     "order": 8,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 80,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "EMAIL",
+     "col_id": 9,
+     "order": 9,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 160,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "SPECIALITE",
+     "col_id": 10,
+     "order": 10,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 160,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "DIPLOME",
+     "col_id": 11,
+     "order": 11,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 160,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "CONTRAT",
+     "col_id": 12,
+     "order": 12,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 40,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "TAUX_HORAIRE",
+     "col_id": 13,
+     "order": 13,
+     "type": "CURRENCY (Monétaire)",
+     "type_code": 5,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "DATE_EMBAUCHE",
+     "col_id": 14,
+     "order": 14,
+     "type": "DATETIME (Date/Heure)",
+     "type_code": 8,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "PHOTO",
+     "col_id": 15,
+     "order": 15,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 510,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "ACTIF",
+     "col_id": 16,
+     "order": 16,
+     "type": "BOOLEAN (Oui/Non)",
+     "type_code": 1,
+     "length": 1,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    }
+   ],
+   "indexes": [
+    {
+     "name": ".rB",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 122,
+     "refs_table": "PROGRAMME",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_FORMATEUR"
+     ]
+    },
+    {
+     "name": ".rC",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 193,
+     "refs_table": "BULLETIN_LIGNE",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_FORMATEUR"
+     ]
+    },
+    {
+     "name": ".rD",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 220,
+     "refs_table": "PAIE_FORMATEUR",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_FORMATEUR"
+     ]
+    },
+    {
+     "name": "PK_FORM",
+     "idx_type": 1,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "ID_FORMATEUR"
+     ]
+    }
+   ],
+   "row_count": 0
+  },
+  "GRILLE_MENTION": {
+   "table": "GRILLE_MENTION",
+   "rows_header": 5,
+   "autonumber_seed": 5,
+   "autonumber_increment": 1,
+   "primary_keys": [
+    "ID_MENTION"
+   ],
+   "columns": [
+    {
+     "name": "ID_MENTION",
+     "col_id": 0,
+     "order": 0,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": true,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "INF",
+     "col_id": 1,
+     "order": 1,
+     "type": "DOUBLE (Réel double)",
+     "type_code": 7,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "SUP",
+     "col_id": 2,
+     "order": 2,
+     "type": "DOUBLE (Réel double)",
+     "type_code": 7,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "MENTION",
+     "col_id": 3,
+     "order": 3,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 60,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "ADMIS",
+     "col_id": 4,
+     "order": 4,
+     "type": "BOOLEAN (Oui/Non)",
+     "type_code": 1,
+     "length": 1,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    }
+   ],
+   "indexes": [
+    {
+     "name": "PK_MEN",
+     "idx_type": 1,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "ID_MENTION"
+     ]
+    }
+   ],
+   "row_count": 5
+  },
+  "INSCRIPTION": {
+   "table": "INSCRIPTION",
+   "rows_header": 0,
+   "autonumber_seed": 0,
+   "autonumber_increment": 1,
+   "primary_keys": [
+    "ID_INSCRIPTION"
+   ],
+   "columns": [
+    {
+     "name": "ID_INSCRIPTION",
+     "col_id": 0,
+     "order": 0,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": true,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "ID_ETUDIANT",
+     "col_id": 1,
+     "order": 1,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "ID_CLASSE",
+     "col_id": 2,
+     "order": 2,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "NUM_INSCRIPTION",
+     "col_id": 3,
+     "order": 3,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 40,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "DATE_INSCRIPTION",
+     "col_id": 4,
+     "order": 4,
+     "type": "DATETIME (Date/Heure)",
+     "type_code": 8,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "REDOUBLANT",
+     "col_id": 5,
+     "order": 5,
+     "type": "BOOLEAN (Oui/Non)",
+     "type_code": 1,
+     "length": 1,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "STATUT",
+     "col_id": 6,
+     "order": 6,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 40,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "DATE_SORTIE",
+     "col_id": 7,
+     "order": 7,
+     "type": "DATETIME (Date/Heure)",
+     "type_code": 8,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "MOTIF_SORTIE",
+     "col_id": 8,
+     "order": 8,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 300,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    }
+   ],
+   "indexes": [
+    {
+     "name": ".rD",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 146,
+     "refs_table": "NOTE",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_INSCRIPTION"
+     ]
+    },
+    {
+     "name": ".rE",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 162,
+     "refs_table": "NOTE_EXAMEN",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_INSCRIPTION"
+     ]
+    },
+    {
+     "name": ".rF",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 181,
+     "refs_table": "ABSENCE",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_INSCRIPTION"
+     ]
+    },
+    {
+     "name": ".rG",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 187,
+     "refs_table": "BULLETIN",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_INSCRIPTION"
+     ]
+    },
+    {
+     "name": ".rH",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 202,
+     "refs_table": "RESULTAT_FINAL",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_INSCRIPTION"
+     ]
+    },
+    {
+     "name": ".rI",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 210,
+     "refs_table": "ECHEANCIER",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_INSCRIPTION"
+     ]
+    },
+    {
+     "name": "FK_INS_CLA",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 103,
+     "refs_table": "CLASSE",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_CLASSE"
+     ]
+    },
+    {
+     "name": "FK_INS_ETU",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 129,
+     "refs_table": "ETUDIANT",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_ETUDIANT"
+     ]
+    },
+    {
+     "name": "IX_INS_UNI",
+     "idx_type": 0,
+     "flag_byte": 129,
+     "unique": true,
+     "is_pk": false,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "ID_ETUDIANT",
+      "ID_CLASSE"
+     ]
+    },
+    {
+     "name": "PK_INS",
+     "idx_type": 1,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "ID_INSCRIPTION"
+     ]
+    }
+   ],
+   "row_count": 0
+  },
+  "JOURNAL": {
+   "table": "JOURNAL",
+   "rows_header": 0,
+   "autonumber_seed": 0,
+   "autonumber_increment": 1,
+   "primary_keys": [
+    "ID_LOG"
+   ],
+   "columns": [
+    {
+     "name": "ID_LOG",
+     "col_id": 0,
+     "order": 0,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": true,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "DATE_LOG",
+     "col_id": 1,
+     "order": 1,
+     "type": "DATETIME (Date/Heure)",
+     "type_code": 8,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "CODE_UTR",
+     "col_id": 2,
+     "order": 2,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 40,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "ACTION_LOG",
+     "col_id": 3,
+     "order": 3,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 80,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "TABLE_CIBLE",
+     "col_id": 4,
+     "order": 4,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 80,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "ID_CIBLE",
+     "col_id": 5,
+     "order": 5,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "DETAIL",
+     "col_id": 6,
+     "order": 6,
+     "type": "MEMO (Texte long)",
+     "type_code": 12,
+     "length": 0,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    }
+   ],
+   "indexes": [
+    {
+     "name": "PK_LOG",
+     "idx_type": 1,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "ID_LOG"
+     ]
+    }
+   ],
+   "row_count": 0
+  },
+  "MATIERE": {
+   "table": "MATIERE",
+   "rows_header": 17,
+   "autonumber_seed": 0,
+   "autonumber_increment": 1,
+   "primary_keys": [
+    "CODE_MATIERE"
+   ],
+   "columns": [
+    {
+     "name": "CODE_MATIERE",
+     "col_id": 0,
+     "order": 0,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 20,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "MATIERE",
+     "col_id": 1,
+     "order": 1,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 160,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "CODE_MODULE",
+     "col_id": 2,
+     "order": 2,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 20,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "NATURE",
+     "col_id": 3,
+     "order": 3,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 40,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "ORDRE_MAT",
+     "col_id": 4,
+     "order": 4,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    }
+   ],
+   "indexes": [
+    {
+     "name": ".rC",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 122,
+     "refs_table": "PROGRAMME",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "CODE_MATIERE"
+     ]
+    },
+    {
+     "name": ".rD",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 155,
+     "refs_table": "EPREUVE",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "CODE_MATIERE"
+     ]
+    },
+    {
+     "name": ".rE",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 193,
+     "refs_table": "BULLETIN_LIGNE",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "CODE_MATIERE"
+     ]
+    },
+    {
+     "name": "FK_MAT_MOD",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 111,
+     "refs_table": "MODULE_FORMATION",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "CODE_MODULE"
+     ]
+    },
+    {
+     "name": "PK_MAT",
+     "idx_type": 1,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "CODE_MATIERE"
+     ]
+    }
+   ],
+   "row_count": 17
+  },
+  "MODULE_FORMATION": {
+   "table": "MODULE_FORMATION",
+   "rows_header": 4,
+   "autonumber_seed": 0,
+   "autonumber_increment": 1,
+   "primary_keys": [
+    "CODE_MODULE"
+   ],
+   "columns": [
+    {
+     "name": "CODE_MODULE",
+     "col_id": 0,
+     "order": 0,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 20,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "MODULE_LIB",
+     "col_id": 1,
+     "order": 1,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 160,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "CODE_FILIERE",
+     "col_id": 2,
+     "order": 2,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 20,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    }
+   ],
+   "indexes": [
+    {
+     "name": ".rC",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 115,
+     "refs_table": "MATIERE",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "CODE_MODULE"
+     ]
+    },
+    {
+     "name": "FK_MOD_FIL",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 94,
+     "refs_table": "FILIERE",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "CODE_FILIERE"
+     ]
+    },
+    {
+     "name": "PK_MOD",
+     "idx_type": 1,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "CODE_MODULE"
+     ]
+    }
+   ],
+   "row_count": 4
+  },
+  "NIVEAU": {
+   "table": "NIVEAU",
+   "rows_header": 2,
+   "autonumber_seed": 0,
+   "autonumber_increment": 1,
+   "primary_keys": [
+    "CODE_NIVEAU"
+   ],
+   "columns": [
+    {
+     "name": "CODE_NIVEAU",
+     "col_id": 0,
+     "order": 0,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 20,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "NIVEAU",
+     "col_id": 1,
+     "order": 1,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 100,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "ORDRE_NIV",
+     "col_id": 2,
+     "order": 2,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    }
+   ],
+   "indexes": [
+    {
+     "name": ".rB",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 103,
+     "refs_table": "CLASSE",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "CODE_NIVEAU"
+     ]
+    },
+    {
+     "name": "PK_NIV",
+     "idx_type": 1,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "CODE_NIVEAU"
+     ]
+    }
+   ],
+   "row_count": 2
+  },
+  "NOTE": {
+   "table": "NOTE",
+   "rows_header": 0,
+   "autonumber_seed": 0,
+   "autonumber_increment": 1,
+   "primary_keys": [
+    "ID_NOTE"
+   ],
+   "columns": [
+    {
+     "name": "ID_NOTE",
+     "col_id": 0,
+     "order": 0,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": true,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "ID_EVALUATION",
+     "col_id": 1,
+     "order": 1,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "ID_INSCRIPTION",
+     "col_id": 2,
+     "order": 2,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "VALEUR_NOTE",
+     "col_id": 3,
+     "order": 3,
+     "type": "DOUBLE (Réel double)",
+     "type_code": 7,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "ABSENT",
+     "col_id": 4,
+     "order": 4,
+     "type": "BOOLEAN (Oui/Non)",
+     "type_code": 1,
+     "length": 1,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "OBSERVATION",
+     "col_id": 5,
+     "order": 5,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 300,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "DATE_SAISIE",
+     "col_id": 6,
+     "order": 6,
+     "type": "DATETIME (Date/Heure)",
+     "type_code": 8,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "CODE_UTR",
+     "col_id": 7,
+     "order": 7,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 40,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    }
+   ],
+   "indexes": [
+    {
+     "name": "FK_NOT_EVA",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 141,
+     "refs_table": "EVALUATION",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_EVALUATION"
+     ]
+    },
+    {
+     "name": "FK_NOT_INS",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 132,
+     "refs_table": "INSCRIPTION",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_INSCRIPTION"
+     ]
+    },
+    {
+     "name": "IX_NOTE_UNI",
+     "idx_type": 0,
+     "flag_byte": 129,
+     "unique": true,
+     "is_pk": false,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "ID_EVALUATION",
+      "ID_INSCRIPTION"
+     ]
+    },
+    {
+     "name": "PK_NOTE",
+     "idx_type": 1,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "ID_NOTE"
+     ]
+    }
+   ],
+   "row_count": 0
+  },
+  "NOTE_EXAMEN": {
+   "table": "NOTE_EXAMEN",
+   "rows_header": 0,
+   "autonumber_seed": 0,
+   "autonumber_increment": 1,
+   "primary_keys": [
+    "ID_NOTE_EX"
+   ],
+   "columns": [
+    {
+     "name": "ID_NOTE_EX",
+     "col_id": 0,
+     "order": 0,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": true,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "ID_EPREUVE",
+     "col_id": 1,
+     "order": 1,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "ID_INSCRIPTION",
+     "col_id": 2,
+     "order": 2,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "VALEUR_NOTE",
+     "col_id": 3,
+     "order": 3,
+     "type": "DOUBLE (Réel double)",
+     "type_code": 7,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "ABSENT",
+     "col_id": 4,
+     "order": 4,
+     "type": "BOOLEAN (Oui/Non)",
+     "type_code": 1,
+     "length": 1,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "COPIE_NUM",
+     "col_id": 5,
+     "order": 5,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 40,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "DATE_SAISIE",
+     "col_id": 6,
+     "order": 6,
+     "type": "DATETIME (Date/Heure)",
+     "type_code": 8,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "CODE_UTR",
+     "col_id": 7,
+     "order": 7,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 40,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    }
+   ],
+   "indexes": [
+    {
+     "name": "FK_NEX_EPR",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 155,
+     "refs_table": "EPREUVE",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_EPREUVE"
+     ]
+    },
+    {
+     "name": "FK_NEX_INS",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 132,
+     "refs_table": "INSCRIPTION",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_INSCRIPTION"
+     ]
+    },
+    {
+     "name": "IX_NEX_UNI",
+     "idx_type": 0,
+     "flag_byte": 129,
+     "unique": true,
+     "is_pk": false,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "ID_EPREUVE",
+      "ID_INSCRIPTION"
+     ]
+    },
+    {
+     "name": "PK_NOTEX",
+     "idx_type": 1,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "ID_NOTE_EX"
+     ]
+    }
+   ],
+   "row_count": 0
+  },
+  "PAIEMENT": {
+   "table": "PAIEMENT",
+   "rows_header": 0,
+   "autonumber_seed": 0,
+   "autonumber_increment": 1,
+   "primary_keys": [
+    "ID_PAIEMENT"
+   ],
+   "columns": [
+    {
+     "name": "ID_PAIEMENT",
+     "col_id": 0,
+     "order": 0,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": true,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "ID_ECHEANCE",
+     "col_id": 1,
+     "order": 1,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "NUM_RECU",
+     "col_id": 2,
+     "order": 2,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 40,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "DATE_PAIEMENT",
+     "col_id": 3,
+     "order": 3,
+     "type": "DATETIME (Date/Heure)",
+     "type_code": 8,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "MONTANT",
+     "col_id": 4,
+     "order": 4,
+     "type": "CURRENCY (Monétaire)",
+     "type_code": 5,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "MODE_PAIE",
+     "col_id": 5,
+     "order": 5,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 50,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "REF_EXTERNE",
+     "col_id": 6,
+     "order": 6,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 80,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "CODE_UTR",
+     "col_id": 7,
+     "order": 7,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 40,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "OBSERVATION",
+     "col_id": 8,
+     "order": 8,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 300,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    }
+   ],
+   "indexes": [
+    {
+     "name": "FK_PAI_ECH",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 210,
+     "refs_table": "ECHEANCIER",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_ECHEANCE"
+     ]
+    },
+    {
+     "name": "IX_PAI_RECU",
+     "idx_type": 0,
+     "flag_byte": 129,
+     "unique": true,
+     "is_pk": false,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "NUM_RECU"
+     ]
+    },
+    {
+     "name": "PK_PAI",
+     "idx_type": 1,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "ID_PAIEMENT"
+     ]
+    }
+   ],
+   "row_count": 0
+  },
+  "PAIE_FORMATEUR": {
+   "table": "PAIE_FORMATEUR",
+   "rows_header": 0,
+   "autonumber_seed": 0,
+   "autonumber_increment": 1,
+   "primary_keys": [
+    "ID_PAIE"
+   ],
+   "columns": [
+    {
+     "name": "ID_PAIE",
+     "col_id": 0,
+     "order": 0,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": true,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "ID_FORMATEUR",
+     "col_id": 1,
+     "order": 1,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "PERIODE",
+     "col_id": 2,
+     "order": 2,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 40,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "NB_HEURES",
+     "col_id": 3,
+     "order": 3,
+     "type": "DOUBLE (Réel double)",
+     "type_code": 7,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "TAUX",
+     "col_id": 4,
+     "order": 4,
+     "type": "CURRENCY (Monétaire)",
+     "type_code": 5,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "MONTANT",
+     "col_id": 5,
+     "order": 5,
+     "type": "CURRENCY (Monétaire)",
+     "type_code": 5,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "PAYE",
+     "col_id": 6,
+     "order": 6,
+     "type": "BOOLEAN (Oui/Non)",
+     "type_code": 1,
+     "length": 1,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "DATE_PAIE",
+     "col_id": 7,
+     "order": 7,
+     "type": "DATETIME (Date/Heure)",
+     "type_code": 8,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "OBSERVATION",
+     "col_id": 8,
+     "order": 8,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 300,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    }
+   ],
+   "indexes": [
+    {
+     "name": "FK_PAF_FORM",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 119,
+     "refs_table": "FORMATEUR",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_FORMATEUR"
+     ]
+    },
+    {
+     "name": "PK_PAF",
+     "idx_type": 1,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "ID_PAIE"
+     ]
+    }
+   ],
+   "row_count": 0
+  },
+  "PARAMETRE": {
+   "table": "PARAMETRE",
+   "rows_header": 7,
+   "autonumber_seed": 0,
+   "autonumber_increment": 1,
+   "primary_keys": [
+    "CLE"
+   ],
+   "columns": [
+    {
+     "name": "CLE",
+     "col_id": 0,
+     "order": 0,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 80,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "VALEUR",
+     "col_id": 1,
+     "order": 1,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 510,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "DESCRIPTION_P",
+     "col_id": 2,
+     "order": 2,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 300,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    }
+   ],
+   "indexes": [
+    {
+     "name": "PK_PARAM",
+     "idx_type": 1,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "CLE"
+     ]
+    }
+   ],
+   "row_count": 7
+  },
+  "PERIODE_EVAL": {
+   "table": "PERIODE_EVAL",
+   "rows_header": 3,
+   "autonumber_seed": 3,
+   "autonumber_increment": 1,
+   "primary_keys": [
+    "ID_PERIODE"
+   ],
+   "columns": [
+    {
+     "name": "ID_PERIODE",
+     "col_id": 0,
+     "order": 0,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": true,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "ID_ANNEE",
+     "col_id": 1,
+     "order": 1,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "CODE_PERIODE",
+     "col_id": 2,
+     "order": 2,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 20,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "LIBELLE",
+     "col_id": 3,
+     "order": 3,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 100,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "ORDRE_PER",
+     "col_id": 4,
+     "order": 4,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "PONDERATION",
+     "col_id": 5,
+     "order": 5,
+     "type": "DOUBLE (Réel double)",
+     "type_code": 7,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "DATE_DEBUT",
+     "col_id": 6,
+     "order": 6,
+     "type": "DATETIME (Date/Heure)",
+     "type_code": 8,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "DATE_FIN",
+     "col_id": 7,
+     "order": 7,
+     "type": "DATETIME (Date/Heure)",
+     "type_code": 8,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "CLOTUREE",
+     "col_id": 8,
+     "order": 8,
+     "type": "BOOLEAN (Oui/Non)",
+     "type_code": 1,
+     "length": 1,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    }
+   ],
+   "indexes": [
+    {
+     "name": ".rC",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 141,
+     "refs_table": "EVALUATION",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_PERIODE"
+     ]
+    },
+    {
+     "name": ".rD",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 187,
+     "refs_table": "BULLETIN",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_PERIODE"
+     ]
+    },
+    {
+     "name": "FK_PER_ANNEE",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 91,
+     "refs_table": "ANNEE_SCOLAIRE",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_ANNEE"
+     ]
+    },
+    {
+     "name": "PK_PER",
+     "idx_type": 1,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "ID_PERIODE"
+     ]
+    }
+   ],
+   "row_count": 3
+  },
+  "PROGRAMME": {
+   "table": "PROGRAMME",
+   "rows_header": 0,
+   "autonumber_seed": 0,
+   "autonumber_increment": 1,
+   "primary_keys": [
+    "ID_PROG"
+   ],
+   "columns": [
+    {
+     "name": "ID_PROG",
+     "col_id": 0,
+     "order": 0,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": true,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "ID_CLASSE",
+     "col_id": 1,
+     "order": 1,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "CODE_MATIERE",
+     "col_id": 2,
+     "order": 2,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 20,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "ID_FORMATEUR",
+     "col_id": 3,
+     "order": 3,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "COEFFICIENT",
+     "col_id": 4,
+     "order": 4,
+     "type": "DOUBLE (Réel double)",
+     "type_code": 7,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "VOL_HORAIRE",
+     "col_id": 5,
+     "order": 5,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "NOTE_ELIMIN",
+     "col_id": 6,
+     "order": 6,
+     "type": "DOUBLE (Réel double)",
+     "type_code": 7,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "OBSERVATION",
+     "col_id": 7,
+     "order": 7,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 300,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    }
+   ],
+   "indexes": [
+    {
+     "name": ".rE",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 141,
+     "refs_table": "EVALUATION",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_PROG"
+     ]
+    },
+    {
+     "name": ".rF",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 171,
+     "refs_table": "EMPLOI_DU_TEMPS",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_PROG"
+     ]
+    },
+    {
+     "name": "FK_PRO_CLA",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 103,
+     "refs_table": "CLASSE",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_CLASSE"
+     ]
+    },
+    {
+     "name": "FK_PRO_FORM",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 119,
+     "refs_table": "FORMATEUR",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_FORMATEUR"
+     ]
+    },
+    {
+     "name": "FK_PRO_MAT",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 115,
+     "refs_table": "MATIERE",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "CODE_MATIERE"
+     ]
+    },
+    {
+     "name": "IX_PROG_UNI",
+     "idx_type": 0,
+     "flag_byte": 129,
+     "unique": true,
+     "is_pk": false,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "ID_CLASSE",
+      "CODE_MATIERE"
+     ]
+    },
+    {
+     "name": "PK_PROG",
+     "idx_type": 1,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "ID_PROG"
+     ]
+    }
+   ],
+   "row_count": 0
+  },
+  "RESULTAT_FINAL": {
+   "table": "RESULTAT_FINAL",
+   "rows_header": 0,
+   "autonumber_seed": 0,
+   "autonumber_increment": 1,
+   "primary_keys": [
+    "ID_RESULTAT"
+   ],
+   "columns": [
+    {
+     "name": "ID_RESULTAT",
+     "col_id": 0,
+     "order": 0,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": true,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "ID_INSCRIPTION",
+     "col_id": 1,
+     "order": 1,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "MOY_CC",
+     "col_id": 2,
+     "order": 2,
+     "type": "DOUBLE (Réel double)",
+     "type_code": 7,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "MOY_EXAM",
+     "col_id": 3,
+     "order": 3,
+     "type": "DOUBLE (Réel double)",
+     "type_code": 7,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "MOYENNE_GEN",
+     "col_id": 4,
+     "order": 4,
+     "type": "DOUBLE (Réel double)",
+     "type_code": 7,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "RANG",
+     "col_id": 5,
+     "order": 5,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "MENTION",
+     "col_id": 6,
+     "order": 6,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 60,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "DECISION",
+     "col_id": 7,
+     "order": 7,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 80,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "CREDIT_VALIDE",
+     "col_id": 8,
+     "order": 8,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "DATE_DELIB",
+     "col_id": 9,
+     "order": 9,
+     "type": "DATETIME (Date/Heure)",
+     "type_code": 8,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "OBSERVATION",
+     "col_id": 10,
+     "order": 10,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 510,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    }
+   ],
+   "indexes": [
+    {
+     "name": "FK_RES_INS",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 132,
+     "refs_table": "INSCRIPTION",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_INSCRIPTION"
+     ]
+    },
+    {
+     "name": "PK_RES",
+     "idx_type": 1,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "ID_RESULTAT"
+     ]
+    }
+   ],
+   "row_count": 0
+  },
+  "SALLE": {
+   "table": "SALLE",
+   "rows_header": 5,
+   "autonumber_seed": 5,
+   "autonumber_increment": 1,
+   "primary_keys": [
+    "ID_SALLE"
+   ],
+   "columns": [
+    {
+     "name": "ID_SALLE",
+     "col_id": 0,
+     "order": 0,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": true,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "NOM_SALLE",
+     "col_id": 1,
+     "order": 1,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 80,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "CAPACITE",
+     "col_id": 2,
+     "order": 2,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "NATURE_SALLE",
+     "col_id": 3,
+     "order": 3,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 60,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "DISPONIBLE",
+     "col_id": 4,
+     "order": 4,
+     "type": "BOOLEAN (Oui/Non)",
+     "type_code": 1,
+     "length": 1,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    }
+   ],
+   "indexes": [
+    {
+     "name": ".rB",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 103,
+     "refs_table": "CLASSE",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_SALLE"
+     ]
+    },
+    {
+     "name": ".rC",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 155,
+     "refs_table": "EPREUVE",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_SALLE"
+     ]
+    },
+    {
+     "name": ".rD",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 171,
+     "refs_table": "EMPLOI_DU_TEMPS",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_SALLE"
+     ]
+    },
+    {
+     "name": "PK_SALLE",
+     "idx_type": 1,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "ID_SALLE"
+     ]
+    }
+   ],
+   "row_count": 5
+  },
+  "SEANCE": {
+   "table": "SEANCE",
+   "rows_header": 0,
+   "autonumber_seed": 0,
+   "autonumber_increment": 1,
+   "primary_keys": [
+    "ID_SEANCE"
+   ],
+   "columns": [
+    {
+     "name": "ID_SEANCE",
+     "col_id": 0,
+     "order": 0,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": true,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "ID_EDT",
+     "col_id": 1,
+     "order": 1,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "DATE_SEANCE",
+     "col_id": 2,
+     "order": 2,
+     "type": "DATETIME (Date/Heure)",
+     "type_code": 8,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "CONTENU",
+     "col_id": 3,
+     "order": 3,
+     "type": "MEMO (Texte long)",
+     "type_code": 12,
+     "length": 0,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "NB_HEURES",
+     "col_id": 4,
+     "order": 4,
+     "type": "DOUBLE (Réel double)",
+     "type_code": 7,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "STATUT",
+     "col_id": 5,
+     "order": 5,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 40,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "ID_FORMATEUR_REMP",
+     "col_id": 6,
+     "order": 6,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    }
+   ],
+   "indexes": [
+    {
+     "name": ".rC",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 181,
+     "refs_table": "ABSENCE",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_SEANCE"
+     ]
+    },
+    {
+     "name": "FK_SEA_EDT",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 171,
+     "refs_table": "EMPLOI_DU_TEMPS",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_EDT"
+     ]
+    },
+    {
+     "name": "PK_SEA",
+     "idx_type": 1,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "ID_SEANCE"
+     ]
+    }
+   ],
+   "row_count": 0
+  },
+  "SESSION_EXAM": {
+   "table": "SESSION_EXAM",
+   "rows_header": 0,
+   "autonumber_seed": 0,
+   "autonumber_increment": 1,
+   "primary_keys": [
+    "ID_SESSION"
+   ],
+   "columns": [
+    {
+     "name": "ID_SESSION",
+     "col_id": 0,
+     "order": 0,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": true,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "ID_ANNEE",
+     "col_id": 1,
+     "order": 1,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "LIBELLE",
+     "col_id": 2,
+     "order": 2,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 120,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "NATURE",
+     "col_id": 3,
+     "order": 3,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 50,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "DATE_DEBUT",
+     "col_id": 4,
+     "order": 4,
+     "type": "DATETIME (Date/Heure)",
+     "type_code": 8,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "DATE_FIN",
+     "col_id": 5,
+     "order": 5,
+     "type": "DATETIME (Date/Heure)",
+     "type_code": 8,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "CLOTUREE",
+     "col_id": 6,
+     "order": 6,
+     "type": "BOOLEAN (Oui/Non)",
+     "type_code": 1,
+     "length": 1,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    }
+   ],
+   "indexes": [
+    {
+     "name": ".rC",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 155,
+     "refs_table": "EPREUVE",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_SESSION"
+     ]
+    },
+    {
+     "name": "FK_SES_ANNEE",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 91,
+     "refs_table": "ANNEE_SCOLAIRE",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_ANNEE"
+     ]
+    },
+    {
+     "name": "PK_SES",
+     "idx_type": 1,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "ID_SESSION"
+     ]
+    }
+   ],
+   "row_count": 0
+  },
+  "TARIF": {
+   "table": "TARIF",
+   "rows_header": 0,
+   "autonumber_seed": 0,
+   "autonumber_increment": 1,
+   "primary_keys": [
+    "ID_TARIF"
+   ],
+   "columns": [
+    {
+     "name": "ID_TARIF",
+     "col_id": 0,
+     "order": 0,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": true,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "ID_CLASSE",
+     "col_id": 1,
+     "order": 1,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "TYPE_FRAIS",
+     "col_id": 2,
+     "order": 2,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 60,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "MONTANT",
+     "col_id": 3,
+     "order": 3,
+     "type": "CURRENCY (Monétaire)",
+     "type_code": 5,
+     "length": 8,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "NB_TRANCHES",
+     "col_id": 4,
+     "order": 4,
+     "type": "LONG (Entier long)",
+     "type_code": 4,
+     "length": 4,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "OBLIGATOIRE",
+     "col_id": 5,
+     "order": 5,
+     "type": "BOOLEAN (Oui/Non)",
+     "type_code": 1,
+     "length": 1,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    },
+    {
+     "name": "OBSERVATION",
+     "col_id": 6,
+     "order": 6,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 300,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    }
+   ],
+   "indexes": [
+    {
+     "name": ".rC",
+     "idx_type": 2,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": 210,
+     "refs_table": "ECHEANCIER",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_TARIF"
+     ]
+    },
+    {
+     "name": "FK_TAR_CLA",
+     "idx_type": 2,
+     "flag_byte": 128,
+     "unique": false,
+     "is_pk": false,
+     "refs_table_page": 103,
+     "refs_table": "CLASSE",
+     "cascade_ups": 0,
+     "cascade_dels": 0,
+     "columns": [
+      "ID_CLASSE"
+     ]
+    },
+    {
+     "name": "PK_TAR",
+     "idx_type": 1,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "ID_TARIF"
+     ]
+    }
+   ],
+   "row_count": 0
+  },
+  "UTILISATEUR": {
+   "table": "UTILISATEUR",
+   "rows_header": 3,
+   "autonumber_seed": 0,
+   "autonumber_increment": 1,
+   "primary_keys": [
+    "CODE_UTR"
+   ],
+   "columns": [
+    {
+     "name": "CODE_UTR",
+     "col_id": 0,
+     "order": 0,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 40,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "NOM_UTR",
+     "col_id": 1,
+     "order": 1,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 120,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "MOT_PASSE",
+     "col_id": 2,
+     "order": 2,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 120,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "PROFIL",
+     "col_id": 3,
+     "order": 3,
+     "type": "TEXT (Texte)",
+     "type_code": 10,
+     "length": 40,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": false,
+     "decimals": 0
+    },
+    {
+     "name": "ACTIF",
+     "col_id": 4,
+     "order": 4,
+     "type": "BOOLEAN (Oui/Non)",
+     "type_code": 1,
+     "length": 1,
+     "autonumber": false,
+     "required": false,
+     "fixed_length": true,
+     "decimals": 4
+    }
+   ],
+   "indexes": [
+    {
+     "name": "PK_UTR",
+     "idx_type": 1,
+     "flag_byte": 137,
+     "unique": true,
+     "is_pk": true,
+     "refs_table_page": null,
+     "refs_table": null,
+     "cascade_ups": 4,
+     "cascade_dels": 4,
+     "columns": [
+      "CODE_UTR"
+     ]
+    }
+   ],
+   "row_count": 3
+  }
+ },
+ "data": {
+  "ANNEE_SCOLAIRE": [
+   {
+    "ID_ANNEE": 1,
+    "LIBELLE": "2025-2026",
+    "DATE_DEBUT": "2025-10-01 00:00:00",
+    "DATE_FIN": "2026-07-31 00:00:00",
+    "ACTIVE": true
+   }
+  ],
+  "CLASSE": [
+   {
+    "ID_CLASSE": 1,
+    "LIBELLE": "BTS1 Hotellerie",
+    "ID_ANNEE": 1,
+    "CODE_FILIERE": "HOT",
+    "CODE_NIVEAU": "BTS1",
+    "ID_SALLE": 1,
+    "EFFECTIF_MAX": 35,
+    "ID_RESPONSABLE": null
+   },
+   {
+    "ID_CLASSE": 2,
+    "LIBELLE": "BTS2 Hotellerie",
+    "ID_ANNEE": 1,
+    "CODE_FILIERE": "HOT",
+    "CODE_NIVEAU": "BTS2",
+    "ID_SALLE": 2,
+    "EFFECTIF_MAX": 35,
+    "ID_RESPONSABLE": null
+   },
+   {
+    "ID_CLASSE": 3,
+    "LIBELLE": "BTS1 Tourisme",
+    "ID_ANNEE": 1,
+    "CODE_FILIERE": "TOU",
+    "CODE_NIVEAU": "BTS1",
+    "ID_SALLE": 1,
+    "EFFECTIF_MAX": 35,
+    "ID_RESPONSABLE": null
+   },
+   {
+    "ID_CLASSE": 4,
+    "LIBELLE": "BTS2 Tourisme",
+    "ID_ANNEE": 1,
+    "CODE_FILIERE": "TOU",
+    "CODE_NIVEAU": "BTS2",
+    "ID_SALLE": 2,
+    "EFFECTIF_MAX": 35,
+    "ID_RESPONSABLE": null
+   }
+  ],
+  "CRENEAU": [
+   {
+    "ID_CRENEAU": 1,
+    "LIBELLE": "C1",
+    "HEURE_DEBUT": "07:30",
+    "HEURE_FIN": "09:30",
+    "ORDRE_CRE": 1
+   },
+   {
+    "ID_CRENEAU": 2,
+    "LIBELLE": "C2",
+    "HEURE_DEBUT": "09:45",
+    "HEURE_FIN": "11:45",
+    "ORDRE_CRE": 2
+   },
+   {
+    "ID_CRENEAU": 3,
+    "LIBELLE": "C3",
+    "HEURE_DEBUT": "13:30",
+    "HEURE_FIN": "15:30",
+    "ORDRE_CRE": 3
+   },
+   {
+    "ID_CRENEAU": 4,
+    "LIBELLE": "C4",
+    "HEURE_DEBUT": "15:45",
+    "HEURE_FIN": "17:45",
+    "ORDRE_CRE": 4
+   }
+  ],
+  "ETABLISSEMENT": [
+   {
+    "CODE_ETAB": "LTA",
+    "NOM_ETAB": "Lycee Technique / Institut LTA",
+    "SIGLE": "LTA",
+    "ADRESSE": "Antananarivo",
+    "TEL": "",
+    "EMAIL": "",
+    "SITE_WEB": null,
+    "DIRECTEUR": "",
+    "LOGO": null
+   }
+  ],
+  "FILIERE": [
+   {
+    "CODE_FILIERE": "HOT",
+    "FILIERE": "Hotellerie - Restauration",
+    "DIPLOME": "BTS",
+    "DUREE_ANS": 2,
+    "ACTIVE": true
+   },
+   {
+    "CODE_FILIERE": "TOU",
+    "FILIERE": "Tourisme - Agence de voyage",
+    "DIPLOME": "BTS",
+    "DUREE_ANS": 2,
+    "ACTIVE": true
+   }
+  ],
+  "GRILLE_MENTION": [
+   {
+    "ID_MENTION": 1,
+    "INF": 16.0,
+    "SUP": 20.0,
+    "MENTION": "Tres Bien",
+    "ADMIS": true
+   },
+   {
+    "ID_MENTION": 2,
+    "INF": 14.0,
+    "SUP": 16.0,
+    "MENTION": "Bien",
+    "ADMIS": true
+   },
+   {
+    "ID_MENTION": 3,
+    "INF": 12.0,
+    "SUP": 14.0,
+    "MENTION": "Assez Bien",
+    "ADMIS": true
+   },
+   {
+    "ID_MENTION": 4,
+    "INF": 10.0,
+    "SUP": 12.0,
+    "MENTION": "Passable",
+    "ADMIS": true
+   },
+   {
+    "ID_MENTION": 5,
+    "INF": 0.0,
+    "SUP": 10.0,
+    "MENTION": "Ajourne",
+    "ADMIS": false
+   }
+  ],
+  "MATIERE": [
+   {
+    "CODE_MATIERE": "FRA",
+    "MATIERE": "Francais professionnel",
+    "CODE_MODULE": "GEN",
+    "NATURE": "Theorie",
+    "ORDRE_MAT": 1
+   },
+   {
+    "CODE_MATIERE": "ANG",
+    "MATIERE": "Anglais",
+    "CODE_MODULE": "GEN",
+    "NATURE": "Theorie",
+    "ORDRE_MAT": 2
+   },
+   {
+    "CODE_MATIERE": "ALL",
+    "MATIERE": "Allemand / 3eme langue",
+    "CODE_MODULE": "GEN",
+    "NATURE": "Theorie",
+    "ORDRE_MAT": 3
+   },
+   {
+    "CODE_MATIERE": "BUR",
+    "MATIERE": "Bureautique",
+    "CODE_MODULE": "TRAN",
+    "NATURE": "Pratique",
+    "ORDRE_MAT": 4
+   },
+   {
+    "CODE_MATIERE": "COM",
+    "MATIERE": "Communication et accueil",
+    "CODE_MODULE": "TRAN",
+    "NATURE": "Theorie",
+    "ORDRE_MAT": 5
+   },
+   {
+    "CODE_MATIERE": "COMPT",
+    "MATIERE": "Comptabilite et gestion",
+    "CODE_MODULE": "TRAN",
+    "NATURE": "Theorie",
+    "ORDRE_MAT": 6
+   },
+   {
+    "CODE_MATIERE": "DRO",
+    "MATIERE": "Droit et legislation",
+    "CODE_MODULE": "TRAN",
+    "NATURE": "Theorie",
+    "ORDRE_MAT": 7
+   },
+   {
+    "CODE_MATIERE": "CUI",
+    "MATIERE": "Techniques culinaires",
+    "CODE_MODULE": "PROH",
+    "NATURE": "Pratique",
+    "ORDRE_MAT": 8
+   },
+   {
+    "CODE_MATIERE": "RES",
+    "MATIERE": "Service en restaurant",
+    "CODE_MODULE": "PROH",
+    "NATURE": "Pratique",
+    "ORDRE_MAT": 9
+   },
+   {
+    "CODE_MATIERE": "HEB",
+    "MATIERE": "Hebergement et etages",
+    "CODE_MODULE": "PROH",
+    "NATURE": "Pratique",
+    "ORDRE_MAT": 10
+   },
+   {
+    "CODE_MATIERE": "HYG",
+    "MATIERE": "Hygiene et securite alimentaire",
+    "CODE_MODULE": "PROH",
+    "NATURE": "Theorie",
+    "ORDRE_MAT": 11
+   },
+   {
+    "CODE_MATIERE": "GEO",
+    "MATIERE": "Geographie touristique",
+    "CODE_MODULE": "PROT",
+    "NATURE": "Theorie",
+    "ORDRE_MAT": 12
+   },
+   {
+    "CODE_MATIERE": "BIL",
+    "MATIERE": "Billetterie et transport",
+    "CODE_MODULE": "PROT",
+    "NATURE": "Pratique",
+    "ORDRE_MAT": 13
+   },
+   {
+    "CODE_MATIERE": "GUI",
+    "MATIERE": "Techniques de guidage",
+    "CODE_MODULE": "PROT",
+    "NATURE": "Pratique",
+    "ORDRE_MAT": 14
+   },
+   {
+    "CODE_MATIERE": "PACK",
+    "MATIERE": "Conception de produits touristiques",
+    "CODE_MODULE": "PROT",
+    "NATURE": "Pratique",
+    "ORDRE_MAT": 15
+   },
+   {
+    "CODE_MATIERE": "MKT",
+    "MATIERE": "Marketing et vente",
+    "CODE_MODULE": "TRAN",
+    "NATURE": "Theorie",
+    "ORDRE_MAT": 16
+   },
+   {
+    "CODE_MATIERE": "STA",
+    "MATIERE": "Stage et rapport",
+    "CODE_MODULE": "TRAN",
+    "NATURE": "Pratique",
+    "ORDRE_MAT": 17
+   }
+  ],
+  "MODULE_FORMATION": [
+   {
+    "CODE_MODULE": "GEN",
+    "MODULE_LIB": "Enseignement general",
+    "CODE_FILIERE": null
+   },
+   {
+    "CODE_MODULE": "PROH",
+    "MODULE_LIB": "Professionnel Hotellerie",
+    "CODE_FILIERE": "HOT"
+   },
+   {
+    "CODE_MODULE": "PROT",
+    "MODULE_LIB": "Professionnel Tourisme",
+    "CODE_FILIERE": "TOU"
+   },
+   {
+    "CODE_MODULE": "TRAN",
+    "MODULE_LIB": "Modules transversaux",
+    "CODE_FILIERE": null
+   }
+  ],
+  "NIVEAU": [
+   {
+    "CODE_NIVEAU": "BTS1",
+    "NIVEAU": "Premiere annee BTS",
+    "ORDRE_NIV": 1
+   },
+   {
+    "CODE_NIVEAU": "BTS2",
+    "NIVEAU": "Deuxieme annee BTS",
+    "ORDRE_NIV": 2
+   }
+  ],
+  "PARAMETRE": [
+   {
+    "CLE": "BAREME_DEFAUT",
+    "VALEUR": "20",
+    "DESCRIPTION_P": "Bareme des notes"
+   },
+   {
+    "CLE": "MOY_ADMISSION",
+    "VALEUR": "10",
+    "DESCRIPTION_P": "Moyenne minimale de passage"
+   },
+   {
+    "CLE": "NOTE_ELIMINATOIRE",
+    "VALEUR": "5",
+    "DESCRIPTION_P": "Note eliminatoire par defaut"
+   },
+   {
+    "CLE": "POIDS_CC",
+    "VALEUR": "40",
+    "DESCRIPTION_P": "Poids du controle continu en pourcentage"
+   },
+   {
+    "CLE": "POIDS_EXAMEN",
+    "VALEUR": "60",
+    "DESCRIPTION_P": "Poids de l examen final en pourcentage"
+   },
+   {
+    "CLE": "SEUIL_ABSENCE",
+    "VALEUR": "30",
+    "DESCRIPTION_P": "Heures d absence avant exclusion examen"
+   },
+   {
+    "CLE": "DEVISE",
+    "VALEUR": "MGA",
+    "DESCRIPTION_P": "Devise des ecolages"
+   }
+  ],
+  "PERIODE_EVAL": [
+   {
+    "ID_PERIODE": 1,
+    "ID_ANNEE": 1,
+    "CODE_PERIODE": "EV1",
+    "LIBELLE": "1ere Evaluation",
+    "ORDRE_PER": 1,
+    "PONDERATION": 1.0,
+    "DATE_DEBUT": null,
+    "DATE_FIN": null,
+    "CLOTUREE": false
+   },
+   {
+    "ID_PERIODE": 2,
+    "ID_ANNEE": 1,
+    "CODE_PERIODE": "EV2",
+    "LIBELLE": "2eme Evaluation",
+    "ORDRE_PER": 2,
+    "PONDERATION": 1.0,
+    "DATE_DEBUT": null,
+    "DATE_FIN": null,
+    "CLOTUREE": false
+   },
+   {
+    "ID_PERIODE": 3,
+    "ID_ANNEE": 1,
+    "CODE_PERIODE": "EXB",
+    "LIBELLE": "Examen blanc",
+    "ORDRE_PER": 3,
+    "PONDERATION": 1.0,
+    "DATE_DEBUT": null,
+    "DATE_FIN": null,
+    "CLOTUREE": false
+   }
+  ],
+  "SALLE": [
+   {
+    "ID_SALLE": 1,
+    "NOM_SALLE": "Salle A1",
+    "CAPACITE": 40,
+    "NATURE_SALLE": "Cours",
+    "DISPONIBLE": true
+   },
+   {
+    "ID_SALLE": 2,
+    "NOM_SALLE": "Salle A2",
+    "CAPACITE": 40,
+    "NATURE_SALLE": "Cours",
+    "DISPONIBLE": true
+   },
+   {
+    "ID_SALLE": 3,
+    "NOM_SALLE": "Labo Informatique",
+    "CAPACITE": 25,
+    "NATURE_SALLE": "Informatique",
+    "DISPONIBLE": true
+   },
+   {
+    "ID_SALLE": 4,
+    "NOM_SALLE": "Cuisine pedagogique",
+    "CAPACITE": 20,
+    "NATURE_SALLE": "Atelier",
+    "DISPONIBLE": true
+   },
+   {
+    "ID_SALLE": 5,
+    "NOM_SALLE": "Restaurant d application",
+    "CAPACITE": 30,
+    "NATURE_SALLE": "Atelier",
+    "DISPONIBLE": true
+   }
+  ],
+  "UTILISATEUR": [
+   {
+    "CODE_UTR": "ADMIN",
+    "NOM_UTR": "Administrateur",
+    "MOT_PASSE": "admin",
+    "PROFIL": "ADMIN",
+    "ACTIF": true
+   },
+   {
+    "CODE_UTR": "SCOL",
+    "NOM_UTR": "Scolarite",
+    "MOT_PASSE": "scol",
+    "PROFIL": "SCOLARITE",
+    "ACTIF": true
+   },
+   {
+    "CODE_UTR": "CAISSE",
+    "NOM_UTR": "Caissier",
+    "MOT_PASSE": "caisse",
+    "PROFIL": "FINANCE",
+    "ACTIF": true
+   }
+  ]
+ }
+}
