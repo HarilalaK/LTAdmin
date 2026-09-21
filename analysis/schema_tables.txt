@@ -1,0 +1,448 @@
+
+========================================================================================================
+TABLE ABSENCE   (0 lignes)   PK = ['ID_ABSENCE']   AutoNumber: prochain=0, incr=1
+   ID_ABSENCE             LONG (Entier long)       L=4     [AUTONUMBER]
+   ID_SEANCE              LONG (Entier long)       L=4     [-]
+   ID_INSCRIPTION         LONG (Entier long)       L=4     [-]
+   NATURE                 TEXT (Texte)             L=30    [-]
+   NB_HEURES              DOUBLE (Réel double)     L=8     [-]
+   JUSTIFIEE              BOOLEAN (Oui/Non)        L=1     [-]
+   MOTIF                  TEXT (Texte)             L=300   [-]
+   DATE_SAISIE            DATETIME (Date/Heure)    L=8     [-]
+   IDX FK_ABS_INS       INDEX        (ID_INSCRIPTION)  -> référence INSCRIPTION
+   IDX FK_ABS_SEA       INDEX        (ID_SEANCE)  -> référence SEANCE
+   IDX IX_ABS_INS       INDEX        (ID_INSCRIPTION)
+   IDX PK_ABS           PRIMARY KEY  (ID_ABSENCE)
+
+========================================================================================================
+TABLE ANNEE_SCOLAIRE   (1 lignes)   PK = ['ID_ANNEE']   AutoNumber: prochain=1, incr=1
+   ID_ANNEE               LONG (Entier long)       L=4     [AUTONUMBER]
+   LIBELLE                TEXT (Texte)             L=40    [-]
+   DATE_DEBUT             DATETIME (Date/Heure)    L=8     [-]
+   DATE_FIN               DATETIME (Date/Heure)    L=8     [-]
+   ACTIVE                 BOOLEAN (Oui/Non)        L=1     [-]
+   IDX PK_ANNEE         PRIMARY KEY  (ID_ANNEE)
+
+========================================================================================================
+TABLE BULLETIN   (0 lignes)   PK = ['ID_BULLETIN']   AutoNumber: prochain=0, incr=1
+   ID_BULLETIN            LONG (Entier long)       L=4     [AUTONUMBER]
+   ID_INSCRIPTION         LONG (Entier long)       L=4     [-]
+   ID_PERIODE             LONG (Entier long)       L=4     [-]
+   MOYENNE                DOUBLE (Réel double)     L=8     [-]
+   TOTAL_POINTS           DOUBLE (Réel double)     L=8     [-]
+   TOTAL_COEF             DOUBLE (Réel double)     L=8     [-]
+   RANG                   LONG (Entier long)       L=4     [-]
+   EFFECTIF               LONG (Entier long)       L=4     [-]
+   MOY_CLASSE             DOUBLE (Réel double)     L=8     [-]
+   NB_ABSENCE             DOUBLE (Réel double)     L=8     [-]
+   APPRECIATION           TEXT (Texte)             L=510   [-]
+   DECISION               TEXT (Texte)             L=80    [-]
+   DATE_EDITION           DATETIME (Date/Heure)    L=8     [-]
+   IDX FK_BUL_INS       INDEX        (ID_INSCRIPTION)  -> référence INSCRIPTION
+   IDX FK_BUL_PER       INDEX        (ID_PERIODE)  -> référence PERIODE_EVAL
+   IDX IX_BUL_UNI       UNIQUE       (ID_INSCRIPTION, ID_PERIODE)
+   IDX PK_BUL           PRIMARY KEY  (ID_BULLETIN)
+
+========================================================================================================
+TABLE BULLETIN_LIGNE   (0 lignes)   PK = ['ID_LIGNE']   AutoNumber: prochain=0, incr=1
+   ID_LIGNE               LONG (Entier long)       L=4     [AUTONUMBER]
+   ID_BULLETIN            LONG (Entier long)       L=4     [-]
+   CODE_MATIERE           TEXT (Texte)             L=20    [-]
+   MOYENNE_MAT            DOUBLE (Réel double)     L=8     [-]
+   COEFFICIENT            DOUBLE (Réel double)     L=8     [-]
+   POINTS                 DOUBLE (Réel double)     L=8     [-]
+   RANG_MAT               LONG (Entier long)       L=4     [-]
+   MOY_MIN                DOUBLE (Réel double)     L=8     [-]
+   MOY_MAX                DOUBLE (Réel double)     L=8     [-]
+   APPRECIATION           TEXT (Texte)             L=300   [-]
+   ID_FORMATEUR           LONG (Entier long)       L=4     [-]
+   IDX FK_BLI_BUL       INDEX        (ID_BULLETIN)  -> référence BULLETIN
+   IDX FK_BLI_FORM      INDEX        (ID_FORMATEUR)  -> référence FORMATEUR
+   IDX FK_BLI_MAT       INDEX        (CODE_MATIERE)  -> référence MATIERE
+   IDX PK_BLI           PRIMARY KEY  (ID_LIGNE)
+
+========================================================================================================
+TABLE CLASSE   (4 lignes)   PK = ['ID_CLASSE']   AutoNumber: prochain=4, incr=1
+   ID_CLASSE              LONG (Entier long)       L=4     [AUTONUMBER]
+   LIBELLE                TEXT (Texte)             L=120   [-]
+   ID_ANNEE               LONG (Entier long)       L=4     [-]
+   CODE_FILIERE           TEXT (Texte)             L=20    [-]
+   CODE_NIVEAU            TEXT (Texte)             L=20    [-]
+   ID_SALLE               LONG (Entier long)       L=4     [-]
+   EFFECTIF_MAX           LONG (Entier long)       L=4     [-]
+   ID_RESPONSABLE         LONG (Entier long)       L=4     [-]
+   IDX FK_CLA_ANNEE     INDEX        (ID_ANNEE)  -> référence ANNEE_SCOLAIRE
+   IDX FK_CLA_FIL       INDEX        (CODE_FILIERE)  -> référence FILIERE
+   IDX FK_CLA_NIV       INDEX        (CODE_NIVEAU)  -> référence NIVEAU
+   IDX FK_CLA_SALLE     INDEX        (ID_SALLE)  -> référence SALLE
+   IDX PK_CLASSE        PRIMARY KEY  (ID_CLASSE)
+
+========================================================================================================
+TABLE CRENEAU   (4 lignes)   PK = ['ID_CRENEAU']   AutoNumber: prochain=4, incr=1
+   ID_CRENEAU             LONG (Entier long)       L=4     [AUTONUMBER]
+   LIBELLE                TEXT (Texte)             L=60    [-]
+   HEURE_DEBUT            TEXT (Texte)             L=10    [-]
+   HEURE_FIN              TEXT (Texte)             L=10    [-]
+   ORDRE_CRE              LONG (Entier long)       L=4     [-]
+   IDX PK_CRE           PRIMARY KEY  (ID_CRENEAU)
+
+========================================================================================================
+TABLE ECHEANCIER   (0 lignes)   PK = ['ID_ECHEANCE']   AutoNumber: prochain=0, incr=1
+   ID_ECHEANCE            LONG (Entier long)       L=4     [AUTONUMBER]
+   ID_INSCRIPTION         LONG (Entier long)       L=4     [-]
+   ID_TARIF               LONG (Entier long)       L=4     [-]
+   NUM_TRANCHE            LONG (Entier long)       L=4     [-]
+   LIBELLE                TEXT (Texte)             L=80    [-]
+   MONTANT_DU             CURRENCY (Monétaire)     L=8     [-]
+   DATE_ECHEANCE          DATETIME (Date/Heure)    L=8     [-]
+   STATUT                 TEXT (Texte)             L=30    [-]
+   REMISE                 CURRENCY (Monétaire)     L=8     [-]
+   IDX FK_ECH_INS       INDEX        (ID_INSCRIPTION)  -> référence INSCRIPTION
+   IDX FK_ECH_TAR       INDEX        (ID_TARIF)  -> référence TARIF
+   IDX PK_ECH           PRIMARY KEY  (ID_ECHEANCE)
+
+========================================================================================================
+TABLE EMPLOI_DU_TEMPS   (0 lignes)   PK = ['ID_EDT']   AutoNumber: prochain=0, incr=1
+   ID_EDT                 LONG (Entier long)       L=4     [AUTONUMBER]
+   ID_PROG                LONG (Entier long)       L=4     [-]
+   ID_CRENEAU             LONG (Entier long)       L=4     [-]
+   JOUR                   TEXT (Texte)             L=24    [-]
+   ID_SALLE               LONG (Entier long)       L=4     [-]
+   DATE_DEBUT             DATETIME (Date/Heure)    L=8     [-]
+   DATE_FIN               DATETIME (Date/Heure)    L=8     [-]
+   ACTIF                  BOOLEAN (Oui/Non)        L=1     [-]
+   IDX FK_EDT_CRE       INDEX        (ID_CRENEAU)  -> référence CRENEAU
+   IDX FK_EDT_PRO       INDEX        (ID_PROG)  -> référence PROGRAMME
+   IDX FK_EDT_SALLE     INDEX        (ID_SALLE)  -> référence SALLE
+   IDX IX_EDT_SLOT      INDEX        (JOUR, ID_CRENEAU, ID_SALLE)
+   IDX PK_EDT           PRIMARY KEY  (ID_EDT)
+
+========================================================================================================
+TABLE EPREUVE   (0 lignes)   PK = ['ID_EPREUVE']   AutoNumber: prochain=0, incr=1
+   ID_EPREUVE             LONG (Entier long)       L=4     [AUTONUMBER]
+   ID_SESSION             LONG (Entier long)       L=4     [-]
+   ID_CLASSE              LONG (Entier long)       L=4     [-]
+   CODE_MATIERE           TEXT (Texte)             L=20    [-]
+   DATE_EPREUVE           DATETIME (Date/Heure)    L=8     [-]
+   HEURE_DEBUT            TEXT (Texte)             L=10    [-]
+   DUREE_MN               LONG (Entier long)       L=4     [-]
+   COEFFICIENT            DOUBLE (Réel double)     L=8     [-]
+   BAREME                 DOUBLE (Réel double)     L=8     [-]
+   ID_SALLE               LONG (Entier long)       L=4     [-]
+   SURVEILLANT            TEXT (Texte)             L=160   [-]
+   IDX FK_EPR_CLA       INDEX        (ID_CLASSE)  -> référence CLASSE
+   IDX FK_EPR_MAT       INDEX        (CODE_MATIERE)  -> référence MATIERE
+   IDX FK_EPR_SALLE     INDEX        (ID_SALLE)  -> référence SALLE
+   IDX FK_EPR_SES       INDEX        (ID_SESSION)  -> référence SESSION_EXAM
+   IDX PK_EPR           PRIMARY KEY  (ID_EPREUVE)
+
+========================================================================================================
+TABLE ETABLISSEMENT   (1 lignes)   PK = ['CODE_ETAB']   AutoNumber: prochain=0, incr=1
+   CODE_ETAB              TEXT (Texte)             L=20    [-]
+   NOM_ETAB               TEXT (Texte)             L=200   [-]
+   SIGLE                  TEXT (Texte)             L=40    [-]
+   ADRESSE                TEXT (Texte)             L=300   [-]
+   TEL                    TEXT (Texte)             L=80    [-]
+   EMAIL                  TEXT (Texte)             L=160   [-]
+   SITE_WEB               TEXT (Texte)             L=160   [-]
+   DIRECTEUR              TEXT (Texte)             L=160   [-]
+   LOGO                   TEXT (Texte)             L=510   [-]
+   IDX PK_ETAB          PRIMARY KEY  (CODE_ETAB)
+
+========================================================================================================
+TABLE ETUDIANT   (0 lignes)   PK = ['ID_ETUDIANT']   AutoNumber: prochain=0, incr=1
+   ID_ETUDIANT            LONG (Entier long)       L=4     [AUTONUMBER]
+   MATRICULE              TEXT (Texte)             L=40    [-]
+   NOM                    TEXT (Texte)             L=120   [-]
+   PRENOM                 TEXT (Texte)             L=160   [-]
+   SEXE                   TEXT (Texte)             L=2     [-]
+   DATE_NAISSANCE         DATETIME (Date/Heure)    L=8     [-]
+   LIEU_NAISSANCE         TEXT (Texte)             L=120   [-]
+   CIN                    TEXT (Texte)             L=40    [-]
+   NATIONALITE            TEXT (Texte)             L=80    [-]
+   ADRESSE                TEXT (Texte)             L=300   [-]
+   TEL                    TEXT (Texte)             L=80    [-]
+   EMAIL                  TEXT (Texte)             L=160   [-]
+   NOM_TUTEUR             TEXT (Texte)             L=160   [-]
+   TEL_TUTEUR             TEXT (Texte)             L=80    [-]
+   PROFESSION_TUTEUR      TEXT (Texte)             L=120   [-]
+   SERIE_BACC             TEXT (Texte)             L=40    [-]
+   ANNEE_BACC             LONG (Entier long)       L=4     [-]
+   ETAB_ORIGINE           TEXT (Texte)             L=200   [-]
+   PHOTO                  TEXT (Texte)             L=510   [-]
+   DATE_CREATION          DATETIME (Date/Heure)    L=8     [-]
+   STATUT                 TEXT (Texte)             L=40    [-]
+   IDX IX_ETU_MAT       UNIQUE       (MATRICULE)
+   IDX PK_ETU           PRIMARY KEY  (ID_ETUDIANT)
+
+========================================================================================================
+TABLE EVALUATION   (0 lignes)   PK = ['ID_EVALUATION']   AutoNumber: prochain=0, incr=1
+   ID_EVALUATION          LONG (Entier long)       L=4     [AUTONUMBER]
+   ID_PERIODE             LONG (Entier long)       L=4     [-]
+   ID_PROG                LONG (Entier long)       L=4     [-]
+   INTITULE               TEXT (Texte)             L=200   [-]
+   NATURE                 TEXT (Texte)             L=50    [-]
+   DATE_EVAL              DATETIME (Date/Heure)    L=8     [-]
+   BAREME                 DOUBLE (Réel double)     L=8     [-]
+   POIDS                  DOUBLE (Réel double)     L=8     [-]
+   PUBLIEE                BOOLEAN (Oui/Non)        L=1     [-]
+   IDX FK_EVA_PER       INDEX        (ID_PERIODE)  -> référence PERIODE_EVAL
+   IDX FK_EVA_PRO       INDEX        (ID_PROG)  -> référence PROGRAMME
+   IDX PK_EVAL          PRIMARY KEY  (ID_EVALUATION)
+
+========================================================================================================
+TABLE FILIERE   (2 lignes)   PK = ['CODE_FILIERE']   AutoNumber: prochain=0, incr=1
+   CODE_FILIERE           TEXT (Texte)             L=20    [-]
+   FILIERE                TEXT (Texte)             L=160   [-]
+   DIPLOME                TEXT (Texte)             L=80    [-]
+   DUREE_ANS              LONG (Entier long)       L=4     [-]
+   ACTIVE                 BOOLEAN (Oui/Non)        L=1     [-]
+   IDX PK_FIL           PRIMARY KEY  (CODE_FILIERE)
+
+========================================================================================================
+TABLE FORMATEUR   (0 lignes)   PK = ['ID_FORMATEUR']   AutoNumber: prochain=0, incr=1
+   ID_FORMATEUR           LONG (Entier long)       L=4     [AUTONUMBER]
+   MATRICULE              TEXT (Texte)             L=40    [-]
+   NOM                    TEXT (Texte)             L=120   [-]
+   PRENOM                 TEXT (Texte)             L=120   [-]
+   SEXE                   TEXT (Texte)             L=2     [-]
+   DATE_NAISSANCE         DATETIME (Date/Heure)    L=8     [-]
+   CIN                    TEXT (Texte)             L=40    [-]
+   ADRESSE                TEXT (Texte)             L=300   [-]
+   TEL                    TEXT (Texte)             L=80    [-]
+   EMAIL                  TEXT (Texte)             L=160   [-]
+   SPECIALITE             TEXT (Texte)             L=160   [-]
+   DIPLOME                TEXT (Texte)             L=160   [-]
+   CONTRAT                TEXT (Texte)             L=40    [-]
+   TAUX_HORAIRE           CURRENCY (Monétaire)     L=8     [-]
+   DATE_EMBAUCHE          DATETIME (Date/Heure)    L=8     [-]
+   PHOTO                  TEXT (Texte)             L=510   [-]
+   ACTIF                  BOOLEAN (Oui/Non)        L=1     [-]
+   IDX PK_FORM          PRIMARY KEY  (ID_FORMATEUR)
+
+========================================================================================================
+TABLE GRILLE_MENTION   (5 lignes)   PK = ['ID_MENTION']   AutoNumber: prochain=5, incr=1
+   ID_MENTION             LONG (Entier long)       L=4     [AUTONUMBER]
+   INF                    DOUBLE (Réel double)     L=8     [-]
+   SUP                    DOUBLE (Réel double)     L=8     [-]
+   MENTION                TEXT (Texte)             L=60    [-]
+   ADMIS                  BOOLEAN (Oui/Non)        L=1     [-]
+   IDX PK_MEN           PRIMARY KEY  (ID_MENTION)
+
+========================================================================================================
+TABLE INSCRIPTION   (0 lignes)   PK = ['ID_INSCRIPTION']   AutoNumber: prochain=0, incr=1
+   ID_INSCRIPTION         LONG (Entier long)       L=4     [AUTONUMBER]
+   ID_ETUDIANT            LONG (Entier long)       L=4     [-]
+   ID_CLASSE              LONG (Entier long)       L=4     [-]
+   NUM_INSCRIPTION        TEXT (Texte)             L=40    [-]
+   DATE_INSCRIPTION       DATETIME (Date/Heure)    L=8     [-]
+   REDOUBLANT             BOOLEAN (Oui/Non)        L=1     [-]
+   STATUT                 TEXT (Texte)             L=40    [-]
+   DATE_SORTIE            DATETIME (Date/Heure)    L=8     [-]
+   MOTIF_SORTIE           TEXT (Texte)             L=300   [-]
+   IDX FK_INS_CLA       INDEX        (ID_CLASSE)  -> référence CLASSE
+   IDX FK_INS_ETU       INDEX        (ID_ETUDIANT)  -> référence ETUDIANT
+   IDX IX_INS_UNI       UNIQUE       (ID_ETUDIANT, ID_CLASSE)
+   IDX PK_INS           PRIMARY KEY  (ID_INSCRIPTION)
+
+========================================================================================================
+TABLE JOURNAL   (0 lignes)   PK = ['ID_LOG']   AutoNumber: prochain=0, incr=1
+   ID_LOG                 LONG (Entier long)       L=4     [AUTONUMBER]
+   DATE_LOG               DATETIME (Date/Heure)    L=8     [-]
+   CODE_UTR               TEXT (Texte)             L=40    [-]
+   ACTION_LOG             TEXT (Texte)             L=80    [-]
+   TABLE_CIBLE            TEXT (Texte)             L=80    [-]
+   ID_CIBLE               LONG (Entier long)       L=4     [-]
+   DETAIL                 MEMO (Texte long)        L=0     [-]
+   IDX PK_LOG           PRIMARY KEY  (ID_LOG)
+
+========================================================================================================
+TABLE MATIERE   (17 lignes)   PK = ['CODE_MATIERE']   AutoNumber: prochain=0, incr=1
+   CODE_MATIERE           TEXT (Texte)             L=20    [-]
+   MATIERE                TEXT (Texte)             L=160   [-]
+   CODE_MODULE            TEXT (Texte)             L=20    [-]
+   NATURE                 TEXT (Texte)             L=40    [-]
+   ORDRE_MAT              LONG (Entier long)       L=4     [-]
+   IDX FK_MAT_MOD       INDEX        (CODE_MODULE)  -> référence MODULE_FORMATION
+   IDX PK_MAT           PRIMARY KEY  (CODE_MATIERE)
+
+========================================================================================================
+TABLE MODULE_FORMATION   (4 lignes)   PK = ['CODE_MODULE']   AutoNumber: prochain=0, incr=1
+   CODE_MODULE            TEXT (Texte)             L=20    [-]
+   MODULE_LIB             TEXT (Texte)             L=160   [-]
+   CODE_FILIERE           TEXT (Texte)             L=20    [-]
+   IDX FK_MOD_FIL       INDEX        (CODE_FILIERE)  -> référence FILIERE
+   IDX PK_MOD           PRIMARY KEY  (CODE_MODULE)
+
+========================================================================================================
+TABLE NIVEAU   (2 lignes)   PK = ['CODE_NIVEAU']   AutoNumber: prochain=0, incr=1
+   CODE_NIVEAU            TEXT (Texte)             L=20    [-]
+   NIVEAU                 TEXT (Texte)             L=100   [-]
+   ORDRE_NIV              LONG (Entier long)       L=4     [-]
+   IDX PK_NIV           PRIMARY KEY  (CODE_NIVEAU)
+
+========================================================================================================
+TABLE NOTE   (0 lignes)   PK = ['ID_NOTE']   AutoNumber: prochain=0, incr=1
+   ID_NOTE                LONG (Entier long)       L=4     [AUTONUMBER]
+   ID_EVALUATION          LONG (Entier long)       L=4     [-]
+   ID_INSCRIPTION         LONG (Entier long)       L=4     [-]
+   VALEUR_NOTE            DOUBLE (Réel double)     L=8     [-]
+   ABSENT                 BOOLEAN (Oui/Non)        L=1     [-]
+   OBSERVATION            TEXT (Texte)             L=300   [-]
+   DATE_SAISIE            DATETIME (Date/Heure)    L=8     [-]
+   CODE_UTR               TEXT (Texte)             L=40    [-]
+   IDX FK_NOT_EVA       INDEX        (ID_EVALUATION)  -> référence EVALUATION
+   IDX FK_NOT_INS       INDEX        (ID_INSCRIPTION)  -> référence INSCRIPTION
+   IDX IX_NOTE_UNI      UNIQUE       (ID_EVALUATION, ID_INSCRIPTION)
+   IDX PK_NOTE          PRIMARY KEY  (ID_NOTE)
+
+========================================================================================================
+TABLE NOTE_EXAMEN   (0 lignes)   PK = ['ID_NOTE_EX']   AutoNumber: prochain=0, incr=1
+   ID_NOTE_EX             LONG (Entier long)       L=4     [AUTONUMBER]
+   ID_EPREUVE             LONG (Entier long)       L=4     [-]
+   ID_INSCRIPTION         LONG (Entier long)       L=4     [-]
+   VALEUR_NOTE            DOUBLE (Réel double)     L=8     [-]
+   ABSENT                 BOOLEAN (Oui/Non)        L=1     [-]
+   COPIE_NUM              TEXT (Texte)             L=40    [-]
+   DATE_SAISIE            DATETIME (Date/Heure)    L=8     [-]
+   CODE_UTR               TEXT (Texte)             L=40    [-]
+   IDX FK_NEX_EPR       INDEX        (ID_EPREUVE)  -> référence EPREUVE
+   IDX FK_NEX_INS       INDEX        (ID_INSCRIPTION)  -> référence INSCRIPTION
+   IDX IX_NEX_UNI       UNIQUE       (ID_EPREUVE, ID_INSCRIPTION)
+   IDX PK_NOTEX         PRIMARY KEY  (ID_NOTE_EX)
+
+========================================================================================================
+TABLE PAIEMENT   (0 lignes)   PK = ['ID_PAIEMENT']   AutoNumber: prochain=0, incr=1
+   ID_PAIEMENT            LONG (Entier long)       L=4     [AUTONUMBER]
+   ID_ECHEANCE            LONG (Entier long)       L=4     [-]
+   NUM_RECU               TEXT (Texte)             L=40    [-]
+   DATE_PAIEMENT          DATETIME (Date/Heure)    L=8     [-]
+   MONTANT                CURRENCY (Monétaire)     L=8     [-]
+   MODE_PAIE              TEXT (Texte)             L=50    [-]
+   REF_EXTERNE            TEXT (Texte)             L=80    [-]
+   CODE_UTR               TEXT (Texte)             L=40    [-]
+   OBSERVATION            TEXT (Texte)             L=300   [-]
+   IDX FK_PAI_ECH       INDEX        (ID_ECHEANCE)  -> référence ECHEANCIER
+   IDX IX_PAI_RECU      UNIQUE       (NUM_RECU)
+   IDX PK_PAI           PRIMARY KEY  (ID_PAIEMENT)
+
+========================================================================================================
+TABLE PAIE_FORMATEUR   (0 lignes)   PK = ['ID_PAIE']   AutoNumber: prochain=0, incr=1
+   ID_PAIE                LONG (Entier long)       L=4     [AUTONUMBER]
+   ID_FORMATEUR           LONG (Entier long)       L=4     [-]
+   PERIODE                TEXT (Texte)             L=40    [-]
+   NB_HEURES              DOUBLE (Réel double)     L=8     [-]
+   TAUX                   CURRENCY (Monétaire)     L=8     [-]
+   MONTANT                CURRENCY (Monétaire)     L=8     [-]
+   PAYE                   BOOLEAN (Oui/Non)        L=1     [-]
+   DATE_PAIE              DATETIME (Date/Heure)    L=8     [-]
+   OBSERVATION            TEXT (Texte)             L=300   [-]
+   IDX FK_PAF_FORM      INDEX        (ID_FORMATEUR)  -> référence FORMATEUR
+   IDX PK_PAF           PRIMARY KEY  (ID_PAIE)
+
+========================================================================================================
+TABLE PARAMETRE   (7 lignes)   PK = ['CLE']   AutoNumber: prochain=0, incr=1
+   CLE                    TEXT (Texte)             L=80    [-]
+   VALEUR                 TEXT (Texte)             L=510   [-]
+   DESCRIPTION_P          TEXT (Texte)             L=300   [-]
+   IDX PK_PARAM         PRIMARY KEY  (CLE)
+
+========================================================================================================
+TABLE PERIODE_EVAL   (3 lignes)   PK = ['ID_PERIODE']   AutoNumber: prochain=3, incr=1
+   ID_PERIODE             LONG (Entier long)       L=4     [AUTONUMBER]
+   ID_ANNEE               LONG (Entier long)       L=4     [-]
+   CODE_PERIODE           TEXT (Texte)             L=20    [-]
+   LIBELLE                TEXT (Texte)             L=100   [-]
+   ORDRE_PER              LONG (Entier long)       L=4     [-]
+   PONDERATION            DOUBLE (Réel double)     L=8     [-]
+   DATE_DEBUT             DATETIME (Date/Heure)    L=8     [-]
+   DATE_FIN               DATETIME (Date/Heure)    L=8     [-]
+   CLOTUREE               BOOLEAN (Oui/Non)        L=1     [-]
+   IDX FK_PER_ANNEE     INDEX        (ID_ANNEE)  -> référence ANNEE_SCOLAIRE
+   IDX PK_PER           PRIMARY KEY  (ID_PERIODE)
+
+========================================================================================================
+TABLE PROGRAMME   (0 lignes)   PK = ['ID_PROG']   AutoNumber: prochain=0, incr=1
+   ID_PROG                LONG (Entier long)       L=4     [AUTONUMBER]
+   ID_CLASSE              LONG (Entier long)       L=4     [-]
+   CODE_MATIERE           TEXT (Texte)             L=20    [-]
+   ID_FORMATEUR           LONG (Entier long)       L=4     [-]
+   COEFFICIENT            DOUBLE (Réel double)     L=8     [-]
+   VOL_HORAIRE            LONG (Entier long)       L=4     [-]
+   NOTE_ELIMIN            DOUBLE (Réel double)     L=8     [-]
+   OBSERVATION            TEXT (Texte)             L=300   [-]
+   IDX FK_PRO_CLA       INDEX        (ID_CLASSE)  -> référence CLASSE
+   IDX FK_PRO_FORM      INDEX        (ID_FORMATEUR)  -> référence FORMATEUR
+   IDX FK_PRO_MAT       INDEX        (CODE_MATIERE)  -> référence MATIERE
+   IDX IX_PROG_UNI      UNIQUE       (ID_CLASSE, CODE_MATIERE)
+   IDX PK_PROG          PRIMARY KEY  (ID_PROG)
+
+========================================================================================================
+TABLE RESULTAT_FINAL   (0 lignes)   PK = ['ID_RESULTAT']   AutoNumber: prochain=0, incr=1
+   ID_RESULTAT            LONG (Entier long)       L=4     [AUTONUMBER]
+   ID_INSCRIPTION         LONG (Entier long)       L=4     [-]
+   MOY_CC                 DOUBLE (Réel double)     L=8     [-]
+   MOY_EXAM               DOUBLE (Réel double)     L=8     [-]
+   MOYENNE_GEN            DOUBLE (Réel double)     L=8     [-]
+   RANG                   LONG (Entier long)       L=4     [-]
+   MENTION                TEXT (Texte)             L=60    [-]
+   DECISION               TEXT (Texte)             L=80    [-]
+   CREDIT_VALIDE          LONG (Entier long)       L=4     [-]
+   DATE_DELIB             DATETIME (Date/Heure)    L=8     [-]
+   OBSERVATION            TEXT (Texte)             L=510   [-]
+   IDX FK_RES_INS       INDEX        (ID_INSCRIPTION)  -> référence INSCRIPTION
+   IDX PK_RES           PRIMARY KEY  (ID_RESULTAT)
+
+========================================================================================================
+TABLE SALLE   (5 lignes)   PK = ['ID_SALLE']   AutoNumber: prochain=5, incr=1
+   ID_SALLE               LONG (Entier long)       L=4     [AUTONUMBER]
+   NOM_SALLE              TEXT (Texte)             L=80    [-]
+   CAPACITE               LONG (Entier long)       L=4     [-]
+   NATURE_SALLE           TEXT (Texte)             L=60    [-]
+   DISPONIBLE             BOOLEAN (Oui/Non)        L=1     [-]
+   IDX PK_SALLE         PRIMARY KEY  (ID_SALLE)
+
+========================================================================================================
+TABLE SEANCE   (0 lignes)   PK = ['ID_SEANCE']   AutoNumber: prochain=0, incr=1
+   ID_SEANCE              LONG (Entier long)       L=4     [AUTONUMBER]
+   ID_EDT                 LONG (Entier long)       L=4     [-]
+   DATE_SEANCE            DATETIME (Date/Heure)    L=8     [-]
+   CONTENU                MEMO (Texte long)        L=0     [-]
+   NB_HEURES              DOUBLE (Réel double)     L=8     [-]
+   STATUT                 TEXT (Texte)             L=40    [-]
+   ID_FORMATEUR_REMP      LONG (Entier long)       L=4     [-]
+   IDX FK_SEA_EDT       INDEX        (ID_EDT)  -> référence EMPLOI_DU_TEMPS
+   IDX PK_SEA           PRIMARY KEY  (ID_SEANCE)
+
+========================================================================================================
+TABLE SESSION_EXAM   (0 lignes)   PK = ['ID_SESSION']   AutoNumber: prochain=0, incr=1
+   ID_SESSION             LONG (Entier long)       L=4     [AUTONUMBER]
+   ID_ANNEE               LONG (Entier long)       L=4     [-]
+   LIBELLE                TEXT (Texte)             L=120   [-]
+   NATURE                 TEXT (Texte)             L=50    [-]
+   DATE_DEBUT             DATETIME (Date/Heure)    L=8     [-]
+   DATE_FIN               DATETIME (Date/Heure)    L=8     [-]
+   CLOTUREE               BOOLEAN (Oui/Non)        L=1     [-]
+   IDX FK_SES_ANNEE     INDEX        (ID_ANNEE)  -> référence ANNEE_SCOLAIRE
+   IDX PK_SES           PRIMARY KEY  (ID_SESSION)
+
+========================================================================================================
+TABLE TARIF   (0 lignes)   PK = ['ID_TARIF']   AutoNumber: prochain=0, incr=1
+   ID_TARIF               LONG (Entier long)       L=4     [AUTONUMBER]
+   ID_CLASSE              LONG (Entier long)       L=4     [-]
+   TYPE_FRAIS             TEXT (Texte)             L=60    [-]
+   MONTANT                CURRENCY (Monétaire)     L=8     [-]
+   NB_TRANCHES            LONG (Entier long)       L=4     [-]
+   OBLIGATOIRE            BOOLEAN (Oui/Non)        L=1     [-]
+   OBSERVATION            TEXT (Texte)             L=300   [-]
+   IDX FK_TAR_CLA       INDEX        (ID_CLASSE)  -> référence CLASSE
+   IDX PK_TAR           PRIMARY KEY  (ID_TARIF)
+
+========================================================================================================
+TABLE UTILISATEUR   (3 lignes)   PK = ['CODE_UTR']   AutoNumber: prochain=0, incr=1
+   CODE_UTR               TEXT (Texte)             L=40    [-]
+   NOM_UTR                TEXT (Texte)             L=120   [-]
+   MOT_PASSE              TEXT (Texte)             L=120   [-]
+   PROFIL                 TEXT (Texte)             L=40    [-]
+   ACTIF                  BOOLEAN (Oui/Non)        L=1     [-]
+   IDX PK_UTR           PRIMARY KEY  (CODE_UTR)
