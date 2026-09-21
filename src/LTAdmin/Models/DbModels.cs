@@ -13,7 +13,7 @@ public sealed class DbColumnInfo
     public bool IsNullable { get; init; }
     public bool IsAutoIncrement { get; set; }
     public bool IsPrimaryKey { get; set; }
-    public bool IsBinary => DataType is OleDbType.Binary or OleDbType.VarBinary or OleDbType.LongVarBinary or OleDbType.Image;
+    public bool IsBinary => DataType is OleDbType.Binary or OleDbType.VarBinary or OleDbType.LongVarBinary;
     public bool IsDate => DataType is OleDbType.Date or OleDbType.DBDate or OleDbType.DBTime or OleDbType.DBTimeStamp;
     public bool IsBoolean => DataType == OleDbType.Boolean;
     public bool IsNumeric => DataType is OleDbType.BigInt or OleDbType.Integer or OleDbType.SmallInt or OleDbType.TinyInt

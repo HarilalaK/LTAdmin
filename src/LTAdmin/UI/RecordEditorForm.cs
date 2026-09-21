@@ -209,7 +209,7 @@ public sealed class RecordEditorForm : Form
             OleDbType.Single => float.TryParse(raw, NumberStyles.Float, culture, out var single) ? single : throw new FormatException($"{column.Name} doit être un nombre."),
             OleDbType.Double => double.TryParse(raw, NumberStyles.Float, culture, out var doubleValue) ? doubleValue : throw new FormatException($"{column.Name} doit être un nombre."),
             OleDbType.Guid => Guid.TryParse(raw, out var guid) ? guid : throw new FormatException($"{column.Name} doit être un identifiant valide."),
-            OleDbType.Date or OleDbType.DBDate or OleDbType.DBTime or OleDbType.DBTimeStamp => DateTime.TryParse(raw, culture, DateTimeStyles.None, out var date) ? date : throw new FormatException($"{column.Name} doit être une date valide."),
+            OleDbType.Date or OleDbType.DBDate or OleDbType.DBTime or OleDbType.DBTimeStamp => DateTime.TryParse(raw, culture, DateTimeStyles.None, out var parsedDate) ? parsedDate : throw new FormatException($"{column.Name} doit être une date valide."),
             _ => raw
         };
     }
