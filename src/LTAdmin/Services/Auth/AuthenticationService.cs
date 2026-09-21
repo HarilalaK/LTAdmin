@@ -95,35 +95,3 @@ public sealed class AuthenticationService
         }
     }
 }
-
-/// <summary>
-/// Habilitations par groupe fonctionnel. Les profils connus sont ADMIN,
-/// SCOLARITE et FINANCE ; tout autre profil n'accède qu'au tableau de bord
-/// et aux états.
-/// </summary>
-public static class Habilitations
-{
-    public const string Scolarite = "SCOLARITÉ";
-    public const string Pedagogie = "PÉDAGOGIE";
-    public const string Planning = "PLANNING";
-    public const string Examens = "EXAMENS";
-    public const string Bulletins = "BULLETINS";
-    public const string Finances = "FINANCES";
-    public const string Referentiel = "RÉFÉRENTIEL";
-    public const string Administration = "ADMINISTRATION";
-    public const string Accueil = "ACCUEIL";
-
-    public static bool CanAccess(string? profil, string groupe)
-    {
-        if (string.Equals(groupe, Accueil, StringComparison.OrdinalIgnoreCase))
-            return true;
-        if (string.Equals(profil, Profils.Admin, StringComparison.OrdinalIgnoreCase))
-            return true;
-        if (string.Equals(profil, Profils.Scolarite, StringComparison.OrdinalIgnoreCase))
-            return !string.Equals(groupe, Finances, StringComparison.OrdinalIgnoreCase)
-                && !string.Equals(groupe, Administration, StringComparison.OrdinalIgnoreCase);
-        if (string.Equals(profil, Profils.Finance, StringComparison.OrdinalIgnoreCase))
-            return string.Equals(groupe, Finances, StringComparison.OrdinalIgnoreCase);
-        return false;
-    }
-}
