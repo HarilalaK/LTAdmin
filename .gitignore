@@ -1,0 +1,13 @@
+# Visual Studio / .NET
+.vs/
+**/bin/
+**/obj/
+*.user
+*.suo
+
+# Runtime backups and local database copies
+Sauvegardes/
+**/Sauvegardes/
+
+# Local publish output
+publish/
