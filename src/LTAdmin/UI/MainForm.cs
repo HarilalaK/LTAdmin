@@ -10,11 +10,16 @@ public sealed class MainForm : Form
     private readonly AppComposition _app;
     private readonly UserSession _session;
     private readonly Panel _content = new();
+    private readonly Panel _navHost = new();
     private readonly Label _pageTitle = new();
     private readonly Label _pageDescription = new();
-    private readonly FlowLayoutPanel _navigation = new();
-    private readonly List<ModuleEntry> _modules = new();
-    private IReadOnlyList<DbTableInfo> _tables = Array.Empty<DbTableInfo>();
+    private readonly Label _userName = new();
+    private readonly Label _userRole = new();
+    private readonly Label _yearLabel = new();
+    private readonly Dictionary<string, Button> _navButtons = new();
+    private string _currentModule = Modules.TableauDeBord;
+
+    public bool LogoutRequested { get; private set; }
 
     public MainForm(AppComposition app, UserSession session)
     {
@@ -23,354 +28,324 @@ public sealed class MainForm : Form
         Text = "LTAdmin — Gestion scolaire";
         StartPosition = FormStartPosition.CenterScreen;
         WindowState = FormWindowState.Maximized;
-        MinimumSize = new Size(1100, 700);
+        MinimumSize = new Size(960, 640);
         BackColor = Theme.Background;
         Font = Theme.Body;
+        AutoScaleMode = AutoScaleMode.Dpi;
 
-        BuildModules();
-        BuildSidebar();
-        BuildWorkspace();
-        LoadTables();
-        Shown += (_, _) => ShowDashboard();
+        var root = new TableLayoutPanel
+        {
+            Dock = DockStyle.Fill,
+            ColumnCount = 2,
+            RowCount = 2,
+            Padding = new Padding(0),
+            Margin = new Padding(0)
+        };
+        root.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 268));
+        root.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+        root.RowStyles.Add(new RowStyle(SizeType.Absolute, 78));
+        root.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+
+        var sidebar = BuildSidebar();
+        var topbar = BuildTopbar();
+
+        _content.Dock = DockStyle.Fill;
+        _content.BackColor = Theme.Background;
+        _content.Padding = new Padding(8);
+        _content.MinimumSize = new Size(400, 300);
+
+        root.Controls.Add(sidebar, 0, 0);
+        root.SetRowSpan(sidebar, 2);
+        root.Controls.Add(topbar, 1, 0);
+        root.Controls.Add(_content, 1, 1);
+        Controls.Add(root);
+
+        Shown += (_, _) =>
+        {
+            RefreshYear();
+            OpenModule(Modules.TableauDeBord);
+        };
+        Resize += (_, _) =>
+        {
+            if (Width < 1100)
+                root.ColumnStyles[0].Width = 220;
+            else
+                root.ColumnStyles[0].Width = 268;
+        };
     }
 
-    private sealed record ModuleEntry(string Label, string Group, string Description, string? TableName, Func<Control>? View);
-
-    private void BuildModules()
+    private Panel BuildSidebar()
     {
-        _modules.Add(new ModuleEntry("Tableau de bord", Habilitations.Accueil, "Vue d’ensemble de votre établissement", null,
-            () => new DashboardControl(_app, OpenTableByName, OpenModule)));
-        // Scolarité : écrans métier adossés aux services.
-        _modules.Add(new ModuleEntry("Étudiants", Habilitations.Scolarite, "Dossiers et informations des étudiants", null,
-            () => new StudentsControl(_app, _session)));
-        _modules.Add(new ModuleEntry("Inscriptions", Habilitations.Scolarite, "Inscriptions par année et par classe", null,
-            () => new EnrollmentsControl(_app, _session)));
-        // Pédagogie.
-        _modules.Add(new ModuleEntry("Saisie des notes", Habilitations.Pedagogie, "Notes de contrôle continu par évaluation", null,
-            () => new GradesControl(_app, _session)));
-        _modules.Add(new ModuleEntry("Évaluations", Habilitations.Pedagogie, "Contrôles et évaluations", "EVALUATION", null));
-        _modules.Add(new ModuleEntry("Périodes", Habilitations.Pedagogie, "Périodes d’évaluation", "PERIODE_EVAL", null));
-        _modules.Add(new ModuleEntry("Programmes", Habilitations.Pedagogie, "Affectations matière / classe / formateur", "PROGRAMME", null));
-        // Planning.
-        _modules.Add(new ModuleEntry("Emplois du temps", Habilitations.Planning, "Planning des classes", "EMPLOI_DU_TEMPS", null));
-        _modules.Add(new ModuleEntry("Créneaux", Habilitations.Planning, "Créneaux horaires", "CRENEAU", null));
-        _modules.Add(new ModuleEntry("Séances", Habilitations.Planning, "Cahier de texte", "SEANCE", null));
-        _modules.Add(new ModuleEntry("Absences", Habilitations.Planning, "Absences et retards", "ABSENCE", null));
-        // Examens.
-        _modules.Add(new ModuleEntry("Sessions d’examen", Habilitations.Examens, "Sessions d’examen", "SESSION_EXAM", null));
-        _modules.Add(new ModuleEntry("Épreuves", Habilitations.Examens, "Épreuves planifiées", "EPREUVE", null));
-        _modules.Add(new ModuleEntry("Notes d’examen", Habilitations.Examens, "Notes des épreuves", "NOTE_EXAMEN", null));
-        _modules.Add(new ModuleEntry("Résultats finaux", Habilitations.Examens, "Décisions et résultats", "RESULTAT_FINAL", null));
-        // Bulletins.
-        _modules.Add(new ModuleEntry("Bulletins", Habilitations.Bulletins, "Bulletins de notes", "BULLETIN", null));
-        _modules.Add(new ModuleEntry("Lignes de bulletin", Habilitations.Bulletins, "Détail des bulletins", "BULLETIN_LIGNE", null));
-        // Finances.
-        _modules.Add(new ModuleEntry("Caisse / paiements", Habilitations.Finances, "Échéanciers et encaissements", null,
-            () => new PaymentsControl(_app, _session)));
-        _modules.Add(new ModuleEntry("Tarifs", Habilitations.Finances, "Tarifs d’écolage", "TARIF", null));
-        _modules.Add(new ModuleEntry("Échéanciers", Habilitations.Finances, "Échéanciers de paiement", "ECHEANCIER", null));
-        _modules.Add(new ModuleEntry("Paiements", Habilitations.Finances, "Encaissements et reçus", "PAIEMENT", null));
-        _modules.Add(new ModuleEntry("Paie formateurs", Habilitations.Finances, "Rémunération des formateurs", "PAIE_FORMATEUR", null));
-        // Référentiel.
-        _modules.Add(new ModuleEntry("Filières", Habilitations.Referentiel, "Filières et spécialités", "FILIERE", null));
-        _modules.Add(new ModuleEntry("Niveaux", Habilitations.Referentiel, "Niveaux de formation", "NIVEAU", null));
-        _modules.Add(new ModuleEntry("Classes", Habilitations.Referentiel, "Classes et groupes", "CLASSE", null));
-        _modules.Add(new ModuleEntry("Matières", Habilitations.Referentiel, "Matières enseignées", "MATIERE", null));
-        _modules.Add(new ModuleEntry("Modules", Habilitations.Referentiel, "Modules de formation", "MODULE_FORMATION", null));
-        _modules.Add(new ModuleEntry("Salles", Habilitations.Referentiel, "Salles et capacités", "SALLE", null));
-        _modules.Add(new ModuleEntry("Formateurs", Habilitations.Referentiel, "Personnel enseignant", "FORMATEUR", null));
-        // Administration.
-        _modules.Add(new ModuleEntry("Utilisateurs", Habilitations.Administration, "Comptes et droits d’accès", "UTILISATEUR", null));
-        _modules.Add(new ModuleEntry("Paramètres", Habilitations.Administration, "Règles de gestion", "PARAMETRE", null));
-        _modules.Add(new ModuleEntry("Établissement", Habilitations.Administration, "Informations de l’établissement", "ETABLISSEMENT", null));
-        _modules.Add(new ModuleEntry("Années scolaires", Habilitations.Administration, "Années scolaires", "ANNEE_SCOLAIRE", null));
-        _modules.Add(new ModuleEntry("Journal", Habilitations.Administration, "Traçabilité des opérations", "JOURNAL", null));
-    }
+        var sidebar = new Panel
+        {
+            Dock = DockStyle.Fill,
+            BackColor = Theme.Sidebar,
+            Padding = new Padding(12, 16, 12, 12)
+        };
 
-    private void BuildSidebar()
-    {
-        var sidebar = new Panel { Dock = DockStyle.Left, Width = 248, BackColor = Theme.Sidebar, Padding = new Padding(14, 16, 14, 12) };
-        var brand = new Panel { Dock = DockStyle.Top, Height = 75 };
-        brand.Controls.Add(new Label { Text = "LTA", AutoSize = true, Font = new Font("Segoe UI", 25, FontStyle.Bold), ForeColor = Color.White, Location = new Point(10, 0) });
-        brand.Controls.Add(new Label { Text = "ADMINISTRATION", AutoSize = true, Font = new Font("Segoe UI", 8.5f, FontStyle.Bold), ForeColor = Color.FromArgb(147, 197, 253), Location = new Point(13, 39) });
-        brand.Controls.Add(new Label { Text = "Gestion scolaire", AutoSize = true, Font = Theme.Small, ForeColor = Theme.SidebarMuted, Location = new Point(76, 23) });
-        sidebar.Controls.Add(brand);
-
-        _navigation.Dock = DockStyle.Fill;
-        _navigation.FlowDirection = FlowDirection.TopDown;
-        _navigation.WrapContents = false;
-        _navigation.AutoScroll = true;
-        _navigation.Padding = new Padding(0, 4, 0, 8);
-        _navigation.BackColor = Theme.Sidebar;
-        sidebar.Controls.Add(_navigation);
-
-        var userPanel = new Panel { Dock = DockStyle.Bottom, Height = 66, Padding = new Padding(8, 8, 5, 4) };
+        var brand = new Panel { Dock = DockStyle.Top, Height = 72 };
+        brand.Controls.Add(new Label
+        {
+            Text = "LTA",
+            AutoSize = true,
+            Font = new Font("Segoe UI", 22, FontStyle.Bold),
+            ForeColor = Color.White,
+            Location = new Point(8, 2)
+        });
+        brand.Controls.Add(new Label
+        {
+            Text = "ADMINISTRATION",
+            AutoSize = true,
+            Font = new Font("Segoe UI", 8.5f, FontStyle.Bold),
+            ForeColor = Color.FromArgb(147, 197, 253),
+            Location = new Point(10, 40)
+        });
+        var userPanel = new Panel { Dock = DockStyle.Bottom, Height = 118, Padding = new Padding(8) };
         userPanel.Paint += (_, e) =>
         {
-            using var pen = new Pen(Color.FromArgb(45, 63, 88));
+            using var pen = new Pen(Color.FromArgb(51, 71, 99));
             e.Graphics.DrawLine(pen, 0, 0, userPanel.Width, 0);
         };
-        userPanel.Controls.Add(new Label { Text = _session.DisplayName, AutoSize = true, ForeColor = Color.White, Font = Theme.BodyBold, Location = new Point(8, 10) });
-        userPanel.Controls.Add(new Label { Text = _session.Role + " · connecté", AutoSize = true, ForeColor = Theme.SidebarMuted, Font = Theme.Small, Location = new Point(8, 32) });
+        _userName.Text = _session.DisplayName;
+        _userName.AutoSize = false;
+        _userName.Width = 220;
+        _userName.Height = 22;
+        _userName.ForeColor = Color.White;
+        _userName.Font = Theme.BodyBold;
+        _userName.Location = new Point(6, 10);
+        _userRole.Text = _session.Role + " · connecté";
+        _userRole.AutoSize = false;
+        _userRole.Width = 220;
+        _userRole.Height = 20;
+        _userRole.ForeColor = Color.FromArgb(186, 198, 214);
+        _userRole.Font = Theme.Small;
+        _userRole.Location = new Point(6, 32);
+        var logout = Theme.Button("Se déconnecter", Color.FromArgb(51, 65, 85), Color.White, 220);
+        logout.Location = new Point(6, 62);
+        logout.Height = 36;
+        logout.Click += (_, _) => ConfirmLogout();
+        userPanel.Controls.Add(_userName);
+        userPanel.Controls.Add(_userRole);
+        userPanel.Controls.Add(logout);
         sidebar.Controls.Add(userPanel);
-        Controls.Add(sidebar);
+
+        _navHost.Dock = DockStyle.Fill;
+        _navHost.AutoScroll = true;
+        _navHost.BackColor = Theme.Sidebar;
+        _navHost.Padding = new Padding(0, 4, 4, 8);
+        sidebar.Controls.Add(_navHost);
+
+        BuildNavigation();
+        return sidebar;
     }
 
-    private void BuildWorkspace()
+    private Panel BuildTopbar()
     {
-        var topbar = new Panel { Dock = DockStyle.Top, Height = 72, BackColor = Theme.Surface, Padding = new Padding(28, 14, 28, 10) };
-        _pageTitle.Text = "Tableau de bord";
+        var topbar = new Panel
+        {
+            Dock = DockStyle.Fill,
+            BackColor = Theme.Surface,
+            Padding = new Padding(20, 10, 20, 10)
+        };
+        topbar.Paint += (_, e) =>
+        {
+            using var pen = new Pen(Theme.Border);
+            e.Graphics.DrawLine(pen, 0, topbar.Height - 1, topbar.Width, topbar.Height - 1);
+        };
+
+        _pageTitle.Text = Modules.TableauDeBord;
         _pageTitle.AutoSize = true;
         _pageTitle.Font = Theme.SubHeading;
         _pageTitle.ForeColor = Theme.Text;
-        _pageTitle.Location = new Point(28, 14);
-        topbar.Controls.Add(_pageTitle);
+        _pageTitle.Location = new Point(20, 12);
         _pageDescription.Text = "Vue d’ensemble";
         _pageDescription.AutoSize = true;
         _pageDescription.Font = Theme.Small;
         _pageDescription.ForeColor = Theme.MutedText;
-        _pageDescription.Location = new Point(29, 38);
+        _pageDescription.Location = new Point(21, 38);
+        topbar.Controls.Add(_pageTitle);
         topbar.Controls.Add(_pageDescription);
 
-        var reports = Theme.Button("États", Color.FromArgb(241, 245, 249), Theme.Text, 92);
-        reports.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-        reports.Location = new Point(topbar.Width - 370, 18);
-        reports.Click += (_, _) => ShowReports();
-        topbar.Controls.Add(reports);
-        var backup = Theme.Button("Sauvegarder", Color.FromArgb(241, 245, 249), Theme.Text, 112);
-        backup.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-        backup.Location = new Point(topbar.Width - 268, 18);
-        backup.Click += Backup;
-        topbar.Controls.Add(backup);
-        var reload = Theme.Button("Actualiser", Theme.Primary, Color.White, 100);
-        reload.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-        reload.Location = new Point(topbar.Width - 140, 18);
-        reload.Click += (_, _) => RefreshCurrent();
-        topbar.Controls.Add(reload);
+        _yearLabel.AutoSize = true;
+        _yearLabel.Font = Theme.BodyBold;
+        _yearLabel.ForeColor = Theme.Primary;
+        _yearLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        topbar.Controls.Add(_yearLabel);
+
+        var refresh = Theme.Button("Actualiser", Theme.Primary, Color.White, 110);
+        refresh.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        refresh.Click += (_, _) => RefreshCurrent();
+        topbar.Controls.Add(refresh);
+
         topbar.Resize += (_, _) =>
         {
-            reports.Left = topbar.Width - 370;
-            backup.Left = topbar.Width - 268;
-            reload.Left = topbar.Width - 140;
+            refresh.Location = new Point(Math.Max(280, topbar.Width - 130), 20);
+            _yearLabel.Location = new Point(Math.Max(280, refresh.Left - _yearLabel.Width - 16), 26);
         };
-        Controls.Add(topbar);
-
-        _content.Dock = DockStyle.Fill;
-        _content.BackColor = Theme.Background;
-        Controls.Add(_content);
-    }
-
-    private void LoadTables()
-    {
-        try
-        {
-            _tables = _app.Tables.GetTables();
-            BuildNavigation();
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show(this, "Impossible de lire les tables de la base.\n\n" + ex.Message, "Base de données", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
+        return topbar;
     }
 
     private void BuildNavigation()
     {
-        _navigation.SuspendLayout();
-        _navigation.Controls.Clear();
-        string? currentGroup = null;
-        foreach (var item in _modules)
+        _navHost.Controls.Clear();
+        _navButtons.Clear();
+        int y = 4;
+        foreach (var module in Habilitations.MenuOrder)
         {
-            if (!string.Equals(currentGroup, item.Group, StringComparison.Ordinal))
-            {
-                currentGroup = item.Group;
-                var groupLabel = new Label
-                {
-                    Text = item.Group,
-                    Width = 208,
-                    Height = 27,
-                    Margin = new Padding(8, 11, 0, 0),
-                    ForeColor = Theme.SidebarMuted,
-                    Font = new Font("Segoe UI", 8f, FontStyle.Bold),
-                    TextAlign = ContentAlignment.MiddleLeft
-                };
-                _navigation.Controls.Add(groupLabel);
-            }
+            if (!Habilitations.CanAccess(_session.Role, module))
+                continue;
 
-            var allowed = Habilitations.CanAccess(_session.Role, item.Group);
-            var available = allowed && (item.View is not null || (item.TableName is not null && FindTable(item.TableName) is not null));
             var button = new Button
             {
-                Text = "  " + item.Label,
-                Width = 218,
-                Height = 35,
-                Margin = new Padding(0, 1, 0, 0),
+                Text = "  " + module,
+                Width = Math.Max(180, _navHost.ClientSize.Width - 8),
+                Height = 38,
+                Location = new Point(0, y),
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
                 FlatStyle = FlatStyle.Flat,
                 BackColor = Theme.Sidebar,
-                ForeColor = available ? Color.FromArgb(226, 232, 240) : Color.FromArgb(71, 85, 105),
-                Font = Theme.Body,
-                TextAlign = ContentAlignment.MiddleLeft,
-                Padding = new Padding(10, 0, 4, 0),
-                Cursor = available ? Cursors.Hand : Cursors.Default,
-                Enabled = available
-            };
-            button.FlatAppearance.BorderSize = 0;
-            button.FlatAppearance.MouseOverBackColor = Color.FromArgb(31, 50, 79);
-            button.Tag = item;
-            button.Click += (_, _) => Navigate(item);
-            _navigation.Controls.Add(button);
-        }
-
-        if (Habilitations.CanAccess(_session.Role, Habilitations.Administration))
-        {
-            var all = new Button
-            {
-                Text = "  Toutes les tables",
-                Width = 218,
-                Height = 35,
-                Margin = new Padding(0, 12, 0, 0),
-                FlatStyle = FlatStyle.Flat,
-                BackColor = Theme.Sidebar,
-                ForeColor = Color.FromArgb(147, 197, 253),
+                ForeColor = Color.FromArgb(241, 245, 249),
                 Font = Theme.BodyBold,
                 TextAlign = ContentAlignment.MiddleLeft,
-                Padding = new Padding(10, 0, 4, 0),
+                Padding = new Padding(8, 0, 4, 0),
+                Cursor = Cursors.Hand,
+                Tag = module
+            };
+            button.FlatAppearance.BorderSize = 0;
+            button.FlatAppearance.MouseOverBackColor = Color.FromArgb(36, 58, 92);
+            button.Click += (_, _) => OpenModule(module);
+            _navHost.Controls.Add(button);
+            _navButtons[module] = button;
+            y += 42;
+        }
+
+        if (Habilitations.CanAccess(_session.Role, Modules.Administration))
+        {
+            var users = new Button
+            {
+                Text = "  " + Modules.Utilisateurs,
+                Width = Math.Max(180, _navHost.ClientSize.Width - 8),
+                Height = 38,
+                Location = new Point(0, y + 8),
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
+                FlatStyle = FlatStyle.Flat,
+                BackColor = Theme.Sidebar,
+                ForeColor = Color.FromArgb(191, 219, 254),
+                Font = Theme.BodyBold,
+                TextAlign = ContentAlignment.MiddleLeft,
                 Cursor = Cursors.Hand
             };
-            all.FlatAppearance.BorderSize = 0;
-            all.Click += (_, _) => ShowAllTables();
-            _navigation.Controls.Add(all);
+            users.FlatAppearance.BorderSize = 0;
+            users.Click += (_, _) => OpenModule(Modules.Utilisateurs);
+            _navHost.Controls.Add(users);
+            _navButtons[Modules.Utilisateurs] = users;
         }
-        _navigation.ResumeLayout();
     }
 
-    private void Navigate(ModuleEntry item)
+    public void OpenModule(string module)
     {
-        if (item.View is not null)
-        {
-            _pageTitle.Text = item.Label;
-            _pageDescription.Text = item.Description;
-            SetContent(item.View());
-            if (_content.Controls.OfType<Control>().FirstOrDefault() is IRefreshableView refreshable)
-                refreshable.RefreshData();
+        if (!Habilitations.CanAccess(_session.Role, module) && module != Modules.Utilisateurs)
             return;
-        }
-        if (item.TableName is not null)
-            OpenTable(item.TableName, item.Label, item.Description);
-    }
-
-    private void ShowDashboard() => Navigate(_modules[0]);
-
-    private void OpenModule(string label)
-    {
-        var item = _modules.FirstOrDefault(m => string.Equals(m.Label, label, StringComparison.OrdinalIgnoreCase));
-        if (item is not null && Habilitations.CanAccess(_session.Role, item.Group))
-            Navigate(item);
-    }
-
-    private void OpenTableByName(string tableName)
-        => OpenTable(tableName, DatabaseCatalog.DisplayName(tableName), "Gestion des enregistrements");
-
-    private void OpenTable(string tableName, string? title = null, string? description = null)
-    {
-        var table = FindTable(tableName);
-        if (table is null)
-        {
-            MessageBox.Show(this, $"La table {tableName} n’existe pas dans cette base.", "Table indisponible", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        if (module == Modules.Utilisateurs && !Habilitations.CanAccess(_session.Role, Modules.Administration))
             return;
+
+        _currentModule = module;
+        Highlight(module);
+        _pageTitle.Text = module;
+        _pageDescription.Text = Description(module);
+        SetContent(CreateView(module));
+        if (_content.Controls.Count > 0 && _content.Controls[0] is IRefreshableView refreshable)
+            refreshable.RefreshData();
+    }
+
+    private Control CreateView(string module) => module switch
+    {
+        Modules.TableauDeBord => new DashboardControl(_app, _ => { }, OpenModule),
+        Modules.Etudiants => new StudentsControl(_app, _session),
+        Modules.Inscriptions => new EnrollmentsControl(_app, _session),
+        Modules.Notes => new GradesControl(_app, _session),
+        Modules.Ecolage => new PaymentsControl(_app, _session),
+        Modules.Rapports => new PlaceholderView(Modules.Rapports,
+            "États et exports. Utilisez le catalogue des rapports lorsque les données sont disponibles."),
+        Modules.Utilisateurs => new UsersControl(_app, _session),
+        Modules.Administration => new UsersControl(_app, _session),
+        _ => new PlaceholderView(module, "Module « " + module + " ».")
+    };
+
+    private static string Description(string module) => module switch
+    {
+        Modules.TableauDeBord => "Synthèse de l’établissement",
+        Modules.Etudiants => "Dossiers des étudiants",
+        Modules.Inscriptions => "Inscriptions de l’année",
+        Modules.Referentiel => "Filières, classes, matières",
+        Modules.Formateurs => "Personnel enseignant",
+        Modules.Notes => "Notes et évaluations",
+        Modules.Bulletins => "Bulletins de notes",
+        Modules.Examens => "Sessions et épreuves",
+        Modules.EmploiDuTemps => "Planning des classes",
+        Modules.Absences => "Absences et retards",
+        Modules.Ecolage => "Paiements et tarifs",
+        Modules.Paie => "Rémunération des formateurs",
+        Modules.Statistiques => "Indicateurs",
+        Modules.Rapports => "États imprimables",
+        Modules.Administration => "Paramétrage et comptes",
+        Modules.Utilisateurs => "Comptes et profils",
+        _ => ""
+    };
+
+    private void Highlight(string module)
+    {
+        foreach (var kv in _navButtons)
+        {
+            kv.Value.BackColor = kv.Key == module ? Color.FromArgb(30, 105, 217) : Theme.Sidebar;
+            kv.Value.ForeColor = Color.White;
         }
-        _pageTitle.Text = title ?? DatabaseCatalog.DisplayName(table.Name);
-        _pageDescription.Text = description ?? $"Table {table.Name}";
-        SetContent(new TableManagerControl(_app.Database, table));
-        RefreshCurrent();
     }
 
     private void SetContent(Control control)
     {
+        control.Dock = DockStyle.Fill;
+        control.Visible = true;
         _content.SuspendLayout();
-        foreach (var child in _content.Controls.Cast<Control>().Where(child => !ReferenceEquals(child, control)).ToList())
+        foreach (var child in _content.Controls.Cast<Control>().ToList())
         {
             _content.Controls.Remove(child);
             child.Dispose();
         }
-        if (!_content.Controls.Contains(control)) _content.Controls.Add(control);
+        _content.Controls.Add(control);
+        control.BringToFront();
         _content.ResumeLayout(true);
     }
 
     private void RefreshCurrent()
     {
-        if (_content.Controls.OfType<Control>().FirstOrDefault() is IRefreshableView refreshable)
+        RefreshYear();
+        if (_content.Controls.Count > 0 && _content.Controls[0] is IRefreshableView refreshable)
             refreshable.RefreshData();
-        else
-            LoadTables();
     }
 
-    private void ShowReports()
-    {
-        using var reports = new ReportsForm(_app);
-        reports.ShowDialog(this);
-    }
-
-    private void Backup(object? sender, EventArgs e)
+    private void RefreshYear()
     {
         try
         {
-            Cursor = Cursors.WaitCursor;
-            var result = _app.Sauvegardes.CreateBackup(_session.Login);
-            MessageBox.Show(this, result.FullMessage(),
-                result.IsSuccess ? "Sauvegarde" : "Sauvegarde impossible",
-                MessageBoxButtons.OK, result.IsSuccess ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+            var annee = _app.Admin.GetAnneeActive();
+            _yearLabel.Text = annee?.Libelle is { Length: > 0 } lib
+                ? "Année scolaire : " + lib
+                : "Année scolaire : non définie";
         }
-        catch (Exception ex) { MessageBox.Show(this, ex.Message, "Sauvegarde impossible", MessageBoxButtons.OK, MessageBoxIcon.Error); }
-        finally { Cursor = Cursors.Default; }
+        catch
+        {
+            _yearLabel.Text = "Année scolaire : —";
+        }
+        _yearLabel.BringToFront();
     }
 
-    private void ShowAllTables()
+    private void ConfirmLogout()
     {
-        using var chooser = new TableChooserForm(_tables);
-        if (chooser.ShowDialog(this) == DialogResult.OK && chooser.SelectedTable is not null)
-            OpenTable(chooser.SelectedTable.Name, DatabaseCatalog.DisplayName(chooser.SelectedTable.Name), "Gestion complète des enregistrements");
+        if (MessageBox.Show(this, "Voulez-vous vous déconnecter ?", "Déconnexion",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+            return;
+        LogoutRequested = true;
+        Close();
     }
-
-    private DbTableInfo? FindTable(string name)
-        => _tables.FirstOrDefault(t => string.Equals(t.Name, name, StringComparison.OrdinalIgnoreCase));
-}
-
-internal sealed class TableChooserForm : Form
-{
-    private readonly ListBox _list = new();
-    private readonly IReadOnlyList<DbTableInfo> _tables;
-
-    public TableChooserForm(IReadOnlyList<DbTableInfo> tables)
-    {
-        _tables = tables;
-        Text = "Toutes les tables";
-        StartPosition = FormStartPosition.CenterParent;
-        ClientSize = new Size(440, 510);
-        BackColor = Theme.Background;
-        Padding = new Padding(22);
-        Controls.Add(new Label { Text = "Choisir une table", AutoSize = true, Font = Theme.SubHeading, ForeColor = Theme.Text, Location = new Point(22, 20) });
-        Controls.Add(new Label { Text = "L’accès générique permet d’ajouter, modifier, supprimer et exporter toutes les données.", AutoSize = false, Width = 390, Height = 38, ForeColor = Theme.MutedText, Font = Theme.Small, Location = new Point(22, 50) });
-        _list.Location = new Point(22, 102);
-        _list.Width = 394;
-        _list.Height = 320;
-        _list.Font = Theme.Body;
-        _list.BorderStyle = BorderStyle.FixedSingle;
-        _list.DisplayMember = nameof(DbTableInfo.Name);
-        _list.DataSource = _tables.ToList();
-        _list.DoubleClick += (_, _) => Open();
-        Controls.Add(_list);
-        var cancel = Theme.Button("Annuler", Color.FromArgb(241, 245, 249), Theme.Text, 100);
-        cancel.Location = new Point(206, 450);
-        cancel.Click += (_, _) => DialogResult = DialogResult.Cancel;
-        Controls.Add(cancel);
-        var open = Theme.Button("Ouvrir", Theme.Primary, Color.White, 100);
-        open.Location = new Point(316, 450);
-        open.Click += (_, _) => Open();
-        Controls.Add(open);
-        AcceptButton = open;
-        CancelButton = cancel;
-    }
-
-    public DbTableInfo? SelectedTable => _list.SelectedItem as DbTableInfo;
-    private void Open() { if (SelectedTable is not null) DialogResult = DialogResult.OK; }
 }

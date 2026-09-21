@@ -55,7 +55,7 @@ public sealed class AuthenticationService
             }
 
             var displayName = string.IsNullOrWhiteSpace(user.NomUtr) ? user.CodeUtr! : user.NomUtr!;
-            var role = string.IsNullOrWhiteSpace(user.Profil) ? "Utilisateur" : user.Profil!;
+            var role = Habilitations.NormalizeProfil(user.Profil);
             _journal.LogConnexion(user.CodeUtr!, true);
             return Result<UserSession>.Ok(new UserSession(user.CodeUtr!, displayName, role));
         }

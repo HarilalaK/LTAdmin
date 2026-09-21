@@ -77,10 +77,15 @@ public static class ParametreKeys
     public const string Devise = "DEVISE";
 }
 
-/// <summary>Profils d'habilitation connus (table UTILISATEUR).</summary>
+/// <summary>Profils d'habilitation connus (table UTILISATEUR.PROFIL).</summary>
 public static class Profils
 {
     public const string Admin = "ADMIN";
+    public const string Administrateur = "Administrateur";
+    public const string Direction = "Direction";
     public const string Scolarite = "SCOLARITE";
+    public const string ScolariteLibelle = "Scolarité";
     public const string Finance = "FINANCE";
+    public const string Comptabilite = "Comptabilité";
+    public const string Enseignant = "Enseignant";
 }

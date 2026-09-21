@@ -1,3 +1,4 @@
+using LTAdmin.Models;
 using LTAdmin.Services;
 using LTAdmin.Services.Infrastructure;
 using LTAdmin.UI;
@@ -33,9 +34,21 @@ internal static class Program
             using var app = new AppComposition(databasePath);
             app.Database.Open();
             app.Logger.Info("Démarrage de LTAdmin sur " + databasePath);
-            using var login = new LoginForm(app);
-            if (login.ShowDialog() != DialogResult.OK || login.Session is null) return;
-            Application.Run(new MainForm(app, login.Session));
+            while (true)
+            {
+                UserSession? session;
+                using (var login = new LoginForm(app))
+                {
+                    if (login.ShowDialog() != DialogResult.OK || login.Session is null)
+                        return;
+                    session = login.Session;
+                }
+
+                using var main = new MainForm(app, session);
+                Application.Run(main);
+                if (!main.LogoutRequested)
+                    return;
+            }
         }
         catch (Exception ex)
         {
