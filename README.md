@@ -85,7 +85,7 @@ ltadmin/
   repositories/         dépôts typés (étudiants, notes, écolage, EDT, paie…)
   services/             services métier, auth, habilitations, stats, rapports, sauvegardes
   ui/                   thème, widgets, dialogues, vues (16 écrans + éditeur générique)
-tests/                  moteur SQLite de test + 6 suites (81 tests)
+tests/                  moteur SQLite de test + 7 suites (91 tests)
 analysis/               requêtes Access, schéma, extraction complète des données
 docs/ARCHITECTURE.md    architecture (écrite pour la version C#, les couches sont identiques)
 src/LTAdmin/            code C# .NET 8 d'origine (référence du portage)

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from tkinter import ttk
+import tkinter as tk
 
 from ltadmin.models.entities import Utilisateur
 from ltadmin.services.auth.habilitations import PROFILS_CONNUS

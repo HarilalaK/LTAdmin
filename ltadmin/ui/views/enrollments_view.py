@@ -180,6 +180,7 @@ class EnrollmentsView(BaseView):
             try:
                 inscrit.date_inscription = parse_date(values["Date d’inscription"])
             except ValueError as ex:
+                from ltadmin.core.result import Result
                 return Result.fail(str(ex), "VALIDATION")
             inscrit.num_inscription = values["N° inscription"] or None
             inscrit.statut = values["Statut"]
@@ -207,6 +208,7 @@ class EnrollmentsView(BaseView):
             try:
                 date_sortie = parse_date(values["Date de sortie *"])
             except ValueError as ex:
+                from ltadmin.core.result import Result
                 return Result.fail(str(ex), "VALIDATION")
             return self.services.enrollments.enregistrer_sortie(
                 inscrit.id_inscription, date_sortie, values["Motif de sortie"],
