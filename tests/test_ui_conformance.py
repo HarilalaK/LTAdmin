@@ -7,12 +7,15 @@ Vérifie par analyse AST que :
 - les méthodes appelées sur les widgets (DataTable, Toolbar, FormField,
   EntityDialog) existent réellement (ou sont des méthodes tk héritées) ;
 - la session n'expose que login/display_name/role dans l'UI ;
-- l'éditeur générique couvre bien tous les types de colonnes.
+- l'éditeur générique couvre bien tous les types de colonnes ;
+- chaque nom utilisé comme base d'attribut (``tk.BOTH``, ``Result.fail``) est
+  bien lié dans le scope courant (import manquant = écran qui plante).
 """
 
 from __future__ import annotations
 
 import ast
+import builtins
 import glob
 import os
 import re
@@ -25,6 +28,15 @@ sys.path.insert(0, ROOT)
 UI_FILES = sorted(
     glob.glob(os.path.join(ROOT, "ltadmin", "ui", "**", "*.py"), recursive=True))
 ALL_FILES = UI_FILES + [os.path.join(ROOT, "main.py")]
+
+# Tout le code livré : les noms indéfinis ne se limitent pas à l'UI.
+SOURCE_FILES = sorted(
+    glob.glob(os.path.join(ROOT, "ltadmin", "**", "*.py"), recursive=True)
+    + glob.glob(os.path.join(ROOT, "tests", "**", "*.py"), recursive=True)
+    + [os.path.join(ROOT, "main.py")])
+
+BUILTINS = frozenset(dir(builtins))
+_FUNCS = (ast.FunctionDef, ast.AsyncFunctionDef)
 
 WIDGET_CLASSES = {"DataTable", "Toolbar", "FormField", "EntityDialog"}
 
@@ -61,6 +73,105 @@ def _parse(path: str) -> ast.Module:
 
 def _module_path(module: str) -> str:
     return os.path.join(ROOT, *module.split("."))
+
+
+def _add_args(names: set, args: ast.arguments) -> None:
+    """Ajoute les paramètres d'une fonction (ou lambda) aux noms liés."""
+    for arg in args.posonlyargs + args.args + args.kwonlyargs:
+        names.add(arg.arg)
+    for extra in (args.vararg, args.kwarg):
+        if extra is not None:
+            names.add(extra.arg)
+
+
+def _own_nodes(nodes) -> list:
+    """Noeuds du scope courant : on ne descend pas dans les scopes imbriqués
+    (le corps d'une fonction ne voit pas les noms de celui d'une autre), mais
+    on garde décorateurs, valeurs par défaut et bases de classes, évalués
+    dans le scope englobant."""
+    result, stack = [], list(nodes)
+    while stack:
+        node = stack.pop()
+        result.append(node)
+        if isinstance(node, _FUNCS):
+            stack.extend(node.decorator_list)
+            stack.extend(d for d in node.args.defaults if d is not None)
+            stack.extend(d for d in node.args.kw_defaults if d is not None)
+            continue
+        if isinstance(node, ast.ClassDef):
+            stack.extend(node.decorator_list)
+            stack.extend(node.bases)
+            stack.extend(key.value for key in node.keywords)
+            continue
+        if isinstance(node, ast.Lambda):
+            stack.extend(d for d in node.args.defaults if d is not None)
+            stack.extend(d for d in node.args.kw_defaults if d is not None)
+            continue
+        stack.extend(ast.iter_child_nodes(node))
+    return result
+
+
+def _bindings(nodes) -> set:
+    """Noms liés par ce scope : imports, affectations, defs, arguments…"""
+    names = set()
+    for node in _own_nodes(nodes):
+        if isinstance(node, _FUNCS):
+            names.add(node.name)
+            _add_args(names, node.args)
+        elif isinstance(node, ast.ClassDef):
+            names.add(node.name)
+        elif isinstance(node, ast.Lambda):
+            _add_args(names, node.args)
+        elif isinstance(node, ast.Import):
+            for alias in node.names:
+                names.add(alias.asname or alias.name.split(".")[0])
+        elif isinstance(node, ast.ImportFrom):
+            for alias in node.names:
+                if alias.name != "*":
+                    names.add(alias.asname or alias.name)
+        elif isinstance(node, ast.Name) \
+                and isinstance(node.ctx, (ast.Store, ast.Del)):
+            names.add(node.id)
+        elif isinstance(node, (ast.Global, ast.Nonlocal)):
+            names.update(node.names)
+        elif isinstance(node, ast.ExceptHandler) and node.name:
+            names.add(node.name)
+    return names
+
+
+def _undefined_names(source: str, label: str = "<source>") -> list:
+    """Noms utilisés comme base d'attribut mais liés nulle part dans le scope.
+
+    Repère exactement le défaut « NameError: name 'tk' is not defined » qui
+    n'apparaît qu'à l'ouverture d'un écran : un nom global manquant est
+    invisible à l'import, donc à tous les autres contrôles statiques.
+    """
+    tree = ast.parse(source)
+    # ``from x import *`` rend l'analyse statique impossible : fichier ignoré.
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom) \
+                and any(alias.name == "*" for alias in node.names):
+            return []
+    problems = set()
+
+    def visit(nodes, visible) -> None:
+        scope = visible | _bindings(nodes)
+        for node in _own_nodes(nodes):
+            if (isinstance(node, ast.Attribute)
+                    and isinstance(node.value, ast.Name)
+                    and node.value.id not in scope):
+                problems.add(label + ":" + str(node.lineno) + " nom non défini '"
+                             + node.value.id + "'")
+            elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef,
+                                   ast.ClassDef)):
+                visit(node.body, scope)
+            elif isinstance(node, ast.Lambda):
+                inner = set(scope)
+                _add_args(inner, node.args)
+                visit([node.body], inner)
+
+    visit(tree.body, BUILTINS)
+    return sorted(problems)
 
 
 def _top_level_names(tree: ast.Module) -> set:
@@ -358,6 +469,45 @@ class TestSessionEtEditeur(unittest.TestCase):
         self.assertTrue(calls, "main.py n'appelle pas LoginDialog.run")
         for call in calls:
             self.assertEqual(len(call.args), 2)
+
+
+class TestNomsDefinis(unittest.TestCase):
+    """Aucun écran ne doit planter sur un nom global manquant."""
+
+    def test_les_noms_utilises_sont_definis(self):
+        problems = []
+        for path in SOURCE_FILES:
+            with open(path, encoding="utf-8") as handle:
+                source = handle.read()
+            problems.extend(_undefined_names(
+                source, os.path.relpath(path, ROOT).replace(os.sep, "/")))
+        self.assertEqual(problems, [], "\n".join(problems))
+
+    def test_le_controleur_detecte_un_import_manquant(self):
+        """Garde-fou : le contrôleur repère bien le défaut d'origine."""
+        # import absent du fichier (cas tkinter dans statistics_view).
+        self.assertEqual(
+            _undefined_names("def ouvrir(self):\n    return tk.BOTH\n"),
+            ["<source>:2 nom non défini 'tk'"])
+        # import présent, mais dans une autre fonction : hors de portée.
+        self.assertEqual(
+            _undefined_names(
+                "def premier():\n"
+                "    from ltadmin.core.result import Result\n"
+                "    return Result.ok()\n"
+                "\n"
+                "def second():\n"
+                "    return Result.fail('x')\n"),
+            ["<source>:6 nom non défini 'Result'"])
+        # cas corrects : module, fonction, lambda, compréhension, global.
+        for correct in (
+                "import tkinter as tk\n\n\ndef a():\n    return tk.BOTH\n",
+                "def a():\n    import tkinter as tk\n    return tk.BOTH\n",
+                "def a():\n    return sorted(c.name for c in [])\n",
+                "import tkinter as tk\n\nf = lambda e: tk.X\n",
+                "import tkinter as tk\n\n\ndef a():\n"
+                "    import tkinter as tk\n    return tk.X\n"):
+            self.assertEqual(_undefined_names(correct), [], correct)
 
 
 if __name__ == "__main__":
