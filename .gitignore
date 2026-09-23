@@ -16,3 +16,7 @@ logs/
 
 # Local publish output
 publish/
+
+# Python
+__pycache__/
+*.pyc
