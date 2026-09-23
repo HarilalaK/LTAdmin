@@ -242,7 +242,7 @@ class ReferentielView(BaseView):
         ]
 
         def submit(values):
-            classe.libelle = values["Libellé *"]
+            classe.libelle = values["Libellé"]
             classe.effectif_max = values["Effectif maximum"]
             classe.code_filiere = values["Filière"] if values["Filière"] not in (
                 None, "(aucune)") else None
@@ -280,8 +280,8 @@ class ReferentielView(BaseView):
         ]
 
         def submit(values):
-            filiere.code_filiere = values["Code *"]
-            filiere.libelle = values["Libellé *"]
+            filiere.code_filiere = values["Code"]
+            filiere.libelle = values["Libellé"]
             filiere.diplome = values["Diplôme"]
             filiere.duree_ans = values["Durée (années)"]
             filiere.active = values["Active"]
@@ -304,8 +304,8 @@ class ReferentielView(BaseView):
         ]
 
         def submit(values):
-            niveau.code_niveau = values["Code *"]
-            niveau.libelle = values["Libellé *"]
+            niveau.code_niveau = values["Code"]
+            niveau.libelle = values["Libellé"]
             niveau.ordre_niv = values["Ordre"]
             return self.services.referentiel.save_niveau(niveau,
                                                          self.session.login)
@@ -329,7 +329,7 @@ class ReferentielView(BaseView):
         ]
 
         def submit(values):
-            salle.nom_salle = values["Nom *"]
+            salle.nom_salle = values["Nom"]
             salle.capacite = values["Capacité"]
             salle.nature_salle = values["Nature"]
             salle.disponible = values["Disponible"]
@@ -355,8 +355,8 @@ class ReferentielView(BaseView):
         ]
 
         def submit(values):
-            module.code_module = values["Code *"]
-            module.module_lib = values["Libellé *"]
+            module.code_module = values["Code"]
+            module.module_lib = values["Libellé"]
             module.code_filiere = values["Filière"] if values["Filière"] not in (
                 None, "(transversal)") else None
             return self.services.referentiel.save_module(module,
@@ -382,8 +382,8 @@ class ReferentielView(BaseView):
         ]
 
         def submit(values):
-            matiere.code_matiere = values["Code *"]
-            matiere.libelle = values["Libellé *"]
+            matiere.code_matiere = values["Code"]
+            matiere.libelle = values["Libellé"]
             matiere.code_module = values["Module"] if values["Module"] not in (
                 None, "(aucun)") else None
             matiere.ordre_mat = values["Ordre"]

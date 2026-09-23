@@ -86,8 +86,7 @@ class EnrollmentsView(BaseView):
                     "matricule": inscrit.matricule,
                     "nom_complet": inscrit.nom_complet,
                     "classe": inscrit.classe,
-                    "date_inscription": (inscrit.date_inscription.strftime("%d/%m/%Y")
-                                         if inscrit.date_inscription else ""),
+                    "date_inscription": inscrit.date_inscription,
                     "redoublant": inscrit.redoublant,
                     "statut": inscrit.statut,
                     "__entity__": inscrit,
@@ -128,12 +127,12 @@ class EnrollmentsView(BaseView):
         ]
 
         def submit(values):
-            index = etudiant_labels.index(values["Étudiant *"]) \
-                if values["Étudiant *"] in etudiant_labels else -1
+            index = etudiant_labels.index(values["Étudiant"]) \
+                if values["Étudiant"] in etudiant_labels else -1
             if index < 0:
                 from ltadmin.core.result import Result
                 return Result.fail("Sélectionnez un étudiant.", "VALIDATION")
-            classe_label = values["Classe *"] or ""
+            classe_label = values["Classe"] or ""
             id_classe = None
             for c in self._classes:
                 if classe_label == f"{c.libelle} (ID {c.id_classe})":
@@ -206,7 +205,7 @@ class EnrollmentsView(BaseView):
 
         def submit(values):
             try:
-                date_sortie = parse_date(values["Date de sortie *"])
+                date_sortie = parse_date(values["Date de sortie"])
             except ValueError as ex:
                 from ltadmin.core.result import Result
                 return Result.fail(str(ex), "VALIDATION")

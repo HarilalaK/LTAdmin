@@ -61,8 +61,7 @@ class StudentsView(BaseView):
                 "matricule": etudiant.matricule,
                 "nom_complet": etudiant.nom_complet,
                 "sexe": etudiant.sexe,
-                "date_naissance": (etudiant.date_naissance.strftime("%d/%m/%Y")
-                                   if etudiant.date_naissance else ""),
+                "date_naissance": etudiant.date_naissance,
                 "tel": etudiant.tel,
                 "email": etudiant.email,
                 "statut": etudiant.statut,

@@ -66,9 +66,9 @@ class UsersView(BaseView):
         user = Utilisateur()
 
         def submit(values):
-            user.code_utr = values["Identifiant *"]
-            user.nom_utr = values["Nom *"]
-            user.profil = values["Profil *"]
+            user.code_utr = values["Identifiant"]
+            user.nom_utr = values["Nom"]
+            user.profil = values["Profil"]
             user.actif = values["Actif"]
             mot_de_passe = values["Mot de passe (vide = inchangé)"]
             return self.services.admin.save_utilisateur(
@@ -85,8 +85,8 @@ class UsersView(BaseView):
         user = row["__entity__"]
 
         def submit(values):
-            user.nom_utr = values["Nom *"]
-            user.profil = values["Profil *"]
+            user.nom_utr = values["Nom"]
+            user.profil = values["Profil"]
             user.actif = values["Actif"]
             mot_de_passe = values["Mot de passe (vide = inchangé)"]
             return self.services.admin.save_utilisateur(
@@ -111,13 +111,13 @@ class UsersView(BaseView):
         ]
 
         def submit(values):
-            if values["Nouveau mot de passe *"] != values["Confirmation *"]:
+            if values["Nouveau mot de passe"] != values["Confirmation"]:
                 from ltadmin.core.result import Result
                 return Result.fail("La confirmation ne correspond pas au "
                                    "nouveau mot de passe.", "VALIDATION")
             return self.services.authentication.change_password(
-                user.code_utr, values["Ancien mot de passe *"],
-                values["Nouveau mot de passe *"])
+                user.code_utr, values["Ancien mot de passe"],
+                values["Nouveau mot de passe"])
 
         if run_entity_dialog(self, f"Mot de passe — {user.code_utr}", fields,
                              submit, "Modifier", two_columns=False):

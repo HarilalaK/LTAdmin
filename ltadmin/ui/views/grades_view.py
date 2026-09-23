@@ -196,9 +196,12 @@ class GradesView(BaseView):
         def submit(values):
             periode = PeriodeEval(
                 id_annee=None,  # le service rattache à l'année active
-                code_periode=values["Code période *"],
+                code_periode=values["Code période"],
                 libelle=values["Libellé"],
                 ponderation=values["Pondération"],
+                ordre_per=values["Ordre"],
+                date_debut=values["Date de début"],
+                date_fin=values["Date de fin"],
             )
             return self.services.evaluations.create_periode(
                 periode, self.session.login)
@@ -264,15 +267,15 @@ class GradesView(BaseView):
         ]
 
         def submit(values):
-            index = programme_labels.index(values["Programme (matière) *"]) \
-                if values["Programme (matière) *"] in programme_labels else -1
+            index = programme_labels.index(values["Programme (matière)"]) \
+                if values["Programme (matière)"] in programme_labels else -1
             if index < 0:
                 from ltadmin.core.result import Result
                 return Result.fail("Sélectionnez une matière.", "VALIDATION")
             evaluation = Evaluation(
                 id_periode=id_periode,
                 id_prog=programmes_classe[index].id_prog,
-                intitule=values["Intitulé *"],
+                intitule=values["Intitulé"],
                 nature=values["Nature"],
                 bareme=values["Barème"],
                 poids=values["Poids"],

@@ -176,8 +176,8 @@ class PaymentsView(BaseView):
         def submit(values):
             tarif = Tarif(
                 id_classe=classe.id_classe,
-                type_frais=values["Type de frais *"],
-                montant=Decimal(str(values["Montant *"] or 0)),
+                type_frais=values["Type de frais"],
+                montant=Decimal(str(values["Montant"] or 0)),
                 nb_tranches=values["Nombre de tranches (1-24)"] or 1,
                 obligatoire=values["Obligatoire"],
                 observation=values["Observation"],
@@ -211,7 +211,7 @@ class PaymentsView(BaseView):
         ]
 
         def submit(values):
-            index = labels.index(values["Inscription *"])
+            index = labels.index(values["Inscription"])
             return self.services.ecolage.generer_echeancier(
                 inscrits[index].id_inscription, tarif.id_tarif,
                 self.session.login)
@@ -231,8 +231,9 @@ class PaymentsView(BaseView):
         reste = echeance.reste
 
         from ltadmin.services.business.eco_service import MODES_PAIEMENT
+        montant_label = f"Montant (reste : {reste:,.0f})".replace(",", " ")
         fields = [
-            dict(label=f"Montant (reste : {reste:,.0f})".replace(",", " ") + " *",
+            dict(label=montant_label + " *",
                  kind="float", width=14, initial=float(reste),
                  required=True, row=0, column=0),
             dict(label="Mode de paiement *", kind="choice", width=18,
@@ -244,9 +245,9 @@ class PaymentsView(BaseView):
         ]
 
         def submit(values):
-            montant = Decimal(str(values[f"Montant (reste : {reste:,.0f})".replace(',', ' ') + " *"] or 0))
+            montant = Decimal(str(values[montant_label] or 0))
             return self.services.ecolage.encaisser(
-                echeance.id_echeance, montant, values["Mode de paiement *"],
+                echeance.id_echeance, montant, values["Mode de paiement"],
                 values["Référence (chèque, transaction…)"],
                 values["Observation"], self.session.login)
 
