@@ -8,6 +8,7 @@ from __future__ import annotations
 from typing import List, Optional
 
 from ltadmin.core.result import Result, ResultValue
+from ltadmin.data import error_helper
 from ltadmin.data.access_database import AccessDatabase
 from ltadmin.data.schema import Tables
 from ltadmin.models.dto import EvaluationDetail
