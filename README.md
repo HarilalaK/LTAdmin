@@ -1,91 +1,112 @@
-# LTAdmin — gestion scolaire Windows
+# LTAdmin — gestion scolaire desktop en Python
 
-Application desktop Windows WinForms (.NET 8) branchée directement sur la base Access existante `LTA_ADM.accdb`.
+Application **desktop Python (tkinter)** branchée directement sur la base Access existante
+`LTA_ADM.accdb` — **aucune migration, aucune recréation de table**. Portage complet de
+l'application WinForms .NET 8 d'origine (conservée dans `src/LTAdmin/` comme référence).
 
 ## Ce qui est livré
 
-- architecture en couches documentée (`docs/ARCHITECTURE.md`) : modèles, dépôts typés, services métier,
-  statistiques, rapports, validation, authentification, journalisation, écrans ;
+- architecture en couches (`ltadmin/`) : modèles, dépôts typés, services métier,
+  statistiques, rapports, validation, authentification, habilitations, journalisation, écrans ;
 - connexion par la table `UTILISATEUR` (`CODE_UTR`, `MOT_PASSE`, `PROFIL`, `ACTIF`) avec habilitations
-  par groupe (ADMIN, SCOLARITE, FINANCE) et journal des connexions ;
-- tableau de bord avec indicateurs réels : année active, inscrits, recouvrement, échéances échues, alertes d’absence ;
-- écrans métier adossés aux services : étudiants, inscriptions, saisie des notes, caisse/paiements
-  (échéanciers, encaissements, reçus, remises) ;
+  par groupe (ADMIN, Direction, Scolarité, Compta, Enseignant) et journal des connexions ;
+- tableau de bord avec indicateurs réels : année active, inscrits, recouvrement, échéances échues, alertes d'absence ;
+- écrans métier adossés aux services : étudiants, inscriptions, évaluations/notes, bulletins,
+  examens/résultats, caisse (échéanciers, encaissements, reçus, remises), EDT/séances/absences,
+  formateurs/programmes/paie ;
 - écran **États** pour les 8 requêtes Access livrées (listes, moyennes, bulletins, écolage, EDT, absences),
-  avec filtres classe/période et export CSV ;
-- procédures métier réimplémentées en C# : bulletins, résultats finaux, échéanciers, statuts, paie,
-  conflits d’emploi du temps, matricules et reçus uniques ;
+  avec filtres classe/période et export CSV (`;`, UTF-8 BOM) ;
+- procédures métier réimplémentées : bulletins (rangs « competition », min/max/rang par matière),
+  résultats finaux pondérés CC 40 % / examen 60 %, échéanciers, statuts DU/PARTIEL/SOLDE,
+  paie = heures × taux, conflits d'emploi du temps (salle/formateur), matricules et reçus uniques ;
 - maintenance générique de **toutes les tables Access** (réservée aux profils habilités) et édition
   dynamique depuis les métadonnées ;
-- sauvegardes horodatées dans `Sauvegardes\` (inventaire, restauration explicite, purge) ;
-- gestion des erreurs de contraintes (doublons, liaisons, verrous) et détection automatique d’ACE 16 puis ACE 12 ;
-- aucune migration : l’application travaille sur les tables et les règles déjà présentes dans `LTA_ADM.accdb`,
-  sans fausses données.
+- sauvegardes horodatées (inventaire, restauration explicite avec copie de sécurité, purge) ;
+- gestion des erreurs de contraintes (doublons, liaisons, verrous) via les codes
+  `VALIDATION`, `GESTION`, `INTROUVABLE`, `DOUBLON`, `LIAISON`, `VERROUILLE`… ;
+- **suite de tests d'intégration** (81 tests) exécutable sans Access grâce à un moteur SQLite
+  injectable qui reproduit les règles SQL utilisées (paramètres positionnels `?`, identifiants
+  `[crochets]`, `TOP n`, `@@IDENTITY`, `Nz`→`IIf`/`IFNULL`, `UCASE`…).
 
-La liste métier reprend la base décrite dans `LISEZ_MOI.md` : étudiants, inscriptions, formateurs, programmes, évaluations, notes, emplois du temps, absences, examens, bulletins, écolage et journal.
+## Pré-requis
 
-## Pré-requis Windows
+1. **Python 3.11+** (3.12+ recommandé) avec **tkinter** (inclus dans l'installateur Windows
+   officiel — cocher *tcl/tk and IDLE*).
+2. `pip install pyodbc`
+3. **Microsoft Access Database Engine Redistributable** (ACE 16 ou ACE 12), même architecture
+   (32/64 bits) que Python — généralement déjà installé avec Microsoft Access.
+4. Droits d'écriture dans le dossier contenant la base (sauvegardes, journal).
 
-1. Windows 10/11 64 bits (ou Windows 10/11 32 bits avec un build x86 adapté).
-2. .NET 8 SDK pour compiler.
-3. **Microsoft Access Database Engine 2016 Redistributable** dans la même architecture que LTAdmin (ACE 16 ou ACE 12). Il est généralement déjà installé avec Microsoft Access.
-4. Droits d’écriture dans le dossier contenant la base pour créer les sauvegardes.
-
-> Si le fournisseur ACE est en 32 bits, publier l’application en x86 depuis Visual Studio. Avec Office/ACE 64 bits, publier en x64. Le projet reste AnyCPU par défaut pour faciliter le développement.
-
-## Compiler et lancer
-
-Depuis PowerShell à la racine du dépôt :
+## Lancer l'application
 
 ```powershell
-dotnet restore .\LTAdmin.sln
-dotnet build .\LTAdmin.sln -c Release
-dotnet run --project .\src\LTAdmin\LTAdmin.csproj
+pip install pyodbc
+python main.py                                # la base est cherchée automatiquement
+python main.py D:\chemin\LTA_ADM.accdb        # chemin explicite (argument positionnel)
 ```
 
-`LTA_ADM.accdb` est copié automatiquement dans le dossier de sortie. Pour choisir un autre fichier sans modifier le projet :
+Ordre de recherche de la base : argument CLI → variable d'environnement `LTADMIN_DB` → dossier
+de l'exécutable → dossier courant → remontée jusqu'à 5 niveaux parents.
+
+Comptes livrés avec les données initiales : `ADMIN`/`admin` (Administrateur),
+`SCOL`/`scol` (Scolarité), `CAISSE`/`caisse` (Comptabilité). La connexion est insensible à la casse
+(sémantique Access).
+
+## Lancer les tests (sans Access ni tkinter)
 
 ```powershell
-$env:LTADMIN_DB = 'D:\Donnees\LTA_ADM.accdb'
-dotnet run --project .\src\LTAdmin\LTAdmin.csproj
+python -m unittest discover -s tests -t . -v
 ```
 
-Ou démarrer `LTAdmin.exe D:\Donnees\LTA_ADM.accdb`.
+Les tests reconstruisent en SQLite les 33 tables + les 8 requêtes depuis
+`analysis/extraction_complete.json` (données initiales réelles), injectent ce moteur dans
+l'application et valident : infrastructure/habilitations, étudiants/inscriptions,
+évaluations/notes/bulletins, examens/résultats, écolage/paie/EDT, statistiques/états/CSV,
+administration/sauvegardes/maintenance des tables.
 
-## Publier une version autonome
+## Règles Access respectées
 
-```powershell
-dotnet publish .\src\LTAdmin\LTAdmin.csproj -c Release -r win-x64 --self-contained true -o .\publish\win-x64
+- SQL 100 % paramétré positionnel (`?`), jamais de concaténation de valeurs ;
+- identifiants entre crochets `[TABLE].[CHAMP]` ;
+- jointures parenthésées à la Jet `FROM ((A INNER JOIN B) INNER JOIN C)` ;
+- `SELECT TOP n` pour les listes tronquées ;
+- `SELECT @@IDENTITY` sur le même curseur après insertion (autonumbers) ;
+- pas de `Nz()` côté Python : équivalents `IIf(...)` dans les requêtes recréées, `COALESCE`-like
+  géré par le code.
+
+## Structure du dépôt
+
+```
+main.py                 point d'entrée (localisation base, login, fenêtre principale)
+ltadmin/
+  core/                 résultats typés, erreurs, journalisation
+  data/                 moteur pyodbc + AccessDatabase (transactions, @@IDENTITY)
+  models/               entités (dataclasses) et DTO
+  repositories/         dépôts typés (étudiants, notes, écolage, EDT, paie…)
+  services/             services métier, auth, habilitations, stats, rapports, sauvegardes
+  ui/                   thème, widgets, dialogues, vues (16 écrans + éditeur générique)
+tests/                  moteur SQLite de test + 6 suites (81 tests)
+analysis/               requêtes Access, schéma, extraction complète des données
+docs/ARCHITECTURE.md    architecture (écrite pour la version C#, les couches sont identiques)
+src/LTAdmin/            code C# .NET 8 d'origine (référence du portage)
+LTA_ADM.accdb           base de données — source de vérité, inchangée
 ```
 
-Distribuer le contenu de `publish\win-x64` avec `LTA_ADM.accdb`. Le moteur ACE reste un prérequis Windows séparé.
+## Habilitations par profil
 
-## Compte initial de la base fournie
+| Profil | Accès |
+|---|---|
+| Administrateur | tout, y compris Administration et Tables |
+| Direction | tout sauf Administration / Tables |
+| Scolarité | tout sauf Écolage / Paie / Administration / Tables |
+| Comptabilité | Écolage, Paie, Statistiques, Rapports |
+| Enseignant | Notes, Bulletins, Examens, EDT, Absences, Formateurs |
 
-La base de démonstration contient le compte indiqué par la documentation existante :
+Profil inconnu → tableau de bord + états. Le menu n'affiche que les modules autorisés.
 
-- identifiant : `ADMIN`
-- mot de passe : `admin`
+## Sauvegardes
 
-Changez ce mot de passe dans le menu **Administration → Utilisateurs** avant une utilisation réelle.
-
-## Organisation technique
-
-L’architecture complète est documentée dans [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) :
-couches (`Core`, `Data`, `Models`, `Repositories`, `Services`, `UI`), catalogue des services,
-règles de compatibilité Access et marche à suivre pour ajouter un module.
-
-- `Core/Result.cs` : résultats d’opérations (`Result`/`Result<T>`) et codes d’erreur stables ;
-- `Data/` : connexion ACE (`AccessDatabase`, transactions, `@@IDENTITY`), traduction des erreurs
-  de contraintes (`OleDbExceptionHelper`), lecture défensive (`DataRowMapper`), constantes du schéma ;
-- `Models/Entities/` : les 33 entités mappées 1:1 sur la base ; `Models/Dto/` : lignes jointes ;
-- `Repositories/` : 9 dépôts typés (requêtes paramétrées, jointures, `Map*`) ;
-- `Services/Business/` : `StudentService`, `EnrollmentService`, `EvaluationService`, `GradeService`,
-  `ReportCardService`, `ExamService`, `TimetableService`, `AttendanceService`, `PaymentService`,
-  `PayrollService` (+ `StatisticsService`, `ReportService`, `BackupService`, authentification,
-  paramètres, validation, journalisation) assemblés par `AppComposition` ;
-- `UI/` : shell (`LoginForm`, `MainForm`, `DashboardControl`, `ReportsForm`), vues métier
-  (`Views/` : étudiants, inscriptions, caisse, saisie des notes) et maintenance générique
-  des tables (`TableManagerControl`, `RecordEditorForm`) réservée aux profils habilités.
-
-Le fonctionnement hors Windows n’est pas attendu : `System.Data.OleDb` s’appuie sur le fournisseur ACE installé sur la machine Windows.
+Sauvegardes horodatées dans le sous-dossier `Sauvegardes\` à côté de la base :
+`LTA_ADM_AAAAMMJJ_HHMMSS.accdb`.
+La restauration copie d'abord la base courante en `LTA_ADM_avant_restauration_*.accdb`,
+puis écrase ; la purge exige un nombre conservé ≥ 1.
