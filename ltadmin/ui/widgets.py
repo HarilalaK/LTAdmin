@@ -1,4 +1,9 @@
-"""Composants UI partagés : tableaux, formulaires, boîtes de dialogue."""
+"""Composants UI partagés : tableaux, formulaires, boîtes de dialogue.
+
+Les champs date utilisent le sélecteur DatePicker (JJ/MM/AAAA comme dans
+LTA_ADM.accdb) — aucune saisie libre. Les messages de validation nomment
+toujours le champ fautif et sont affichés en ligne sous le champ.
+"""
 
 from __future__ import annotations
 
@@ -8,7 +13,21 @@ from tkinter import filedialog, messagebox, ttk
 from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple
 
 from ltadmin.core.result import Result
+from ltadmin.ui.date_picker import DatePicker
+from ltadmin.ui.date_picker import parse_date as _parse_date_like
 from ltadmin.ui.theme import Theme
+
+__all__ = [
+    "show_result", "show_info", "show_error", "confirm", "DataTable",
+    "Toolbar", "FormField", "parse_date", "ask_save_csv", "DatePicker",
+]
+
+
+def parse_date(value):
+    """Analyse une date saisie ou lue : None → None ; date/datetime →
+    datetime ; texte JJ/MM/AAAA (ou ISO) → datetime. Lève ValueError si le
+    texte est invalide. Source unique : ltadmin.ui.date_picker.parse_date."""
+    return _parse_date_like(value)
 
 
 # ---------------------------------------------------------------------------
@@ -24,8 +43,9 @@ def show_result(result: Result, parent: Optional[tk.Widget] = None) -> bool:
     if result.errors:
         detail = "\n\n" + "\n".join(f"• {e}" for e in result.errors[:8])
         if len(result.errors) > 8:
-            detail += f"\n• … ({len(result.errors) - 8} autre(s))"  # noqa: E501
-    messagebox.showerror("Opération impossible", result.message + detail, parent=parent)
+            detail += f"\n• … ({len(result.errors) - 8} autre(s))"
+    messagebox.showerror("Opération impossible", result.message + detail,
+                         parent=parent)
     return False
 
 
@@ -53,8 +73,7 @@ class DataTable(ttk.Frame):
                  on_delete: Optional[Callable[[Dict[str, Any]], None]] = None,
                  on_refresh: Optional[Callable[[], None]] = None,
                  **kwargs):
-        """
-        columns : liste de (clé, en-tête, largeur_px, ancrage) — ancrage 'w' ou
+        """columns : liste de (clé, en-tête, largeur_px, ancrage) — ancrage 'w' ou
         'center' ; largeur négative = colonne masquée (identifiants).
         """
         super().__init__(parent, **kwargs)
@@ -75,7 +94,8 @@ class DataTable(ttk.Frame):
             stretch = width >= 180
             self.tree.column(key, width=abs(width), anchor=anchor or "w",
                              stretch=stretch)
-        scrollbar = ttk.Scrollbar(container, orient=tk.VERTICAL, command=self.tree.yview)
+        scrollbar = ttk.Scrollbar(container, orient=tk.VERTICAL,
+                                  command=self.tree.yview)
         self.tree.configure(yscrollcommand=scrollbar.set)
         self.tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
@@ -111,8 +131,8 @@ class DataTable(ttk.Frame):
         self._rows = rows
         self.tree.delete(*self.tree.get_children())
         for index, row in enumerate(rows):
-            values = [self._cell(row.get(key)) for key, _, width, _ in self._columns
-                      if width > 0]
+            values = [self._cell(row.get(key)) for key, _, width, _ in
+                      self._columns if width > 0]
             tag = "alt" if index % 2 else ""
             self.tree.insert("", tk.END, values=values, tags=(tag,))
         self.tree.tag_configure("alt", background=Theme.ROW_ALT)
@@ -142,12 +162,21 @@ class DataTable(ttk.Frame):
         def sort_value(row):
             raw = row.get(key)
             if raw is None:
-                return (1, "")
+                return (3, 0.0, "")
+            if isinstance(raw, bool):
+                return (0, float(raw), "")
             if isinstance(raw, (int, float)):
-                return (0, raw)
+                return (0, float(raw), "")
             if isinstance(raw, _dt.datetime):
-                return (0, raw)
-            return (0, str(raw).lower())
+                return (1, raw.timestamp(), "")
+            text = str(raw)
+            try:
+                parsed = parse_date(text)
+            except ValueError:
+                parsed = None
+            if parsed is not None:
+                return (1, parsed.timestamp(), "")
+            return (2, 0.0, text.lower())
 
         self._rows.sort(key=sort_value, reverse=not ascending)
         self.set_rows(self._rows)
@@ -159,7 +188,13 @@ class DataTable(ttk.Frame):
         if isinstance(value, bool):
             return "Oui" if value else "Non"
         if isinstance(value, _dt.datetime):
+            # JJ/MM/AAAA comme Access ; heure uniquement si elle est renseignée.
+            if (value.hour, value.minute, value.second, value.microsecond) \
+                    == (0, 0, 0, 0):
+                return value.strftime("%d/%m/%Y")
             return value.strftime("%d/%m/%Y %H:%M")
+        if isinstance(value, _dt.date):
+            return value.strftime("%d/%m/%Y")
         if hasattr(value, "quantize"):  # Decimal
             return f"{value:,.2f}".replace(",", " ").replace(".", ",")
         return str(value)
@@ -209,8 +244,31 @@ class Toolbar(ttk.Frame):
 # Champs de formulaire
 # ---------------------------------------------------------------------------
 
+def _normalize_label(label: str) -> Tuple[str, bool]:
+    """« Nom * » → (« Nom », True) : la clé du champ perd l'astérisque
+    obligatoire, qui reste affiché dans le libellé."""
+    raw = (label or "").strip()
+    if raw.endswith("*"):
+        return raw[:-1].rstrip(), True
+    return raw, False
+
+
+def _to_number(raw: str, integer: bool) -> Optional[Any]:
+    """« 200 000,50 » / « 200000.50 » → nombre ; None si illisible.
+    Espaces (normaux, finesse, insécables) et virgule décimale acceptés."""
+    cleaned = (raw.replace("\u202f", "").replace("\u00a0", "")
+               .replace(" ", "").replace(",", "."))
+    if not cleaned:
+        return None
+    try:
+        return int(cleaned) if integer else float(cleaned)
+    except ValueError:
+        return None
+
+
 class FormField:
-    """Champ label + widget, avec valeur typée et verrouillage."""
+    """Champ label + widget, avec valeur typée, validation en ligne et
+    verrouillage. Les dates passent par le sélecteur DatePicker."""
 
     def __init__(self, parent, label: str, kind: str = "text", width: int = 30,
                  values: Optional[List[str]] = None, required: bool = False,
@@ -219,49 +277,55 @@ class FormField:
                  column: int = 0, sticky: str = "w", multiline: bool = False):
         self.kind = kind
         self.values = values or []
-        self.required = required
+        base, starred = _normalize_label(label)
+        self.label_text = base
+        self.required = bool(required or starred)
         self.max_length = max_length
 
-        label_text = label + (" *" if required else "")
-        self.label_text = label
-        ttk.Label(parent, text=label_text).grid(
-            row=row, column=column * 2, sticky="ne", padx=(0, 8), pady=4)
+        label_display = base + (" *" if self.required else "")
+        self.label_widget = ttk.Label(parent, text=label_display)
+        self.label_widget.grid(row=row, column=column * 2, sticky="ne",
+                               padx=(0, 8), pady=4)
         self.frame = ttk.Frame(parent)
         self.frame.grid(row=row, column=column * 2 + 1, sticky=sticky + "ew",
                         pady=4)
+        self._error_label = ttk.Label(self.frame, text="", style="Error.TLabel",
+                                      wraplength=280, justify="left")
 
         if kind == "bool":
             self.variable = tk.BooleanVar(value=bool(initial))
             self.widget: tk.Widget = ttk.Checkbutton(
-                self.frame, variable=self.variable, state="disabled" if readonly else "normal")
+                self.frame, variable=self.variable,
+                state="disabled" if readonly else "normal")
             self.widget.pack(anchor="w")
+            self._focus_widget = self.widget
         elif kind == "choice":
-            self.variable = tk.StringVar(value=initial if initial is not None else "")
+            self.variable = tk.StringVar(
+                value=initial if initial is not None else "")
             self.widget = ttk.Combobox(
                 self.frame, textvariable=self.variable, values=self.values,
                 width=width, state="disabled" if readonly else "readonly")
             self.widget.pack(anchor="w")
+            self._focus_widget = self.widget
         elif kind == "date":
-            # Date + case à cocher « renseignée » (équivalent ShowCheckBox).
-            self.variable = tk.StringVar(
-                value=initial.strftime("%d/%m/%Y") if isinstance(initial, _dt.datetime)
-                else (initial or ""))
-            self.checkbox = tk.BooleanVar(value=initial is not None)
-            self.widget = ttk.Frame(self.frame)
-            entry = ttk.Entry(self.widget, textvariable=self.variable, width=14)
-            entry.pack(side=tk.LEFT)
-            ttk.Checkbutton(self.widget, text="", variable=self.checkbox).pack(
-                side=tk.LEFT, padx=(6, 0))
-            self.widget.pack(anchor="w")
+            # Sélecteur calendrier (JJ/MM/AAAA) — pas de champ texte libre.
+            self.picker = DatePicker(self.frame, initial=initial,
+                                     required=self.required,
+                                     readonly=readonly)
+            self.picker.pack(anchor="w")
+            self.widget = self.picker
+            self._focus_widget = self.picker
         elif kind == "memo":
             self.variable = tk.StringVar(
                 value=initial if initial is not None else "")
-            self.widget = tk.Text(self.frame, width=width, height=4, wrap=tk.WORD)
+            self.widget = tk.Text(self.frame, width=width, height=4,
+                                  wrap=tk.WORD)
             if initial is not None:
                 self.widget.insert("1.0", str(initial))
             self.widget.pack(anchor="w")
             if readonly:
                 self.widget.configure(state="disabled")
+            self._focus_widget = self.widget
         else:  # text / int / float
             show = "*" if secret else ""
             self.variable = tk.StringVar(
@@ -271,6 +335,7 @@ class FormField:
             self.widget.pack(anchor="w")
             if readonly:
                 self.widget.configure(state="disabled")
+            self._focus_widget = self.widget
 
     @property
     def value(self) -> Any:
@@ -279,30 +344,24 @@ class FormField:
         if self.kind == "choice":
             return self.variable.get() or None
         if self.kind == "date":
-            if not getattr(self, "checkbox", tk.BooleanVar(value=False)).get():
-                return None
-            return self.variable.get().strip() or None
+            return self.picker.get_date()
         if self.kind == "memo":
             return self.widget.get("1.0", "end").strip() or None
         raw = self.variable.get().strip()
         if raw == "":
             return None
         if self.kind == "int":
-            try:
-                return int(raw.replace(" ", "").replace(",", "."))
-            except ValueError:
-                return None
+            return _to_number(raw, integer=True)
         if self.kind in ("float", "decimal"):
-            try:
-                return float(raw.replace(",", "."))
-            except ValueError:
-                return None
+            return _to_number(raw, integer=False)
         return raw
 
     @value.setter
     def value(self, new_value: Any) -> None:
         if self.kind == "bool":
             self.variable.set(bool(new_value))
+        elif self.kind == "date":
+            self.picker.set_date(new_value)
         elif self.kind == "memo":
             self.widget.delete("1.0", "end")
             if new_value is not None:
@@ -311,38 +370,63 @@ class FormField:
             self.variable.set("" if new_value is None else str(new_value))
 
     def validate(self) -> Optional[str]:
-        """Contrôle local : requis, formats, longueur (les règles métier sont
-        dans les validateurs des services)."""
-        value = self.value
-        if self.required and (value is None or value == "" or value is False):
-            return "Champ obligatoire : renseignez la valeur."
-        if self.kind == "date" and isinstance(value, str):
-            try:
-                _dt.datetime.strptime(value, "%d/%m/%Y")
-            except ValueError:
-                return "Date invalide : format attendu JJ/MM/AAAA."
-        if self.kind == "int" and value is not None and not isinstance(value, int):
-            return "Nombre entier attendu."
-        if self.kind in ("float", "decimal") and value is not None \
-                and not isinstance(value, float):
-            return "Nombre attendu (la virgule est acceptée)."
-        if self.max_length and isinstance(value, str) and len(value) > self.max_length:
-            return f"{self.max_length} caractères maximum."
+        """Contrôle local : requis, formats, longueur. Retourne un message
+        nommant le champ, ou None si la saisie est correcte."""
+        name = f"« {self.label_text} »"
+        if self.kind == "bool":
+            return None  # Non est une valeur valide, jamais « manquante ».
+        if self.kind == "date":
+            if self.picker.get_date() is None and self.required:
+                return (f"{name} : champ obligatoire — sélectionnez une date "
+                        "avec le calendrier (JJ/MM/AAAA).")
+            return None
+        if self.kind == "choice":
+            if self.required and not (self.variable.get() or "").strip():
+                return (f"{name} : champ obligatoire — sélectionnez une valeur "
+                        "dans la liste.")
+            return None
+        if self.kind == "memo":
+            if self.required and not self.widget.get("1.0", "end").strip():
+                return f"{name} : champ obligatoire — renseignez la valeur."
+            return None
+        raw = self.variable.get().strip()
+        if raw == "":
+            if self.required:
+                return f"{name} : champ obligatoire — renseignez la valeur."
+            return None
+        if self.kind == "int" and _to_number(raw, integer=True) is None:
+            return f"{name} : nombre entier attendu (ex. 120)."
+        if self.kind in ("float", "decimal") \
+                and _to_number(raw, integer=False) is None:
+            return (f"{name} : nombre attendu — la virgule et l’espace sont "
+                    "acceptés (ex. 200 000,50).")
+        if self.max_length and len(raw) > self.max_length:
+            return f"{name} : {self.max_length} caractères maximum."
         return None
 
+    def mark_error(self, message: Optional[str] = None) -> None:
+        """Affiche (ou efface) le message d'erreur sous le champ."""
+        if message:
+            self._error_label.configure(text=message)
+            self.label_widget.configure(foreground=Theme.DANGER)
+            if not self._error_label.winfo_ismapped():
+                self._error_label.pack(anchor="w", fill=tk.X)
+        else:
+            self._error_label.configure(text="")
+            self.label_widget.configure(foreground=Theme.TEXT_DARK)
+            if self._error_label.winfo_ismapped():
+                self._error_label.pack_forget()
+        if isinstance(self.widget, DatePicker):
+            self.widget.mark_error(bool(message))
 
-def parse_date(text: Optional[str]) -> Optional[_dt.datetime]:
-    """Analyse JJ/MM/AAAA (ou AAAA-MM-JJ) en datetime ; None si vide/invalide."""
-    if not text or not str(text).strip():
-        return None
-    raw = str(text).strip()
-    for fmt in ("%d/%m/%Y", "%d/%m/%Y %H:%M", "%d/%m/%Y %H:%M:%S",
-                "%Y-%m-%d", "%Y-%m-%d %H:%M:%S"):
-        try:
-            return _dt.datetime.strptime(raw, fmt)
-        except ValueError:
-            continue
-    raise ValueError(f"Date invalide : {raw} (format attendu JJ/MM/AAAA).")
+    def clear_error(self) -> None:
+        self.mark_error(None)
+
+    def focus_target(self) -> None:
+        """Place le curseur sur le premier champ utile."""
+        self._focus_widget.focus_set()
+        if isinstance(self.widget, DatePicker):
+            self.widget.focus_target()
 
 
 def ask_save_csv(default_name: str, parent=None) -> Optional[str]:

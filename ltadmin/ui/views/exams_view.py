@@ -230,7 +230,7 @@ class ExamsView(BaseView):
             from ltadmin.ui.widgets import parse_date
             try:
                 session = SessionExam(
-                    libelle=values["Libellé *"],
+                    libelle=values["Libellé"],
                     nature=values["Nature"],
                     date_debut=parse_date(values["Date de début"]),
                     date_fin=parse_date(values["Date de fin"]),
@@ -299,13 +299,13 @@ class ExamsView(BaseView):
         def submit(values):
             from ltadmin.core.result import Result
             from ltadmin.ui.widgets import parse_date
-            classe_label = values["Classe *"] or ""
+            classe_label = values["Classe"] or ""
             id_classe = None
             for classe in classes:
                 if classe_label == f"{classe.libelle} (ID {classe.id_classe})":
                     id_classe = classe.id_classe
                     break
-            matiere_label = values["Matière *"] or ""
+            matiere_label = values["Matière"] or ""
             code_matiere = None
             for matiere in matieres:
                 if matiere_label == f"{matiere.libelle or matiere.code_matiere} ({matiere.code_matiere})":

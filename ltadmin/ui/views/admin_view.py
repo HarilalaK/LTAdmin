@@ -116,7 +116,9 @@ class AdminView(BaseView):
                  ("Site web", "site_web"), ("Directeur", "directeur")]
         for index, (label, attribute) in enumerate(specs):
             row, column = index // 2, index % 2
-            ttk.Label(frame, text=label + (" *" if "*" in label else ""),
+            base = label.rstrip(" *")
+            display = base + (" *" if label.endswith("*") else "")
+            ttk.Label(frame, text=display,
                       style="Card.TLabel").grid(row=row, column=column * 2,
                                                 sticky="w", padx=(0, 8), pady=4)
             variable = tk.StringVar(value=getattr(etablissement, attribute)
@@ -124,7 +126,7 @@ class AdminView(BaseView):
             ttk.Entry(frame, textvariable=variable, width=28).grid(
                 row=row, column=column * 2 + 1, sticky="w", padx=(0, 24),
                 pady=4)
-            self._etab_fields_vars[attribute] = (variable, label.rstrip(" *"))
+            self._etab_fields_vars[attribute] = (variable, base)
         ttk.Button(frame, text="Enregistrer l’établissement",
                    style="Accent.TButton",
                    command=self.save_etablissement).grid(row=4 + 1, column=0,
@@ -177,7 +179,7 @@ class AdminView(BaseView):
 
         def submit(values):
             return self.services.parametres.set_value(
-                cle, values[f"Valeur de {cle} *"], self.session.login)
+                cle, values[f"Valeur de {cle}"], self.session.login)
 
         if run_entity_dialog(self, f"Paramètre {cle}", fields, submit,
                              "Enregistrer", two_columns=False):
@@ -188,8 +190,19 @@ class AdminView(BaseView):
 
     def save_etablissement(self) -> None:
         etablissement = Etablissement()
-        for attribute, (variable, _) in self._etab_fields_vars.items():
-            setattr(etablissement, attribute, variable.get().strip() or None)
+        missing = []
+        for attribute, (variable, label) in self._etab_fields_vars.items():
+            value = variable.get().strip() or None
+            setattr(etablissement, attribute, value)
+            if attribute in ("code_etab", "nom_etab") and not value:
+                missing.append(label)
+        if missing:
+            from ltadmin.ui.widgets import show_error
+            show_error("Champ(s) obligatoire(s) : "
+                       + ", ".join(f"« {name} »" for name in missing)
+                       + " — renseignez la valeur.",
+                       "Saisie incomplète", parent=self)
+            return
         if show_result(self.services.admin.save_etablissement(
                 etablissement, self.session.login), parent=self):
             self.refresh()
@@ -214,7 +227,7 @@ class AdminView(BaseView):
         def submit(values):
             from ltadmin.core.result import Result
             from ltadmin.ui.widgets import parse_date
-            annee = AnneeScolaire(libelle=values["Libellé *"],
+            annee = AnneeScolaire(libelle=values["Libellé"],
                                   active=values["Active"])
             try:
                 annee.date_debut = parse_date(values["Date de début"])
@@ -237,7 +250,7 @@ class AdminView(BaseView):
         def submit(values):
             from ltadmin.core.result import Result
             from ltadmin.ui.widgets import parse_date
-            annee.libelle = values["Libellé *"]
+            annee.libelle = values["Libellé"]
             annee.active = values["Active"]
             try:
                 annee.date_debut = parse_date(values["Date de début"])

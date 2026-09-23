@@ -181,12 +181,12 @@ class ScheduleView(BaseView):
 
         def submit(values):
             from ltadmin.core.result import Result
-            index = programme_labels.index(values["Programme (classe × matière) *"]) \
-                if values["Programme (classe × matière) *"] in programme_labels else -1
+            index = programme_labels.index(values["Programme (classe × matière)"]) \
+                if values["Programme (classe × matière)"] in programme_labels else -1
             if index < 0:
                 return Result.fail("Sélectionnez un programme.", "VALIDATION")
-            creneau_index = creneau_labels.index(values["Créneau *"]) \
-                if values["Créneau *"] in creneau_labels else -1
+            creneau_index = creneau_labels.index(values["Créneau"]) \
+                if values["Créneau"] in creneau_labels else -1
             if creneau_index < 0:
                 return Result.fail("Sélectionnez un créneau.", "VALIDATION")
             id_salle = None
@@ -204,7 +204,7 @@ class ScheduleView(BaseView):
             slot = EmploiDuTemps(
                 id_prog=programmes[index].id_prog,
                 id_creneau=creneaux[creneau_index].id_creneau,
-                jour=values["Jour *"],
+                jour=values["Jour"],
                 id_salle=id_salle,
                 date_debut=date_debut,
                 date_fin=date_fin,
@@ -232,7 +232,7 @@ class ScheduleView(BaseView):
 
         def submit(values):
             from ltadmin.core.result import Result
-            creneau_label = values["Créneau *"] or ""
+            creneau_label = values["Créneau"] or ""
             id_creneau = base.id_creneau
             creneaux = self.services.schedule.list_creneaux()
             for creneau in creneaux:
@@ -245,7 +245,7 @@ class ScheduleView(BaseView):
                 base.date_fin = parse_date(values["au"])
             except ValueError as ex:
                 return Result.fail(str(ex), "VALIDATION")
-            base.jour = values["Jour *"]
+            base.jour = values["Jour"]
             base.actif = values["Créneau actif"]
             return self.services.schedule.update_slot(base,
                                                       self.session.login)
@@ -296,12 +296,12 @@ class ScheduleView(BaseView):
         def submit(values):
             from ltadmin.core.result import Result
             from ltadmin.ui.widgets import parse_date
-            index = slot_labels.index(values["Créneau d’EDT *"]) \
-                if values["Créneau d’EDT *"] in slot_labels else -1
+            index = slot_labels.index(values["Créneau d’EDT"]) \
+                if values["Créneau d’EDT"] in slot_labels else -1
             if index < 0:
                 return Result.fail("Sélectionnez un créneau d’EDT.", "VALIDATION")
             try:
-                date_seance = parse_date(values["Date de séance *"])
+                date_seance = parse_date(values["Date de séance"])
             except ValueError as ex:
                 return Result.fail(str(ex), "VALIDATION")
             seance = Seance(
@@ -351,15 +351,15 @@ class ScheduleView(BaseView):
 
         def submit(values):
             from ltadmin.core.result import Result
-            index = inscrit_labels.index(values["Étudiant *"]) \
-                if values["Étudiant *"] in inscrit_labels else -1
+            index = inscrit_labels.index(values["Étudiant"]) \
+                if values["Étudiant"] in inscrit_labels else -1
             if index < 0:
                 return Result.fail("Sélectionnez un étudiant.", "VALIDATION")
             absence = Absence(
                 id_seance=seance.id_seance,
                 id_inscription=inscrits[index].id_inscription,
                 nature=values["Nature"],
-                nb_heures=values["Nombre d’heures *"],
+                nb_heures=values["Nombre d’heures"],
                 justifiee=values["Justifiée"],
                 motif=values["Motif"],
             )

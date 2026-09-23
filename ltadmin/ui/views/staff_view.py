@@ -330,12 +330,12 @@ class StaffView(BaseView):
             from ltadmin.services.validation.validation import StaffValidator
             id_classe = None
             for classe in classes:
-                if values["Classe *"] == f"{classe.libelle} (ID {classe.id_classe})":
+                if values["Classe"] == f"{classe.libelle} (ID {classe.id_classe})":
                     id_classe = classe.id_classe
                     break
             code_matiere = None
             for matiere in matieres:
-                if values["Matière *"] == f"{matiere.libelle or matiere.code_matiere} ({matiere.code_matiere})":
+                if values["Matière"] == f"{matiere.libelle or matiere.code_matiere} ({matiere.code_matiere})":
                     code_matiere = matiere.code_matiere
                     break
             if id_classe is None or code_matiere is None:
@@ -351,7 +351,7 @@ class StaffView(BaseView):
                 id_classe=id_classe,
                 code_matiere=code_matiere,
                 id_formateur=id_formateur,
-                coefficient=values["Coefficient *"],
+                coefficient=values["Coefficient"],
                 vol_horaire=values["Volume horaire"],
                 note_elimin=values["Note éliminatoire"],
                 observation=values["Observation"],
@@ -429,13 +429,13 @@ class StaffView(BaseView):
 
         def submit(values):
             try:
-                debut = parse_date(values["Du *"])
-                fin = parse_date(values["Au *"])
+                debut = parse_date(values["Du"])
+                fin = parse_date(values["Au"])
             except ValueError as ex:
                 from ltadmin.core.result import Result
                 return Result.fail(str(ex), "VALIDATION")
             return self.services.payroll.calculer_paie(
-                formateur.id_formateur, values["Période (libellé) *"],
+                formateur.id_formateur, values["Période (libellé)"],
                 debut, fin, self.session.login)
 
         if run_entity_dialog(self, f"Calculer la paie — {formateur.nom_complet}",

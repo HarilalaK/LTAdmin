@@ -111,6 +111,8 @@ def _main() -> int:
     import tkinter as tk
     boot = tk.Tk()
     boot.withdraw()
+    from ltadmin.ui.theme import Theme
+    Theme.apply_ttk_styles(boot)
 
     services = AppServices(database)
     try:
