@@ -4,22 +4,26 @@ namespace LTAdmin.UI;
 
 internal static class Theme
 {
-    public static readonly Color Background = Color.FromArgb(245, 247, 250);
-    public static readonly Color Surface = Color.White;
+    // Dark theme palette
+    public static readonly Color Background = Color.FromArgb(30, 30, 30);
+    public static readonly Color Surface = Color.FromArgb(45, 45, 48);
     public static readonly Color Sidebar = Color.FromArgb(19, 31, 52);
-    public static readonly Color SidebarMuted = Color.FromArgb(148, 163, 184);
-    public static readonly Color Primary = Color.FromArgb(30, 105, 217);
-    public static readonly Color PrimaryDark = Color.FromArgb(20, 78, 160);
-    public static readonly Color Text = Color.FromArgb(30, 41, 59);
-    public static readonly Color MutedText = Color.FromArgb(100, 116, 139);
-    public static readonly Color Border = Color.FromArgb(226, 232, 240);
+    public static readonly Color SidebarMuted = Color.FromArgb(80, 100, 120);
+    public static readonly Color Primary = Color.FromArgb(0, 191, 165); // teal accent
+    public static readonly Color PrimaryDark = Color.FromArgb(0, 150, 130);
+    public static readonly Color Text = Color.FromArgb(230, 230, 230);
+    public static readonly Color MutedText = Color.FromArgb(150, 150, 150);
+    public static readonly Color Border = Color.FromArgb(60, 70, 80);
     public static readonly Color Success = Color.FromArgb(15, 138, 96);
     public static readonly Color Warning = Color.FromArgb(205, 126, 22);
-    public static readonly Font Body = new("Segoe UI", 9.5f, FontStyle.Regular);
-    public static readonly Font BodyBold = new("Segoe UI", 9.5f, FontStyle.Bold);
-    public static readonly Font Small = new("Segoe UI", 8.5f, FontStyle.Regular);
-    public static readonly Font Heading = new("Segoe UI Semibold", 20f, FontStyle.Bold);
-    public static readonly Font SubHeading = new("Segoe UI Semibold", 12f, FontStyle.Bold);
+    // Inter font family (Google Font)
+    public static readonly Font Body = new("Inter", 9.5f, FontStyle.Regular);
+    public static readonly Font BodyBold = new("Inter", 9.5f, FontStyle.Bold);
+    public static readonly Font Small = new("Inter", 8.5f, FontStyle.Regular);
+    public static readonly Font Heading = new("Inter SemiBold", 20f, FontStyle.Bold);
+    public static readonly Font SubHeading = new("Inter SemiBold", 12f, FontStyle.Bold);
+    // Material Icons font (loaded via MaterialIcons helper)
+    public static readonly Font IconFont = MaterialIcons.Font;
 
     public static Button Button(string text, Color backColor, Color foreColor, int width = 110)
     {
