@@ -15,6 +15,8 @@ from ltadmin.models.entities import Inscription
 from ltadmin.repositories.enrollment_repository import EnrollmentRepository
 from ltadmin.repositories.referentiel_repository import ReferentielRepository
 from ltadmin.repositories.student_repository import StudentRepository
+from ltadmin.services.auth.guard import ensure_allowed, ensure_allowed_value
+from ltadmin.services.auth.habilitations import Modules
 from ltadmin.services.common import ServiceBase
 from ltadmin.services.logging.app_logger import AppLogger
 from ltadmin.services.logging.journal_service import JournalService
@@ -61,6 +63,9 @@ class EnrollmentService(ServiceBase):
 
     def inscrire(self, inscription: Inscription, code_utr: str) -> ResultValue[int]:
         """Inscrit un étudiant dans une classe (contrôles : doublon, effectif max)."""
+        denied = ensure_allowed_value(code_utr, Modules.INSCRIPTIONS)
+        if denied is not None:
+            return denied
         validation = EnrollmentValidator.validate(inscription)
         if not validation.is_valid:
             return self.invalid_value(validation)
@@ -110,6 +115,9 @@ class EnrollmentService(ServiceBase):
     def update(self, inscription: Inscription, code_utr: str) -> Result:
         if inscription.id_inscription is None:
             return Result.fail("Inscription introuvable.", "INTROUVABLE")
+        denied = ensure_allowed(code_utr, Modules.INSCRIPTIONS)
+        if denied is not None:
+            return denied
         validation = EnrollmentValidator.validate(inscription)
         if not validation.is_valid:
             return self.invalid(validation)
@@ -131,6 +139,9 @@ class EnrollmentService(ServiceBase):
     def enregistrer_sortie(self, id_inscription: int, date_sortie, motif: Optional[str],
                            code_utr: str) -> Result:
         """Enregistre une sortie (date + motif) sans supprimer l'historique."""
+        denied = ensure_allowed(code_utr, Modules.INSCRIPTIONS)
+        if denied is not None:
+            return denied
         try:
             inscription = self._inscriptions.get_by_id(id_inscription)
             if inscription is None:
@@ -149,6 +160,9 @@ class EnrollmentService(ServiceBase):
             return self.failure("Enregistrement d’une sortie", ex)
 
     def delete(self, id_inscription: int, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.INSCRIPTIONS)
+        if denied is not None:
+            return denied
         try:
             existing = self._inscriptions.get_by_id(id_inscription)
             if existing is None:

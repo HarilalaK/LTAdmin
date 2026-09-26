@@ -16,6 +16,8 @@ from ltadmin.models.dto import MoyenneMatiereRow, MoyennePeriodeRow, NoteSaisieR
 from ltadmin.models.entities import Note
 from ltadmin.repositories.enrollment_repository import EnrollmentRepository
 from ltadmin.repositories.evaluation_repository import EvaluationRepository
+from ltadmin.services.auth.guard import ensure_allowed
+from ltadmin.services.auth.habilitations import Modules
 from ltadmin.services.common import ServiceBase
 from ltadmin.services.logging.app_logger import AppLogger
 from ltadmin.services.logging.journal_service import JournalService
@@ -45,6 +47,9 @@ class GradeService(ServiceBase):
                     valeur: Optional[float], absent: bool,
                     observation: Optional[str], code_utr: str) -> Result:
         """Enregistre (insertion ou mise à jour) la note d'un inscrit."""
+        denied = ensure_allowed(code_utr, Modules.NOTES)
+        if denied is not None:
+            return denied
         try:
             evaluation = self._evaluations.get_evaluation_detail(id_evaluation)
             if evaluation is None:
@@ -98,6 +103,9 @@ class GradeService(ServiceBase):
             return self.failure("Saisie d’une note", ex)
 
     def delete_note(self, id_note: int, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.NOTES)
+        if denied is not None:
+            return denied
         try:
             self._evaluations.delete_note(id_note)
             self.journal.log_suppression(code_utr, Tables.NOTE, id_note)

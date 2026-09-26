@@ -1,0 +1,4 @@
+# Dépendance runtime de LTAdmin.
+# Le moteur ACE (Microsoft Access Database Engine) est fourni par Windows :
+# https://learn.microsoft.com/sql/connect/odbc/download-odbc-driver-for-office
+pyodbc>=5.1

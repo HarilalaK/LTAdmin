@@ -14,6 +14,7 @@ from ltadmin.data.schema import Tables
 from ltadmin.models.db_models import UserSession
 from ltadmin.repositories.admin_repository import AdminRepository
 from ltadmin.data.access_database import AccessDatabase
+from ltadmin.services.auth import password_hashing
 from ltadmin.services.auth.habilitations import normalize_profil
 from ltadmin.services.logging.app_logger import AppLogger
 from ltadmin.services.logging.journal_service import JournalService
@@ -42,10 +43,19 @@ class AuthenticationService:
                 self._journal.log_connexion(user.code_utr, False)
                 return ResultValue.fail(
                     "Ce compte est désactivé. Contactez l’administrateur.", "AUTHENTIFICATION")
-            if (user.mot_passe or "") != (password or ""):
+            if not password_hashing.verify(password or "", user.mot_passe or ""):
                 self._journal.log_connexion(user.code_utr, False)
                 return ResultValue.fail(
                     "Identifiant ou mot de passe incorrect.", "AUTHENTIFICATION")
+            # Migration transparente : les mots de passe historiques en clair
+            # (base fournie) sont hachés dès la première connexion réussie.
+            if password_hashing.needs_upgrade(user.mot_passe or ""):
+                try:
+                    self._admin.update_mot_passe(
+                        user.code_utr, password_hashing.hash_password(password or ""))
+                except Exception as upgrade_error:
+                    # Le hachage ne doit pas empêcher la connexion.
+                    self._logger.error("Migration du mot de passe", upgrade_error)
             display_name = user.nom_utr if (user.nom_utr or "").strip() else user.code_utr
             role = normalize_profil(user.profil)
             self._journal.log_connexion(user.code_utr, True)
@@ -70,10 +80,12 @@ class AuthenticationService:
             user = self._admin.get_utilisateur((code_utr or "").strip())
             if user is None:
                 return Result.fail("Compte introuvable.", "INTROUVABLE")
-            if (user.mot_passe or "") != (ancien_mot_passe or ""):
+            if (user.mot_passe or "") != (ancien_mot_passe or "") \
+                    and not password_hashing.verify(ancien_mot_passe or "", user.mot_passe or ""):
                 return Result.fail(
                     "L’ancien mot de passe est incorrect.", "AUTHENTIFICATION")
-            self._admin.update_mot_passe(user.code_utr, nouveau_mot_passe)
+            self._admin.update_mot_passe(
+                user.code_utr, password_hashing.hash_password(nouveau_mot_passe))
             self._journal.log_operation(
                 code_utr, "MOT_DE_PASSE", Tables.UTILISATEUR, None,
                 "Changement de mot de passe.")

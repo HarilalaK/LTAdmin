@@ -2,7 +2,7 @@
 
 Application **desktop Python (tkinter)** branchée directement sur la base Access existante
 `LTA_ADM.accdb` — **aucune migration, aucune recréation de table**. Portage complet de
-l'application WinForms .NET 8 d'origine (conservée dans `src/LTAdmin/` comme référence).
+l'application WinForms .NET 8 d'origine, dont le code n'est pas conservé dans ce dépôt.
 
 ## Ce qui est livré
 
@@ -24,7 +24,7 @@ l'application WinForms .NET 8 d'origine (conservée dans `src/LTAdmin/` comme r�
 - sauvegardes horodatées (inventaire, restauration explicite avec copie de sécurité, purge) ;
 - gestion des erreurs de contraintes (doublons, liaisons, verrous) via les codes
   `VALIDATION`, `GESTION`, `INTROUVABLE`, `DOUBLON`, `LIAISON`, `VERROUILLE`… ;
-- **suite de tests d'intégration** (81 tests) exécutable sans Access grâce à un moteur SQLite
+- **suite de tests d'intégration** (91 tests) exécutable sans Access grâce à un moteur SQLite
   injectable qui reproduit les règles SQL utilisées (paramètres positionnels `?`, identifiants
   `[crochets]`, `TOP n`, `@@IDENTITY`, `Nz`→`IIf`/`IFNULL`, `UCASE`…).
 
@@ -32,7 +32,7 @@ l'application WinForms .NET 8 d'origine (conservée dans `src/LTAdmin/` comme r�
 
 1. **Python 3.11+** (3.12+ recommandé) avec **tkinter** (inclus dans l'installateur Windows
    officiel — cocher *tcl/tk and IDLE*).
-2. `pip install pyodbc`
+2. `pip install -r requirements.txt` (ou `pip install pyodbc`)
 3. **Microsoft Access Database Engine Redistributable** (ACE 16 ou ACE 12), même architecture
    (32/64 bits) que Python — généralement déjà installé avec Microsoft Access.
 4. Droits d'écriture dans le dossier contenant la base (sauvegardes, journal).
@@ -40,7 +40,7 @@ l'application WinForms .NET 8 d'origine (conservée dans `src/LTAdmin/` comme r�
 ## Lancer l'application
 
 ```powershell
-pip install pyodbc
+pip install -r requirements.txt
 python main.py                                # la base est cherchée automatiquement
 python main.py D:\chemin\LTA_ADM.accdb        # chemin explicite (argument positionnel)
 ```
@@ -57,6 +57,9 @@ Comptes livrés avec les données initiales : `ADMIN`/`admin` (Administrateur),
 ```powershell
 python -m unittest discover -s tests -t . -v
 ```
+
+Les 91 tests sont rejoués automatiquement à chaque push par
+`.github/workflows/tests.yml` (Python 3.11 et 3.12, sans `pyodbc` ni `tkinter`).
 
 Les tests reconstruisent en SQLite les 33 tables + les 8 requêtes depuis
 `analysis/extraction_complete.json` (données initiales réelles), injectent ce moteur dans
@@ -87,8 +90,8 @@ ltadmin/
   ui/                   thème, widgets, dialogues, vues (16 écrans + éditeur générique)
 tests/                  moteur SQLite de test + 7 suites (91 tests)
 analysis/               requêtes Access, schéma, extraction complète des données
-docs/ARCHITECTURE.md    architecture (écrite pour la version C#, les couches sont identiques)
-src/LTAdmin/            code C# .NET 8 d'origine (référence du portage)
+docs/ARCHITECTURE.md    architecture (issue de la version C#, voir §9 pour la correspondance Python)
+requirements.txt        dépendance runtime (pyodbc)
 LTA_ADM.accdb           base de données — source de vérité, inchangée
 ```
 
@@ -110,3 +113,11 @@ Sauvegardes horodatées dans le sous-dossier `Sauvegardes\` à côté de la base
 `LTA_ADM_AAAAMMJJ_HHMMSS.accdb`.
 La restauration copie d'abord la base courante en `LTA_ADM_avant_restauration_*.accdb`,
 puis écrase ; la purge exige un nombre conservé ≥ 1.
+
+## Limites connues
+
+- **Mots de passe en clair** dans `UTILISATEUR` (héritage de la base fournie). La
+  vérification est centralisée dans `AuthenticationService`, ce qui permet d'introduire un
+  hachage sans toucher aux écrans, mais aucun hachage n'est appliqué à ce jour.
+- **Habilitations contrôlées au niveau du menu** (`main_window.py`) **et revérifiées dans
+  chaque service d'écriture** (`services/auth/guard.py`, code `HABILITATION`).

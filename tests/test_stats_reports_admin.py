@@ -155,13 +155,19 @@ class TestAdmin(BaseTestCase):
                                                       "ADMIN")
         self.assertTrue(result.success, result.message)
         relu = self.services.admin.get_utilisateur("TEST")
-        self.assertEqual(relu.mot_passe, "secret123")
+        # Le mot de passe est stocké haché (PBKDF2), jamais en clair.
+        self.assertNotEqual(relu.mot_passe, "secret123")
+        self.assertTrue(relu.mot_passe.startswith("pbkdf2_sha256$"))
+        self.assertTrue(self.services.authentication.authenticate(
+            "TEST", "secret123").success)
         # Modification sans changer le mot de passe.
         relu.nom_utr = "Compte modifié"
         result = self.services.admin.save_utilisateur(relu, None, "ADMIN")
         self.assertTrue(result.success)
-        self.assertEqual(self.services.admin.get_utilisateur("TEST").mot_passe,
-                         "secret123")
+        relu2 = self.services.admin.get_utilisateur("TEST")
+        self.assertEqual(relu2.mot_passe, relu.mot_passe)  # inchangé
+        self.assertTrue(self.services.authentication.authenticate(
+            "TEST", "secret123").success)
         # Profil inconnu refusé.
         relu.profil = "Magicien"
         self.assertFalse(self.services.admin.save_utilisateur(

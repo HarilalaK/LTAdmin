@@ -3,6 +3,11 @@
 > Application Windows Desktop **C# WinForms .NET 8**, adossée à la base existante
 > **`LTA_ADM.accdb` (source de vérité)**. Analyse du schéma : `ANALYSE_BASE_LTA.md`.
 
+> **Ce document décrit la version C# d'origine, qui n'est plus dans le dépôt.** L'application
+> livrée et maintenue est le **portage Python /tkinter** décrit dans `README.md` ; les couches
+> sont identiques, la correspondance C# → Python est donnée au §15. Les sections 12 à 14
+> sont donc propres à la version C#.
+
 ## 1. Principes intangibles
 
 | Règle | Mise en œuvre |
@@ -246,7 +251,10 @@ Services déjà prêts, vues à construire sur le même patron : programmes/form
 résultats/délibérations, paie des formateurs, statistiques détaillées, utilisateurs/paramètres/journal,
 impression (bulletin, reçu). La maintenance générique couvre ces tables en attendant, sans fausses données.
 
-## 14. Compilation & exécution (Windows)
+## 14. Compilation & exécution (Windows) — version C# d'origine (référence)
+
+Historique : la solution C# (``LTAdmin.sln``, projet ``src/LTAdmin/``) n'existe plus.
+Les commandes d'origine étaient :
 
 ```powershell
 dotnet restore .\LTAdmin.sln
@@ -257,3 +265,30 @@ dotnet run --project .\src\LTAdmin\LTAdmin.csproj
 Prérequis : .NET 8 SDK + **Microsoft Access Database Engine 2016** (même architecture que l'app, x64/x86).
 `LTA_ADM.accdb` est copié dans le dossier de sortie ; `LTADMIN_DB` ou un argument permet d'en choisir un autre.
 Comptes de la base fournie : `ADMIN/admin`, `SCOL/scol`, `CAISSE/caisse` (à changer avant usage réel).
+
+## 15. Portage Python — correspondance avec la version C#
+
+L'application livrée reprend les mêmes couches, avec les équivalents suivants :
+
+| C# (.NET 8) | Python (livré) |
+|---|---|
+| `Program.cs` | `main.py` |
+| `Core/Result.cs` | `ltadmin/core/result.py` (`Result`, `ResultValue<T>`) |
+| `Data/AccessDatabase.cs` | `ltadmin/data/access_database.py` |
+| `Data/OleDbExceptionHelper.cs` | `ltadmin/data/error_helper.py` |
+| `Data/Schema.cs` | `ltadmin/data/schema.py` + `schema_catalog.py` |
+| `Models/Entities/*`, `Models/Dto/*` | `ltadmin/models/entities.py`, `dto.py` |
+| `Repositories/*` (9 dépôts) | `ltadmin/repositories/*` (10 dépôts) |
+| `Services/*` | `ltadmin/services/*` (+ `app_composition.py` pour la racine de composition) |
+| `UI/Forms`, `UI/Views` | `ltadmin/ui/views/*` (16 écrans) |
+| tests sur base Access réelle | moteur SQLite injectable : `tests/sqlite_test_engine.py` |
+
+Différences notables :
+
+- **pyodbc / ACE** au lieu d'OleDb ; `AccessDatabase` expose la même API
+  (`execute`, `query`, `scalar`, `transaction`, `@@IDENTITY`).
+- **Exceptions ACE** traduites par `error_helper.interpret()` vers les mêmes codes stables
+  (`VALIDATION`, `GESTION`, `INTROUVABLE`, `DOUBLON`, `LIAISON`, `VERROUILLE`…).
+- **Habilitations** : la matrice par profil est identique (`habilitation.py`), mais elle est
+  évaluée au moment de construire le menu (`main_window.py`) et non dans chaque service.
+- Les vues métier prévues au §13 sont toutes livrées dans le portage Python.

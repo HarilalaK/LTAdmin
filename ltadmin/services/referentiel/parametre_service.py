@@ -14,6 +14,8 @@ from ltadmin.data import error_helper
 from ltadmin.data.schema import ParametreKeys, Tables
 from ltadmin.repositories.admin_repository import AdminRepository
 from ltadmin.data.access_database import AccessDatabase
+from ltadmin.services.auth.guard import ensure_allowed
+from ltadmin.services.auth.habilitations import Modules
 from ltadmin.services.logging.app_logger import AppLogger
 from ltadmin.services.logging.journal_service import JournalService
 
@@ -91,6 +93,9 @@ class ParametreService:
             return Result.fail("Clé de paramètre obligatoire.", "VALIDATION")
         if len(valeur or "") > 510:
             return Result.fail("Valeur trop longue (510 caractères maximum).", "VALIDATION")
+        denied = ensure_allowed(code_utr, Modules.ADMINISTRATION)
+        if denied is not None:
+            return denied
         try:
             updated = self._admin.update_valeur(cle.strip(), (valeur or "").strip())
             if updated == 0:

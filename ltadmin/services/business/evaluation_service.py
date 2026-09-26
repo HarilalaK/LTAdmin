@@ -15,6 +15,8 @@ from ltadmin.models.dto import EvaluationDetail
 from ltadmin.models.entities import Evaluation, PeriodeEval
 from ltadmin.repositories.evaluation_repository import EvaluationRepository
 from ltadmin.repositories.staff_repository import StaffRepository
+from ltadmin.services.auth.guard import ensure_allowed, ensure_allowed_value
+from ltadmin.services.auth.habilitations import Modules
 from ltadmin.services.common import ServiceBase
 from ltadmin.services.logging.app_logger import AppLogger
 from ltadmin.services.logging.journal_service import JournalService
@@ -47,6 +49,9 @@ class EvaluationService(ServiceBase):
             return None
 
     def create_periode(self, periode: PeriodeEval, code_utr: str) -> ResultValue[int]:
+        denied = ensure_allowed_value(code_utr, Modules.NOTES)
+        if denied is not None:
+            return denied
         if periode.id_annee is None:
             # Rattachement automatique à l'année scolaire active.
             from ltadmin.repositories.admin_repository import AdminRepository
@@ -67,6 +72,9 @@ class EvaluationService(ServiceBase):
             return self.failure_value("Création d’une période", ex)
 
     def update_periode(self, periode: PeriodeEval, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.NOTES)
+        if denied is not None:
+            return denied
         if periode.id_periode is None:
             return Result.fail("Période introuvable.", "INTROUVABLE")
         validation = EvaluationValidator.validate_periode(periode)
@@ -83,6 +91,9 @@ class EvaluationService(ServiceBase):
             return self.failure("Modification d’une période", ex)
 
     def set_periode_cloturee(self, id_periode: int, cloturee: bool, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.NOTES)
+        if denied is not None:
+            return denied
         """Clôture (ou rouvre) une période : les notes figées ne sont plus modifiables."""
         try:
             periode = self._evaluations.get_periode(id_periode)
@@ -118,6 +129,9 @@ class EvaluationService(ServiceBase):
             return None
 
     def create_evaluation(self, evaluation: Evaluation, code_utr: str) -> ResultValue[int]:
+        denied = ensure_allowed_value(code_utr, Modules.NOTES)
+        if denied is not None:
+            return denied
         if evaluation.bareme is None or evaluation.bareme <= 0:
             evaluation.bareme = self.parametres.bareme_defaut
         if evaluation.poids is None or evaluation.poids <= 0:
@@ -145,6 +159,9 @@ class EvaluationService(ServiceBase):
             return self.failure_value("Création d’une évaluation", ex)
 
     def update_evaluation(self, evaluation: Evaluation, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.NOTES)
+        if denied is not None:
+            return denied
         if evaluation.id_evaluation is None:
             return Result.fail("Évaluation introuvable.", "INTROUVABLE")
         validation = EvaluationValidator.validate_evaluation(evaluation)
@@ -165,6 +182,9 @@ class EvaluationService(ServiceBase):
             return self.failure("Modification d’une évaluation", ex)
 
     def set_publiee(self, id_evaluation: int, publiee: bool, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.NOTES)
+        if denied is not None:
+            return denied
         try:
             existing = self._evaluations.get_evaluation(id_evaluation)
             if existing is None:
@@ -179,6 +199,9 @@ class EvaluationService(ServiceBase):
             return self.failure("Publication d’une évaluation", ex)
 
     def delete_evaluation(self, id_evaluation: int, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.NOTES)
+        if denied is not None:
+            return denied
         try:
             existing = self._evaluations.get_evaluation(id_evaluation)
             if existing is None:

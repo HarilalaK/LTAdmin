@@ -18,6 +18,8 @@ from ltadmin.models.entities import (
     Salle,
 )
 from ltadmin.repositories.referentiel_repository import ReferentielRepository
+from ltadmin.services.auth.guard import ensure_allowed, ensure_allowed_value
+from ltadmin.services.auth.habilitations import Modules
 from ltadmin.services.common import ServiceBase
 from ltadmin.services.logging.app_logger import AppLogger
 from ltadmin.services.logging.journal_service import JournalService
@@ -42,6 +44,9 @@ class ReferentielService(ServiceBase):
             return []
 
     def save_filiere(self, filiere: Filiere, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.REFERENTIEL)
+        if denied is not None:
+            return denied
         code = (filiere.code_filiere or "").strip()
         if not code:
             return Result.fail("Code filière obligatoire.", "VALIDATION")
@@ -68,6 +73,9 @@ class ReferentielService(ServiceBase):
             return self.failure("Enregistrement d’une filière", ex)
 
     def delete_filiere(self, code: str, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.REFERENTIEL)
+        if denied is not None:
+            return denied
         try:
             if self._referentiel.get_filiere(code) is None:
                 return Result.fail("Filière introuvable.", "INTROUVABLE")
@@ -91,6 +99,9 @@ class ReferentielService(ServiceBase):
             return []
 
     def save_niveau(self, niveau: Niveau, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.REFERENTIEL)
+        if denied is not None:
+            return denied
         code = (niveau.code_niveau or "").strip()
         if not code:
             return Result.fail("Code niveau obligatoire.", "VALIDATION")
@@ -113,6 +124,9 @@ class ReferentielService(ServiceBase):
             return self.failure("Enregistrement d’un niveau", ex)
 
     def delete_niveau(self, code: str, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.REFERENTIEL)
+        if denied is not None:
+            return denied
         try:
             if self._referentiel.get_niveau(code) is None:
                 return Result.fail("Niveau introuvable.", "INTROUVABLE")
@@ -142,6 +156,9 @@ class ReferentielService(ServiceBase):
             return None
 
     def save_salle(self, salle: Salle, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.REFERENTIEL)
+        if denied is not None:
+            return denied
         if not (salle.nom_salle or "").strip():
             return Result.fail("Nom de la salle obligatoire.", "VALIDATION")
         if salle.capacite is not None and salle.capacite <= 0:
@@ -163,6 +180,9 @@ class ReferentielService(ServiceBase):
             return self.failure("Enregistrement d’une salle", ex)
 
     def delete_salle(self, id_salle: int, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.REFERENTIEL)
+        if denied is not None:
+            return denied
         try:
             salle = self._referentiel.get_salle(id_salle)
             if salle is None:
@@ -202,6 +222,9 @@ class ReferentielService(ServiceBase):
             return None
 
     def save_classe(self, classe: Classe, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.REFERENTIEL)
+        if denied is not None:
+            return denied
         if classe.id_annee is None:
             # Rattachement automatique à l'année scolaire active.
             from ltadmin.repositories.admin_repository import AdminRepository
@@ -235,6 +258,9 @@ class ReferentielService(ServiceBase):
             return self.failure("Enregistrement d’une classe", ex)
 
     def delete_classe(self, id_classe: int, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.REFERENTIEL)
+        if denied is not None:
+            return denied
         try:
             classe = self._referentiel.get_classe(id_classe)
             if classe is None:
@@ -265,6 +291,9 @@ class ReferentielService(ServiceBase):
             return []
 
     def save_module(self, module: ModuleFormation, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.REFERENTIEL)
+        if denied is not None:
+            return denied
         code = (module.code_module or "").strip()
         if not code:
             return Result.fail("Code module obligatoire.", "VALIDATION")
@@ -285,6 +314,9 @@ class ReferentielService(ServiceBase):
             return self.failure("Enregistrement d’un module", ex)
 
     def delete_module(self, code: str, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.REFERENTIEL)
+        if denied is not None:
+            return denied
         try:
             if self._referentiel.get_module(code) is None:
                 return Result.fail("Module introuvable.", "INTROUVABLE")
@@ -305,6 +337,9 @@ class ReferentielService(ServiceBase):
             return []
 
     def save_matiere(self, matiere: Matiere, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.REFERENTIEL)
+        if denied is not None:
+            return denied
         code = (matiere.code_matiere or "").strip()
         if not code:
             return Result.fail("Code matière obligatoire.", "VALIDATION")
@@ -329,6 +364,9 @@ class ReferentielService(ServiceBase):
             return self.failure("Enregistrement d’une matière", ex)
 
     def delete_matiere(self, code: str, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.REFERENTIEL)
+        if denied is not None:
+            return denied
         try:
             if self._referentiel.get_matiere(code) is None:
                 return Result.fail("Matière introuvable.", "INTROUVABLE")

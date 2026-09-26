@@ -12,6 +12,8 @@ from ltadmin.data.access_database import AccessDatabase
 from ltadmin.data.schema import Tables
 from ltadmin.models.entities import Etudiant
 from ltadmin.repositories.student_repository import StudentRepository
+from ltadmin.services.auth.guard import ensure_allowed, ensure_allowed_value
+from ltadmin.services.auth.habilitations import Modules
 from ltadmin.services.common import ServiceBase
 from ltadmin.services.logging.app_logger import AppLogger
 from ltadmin.services.logging.journal_service import JournalService
@@ -48,6 +50,9 @@ class StudentService(ServiceBase):
             return 0
 
     def create(self, etudiant: Etudiant, code_utr: str) -> ResultValue[int]:
+        denied = ensure_allowed_value(code_utr, Modules.ETUDIANTS)
+        if denied is not None:
+            return denied
         validation = StudentValidator.validate(etudiant)
         if not validation.is_valid:
             return self.invalid_value(validation)
@@ -70,6 +75,9 @@ class StudentService(ServiceBase):
             return self.failure_value("Création d’un étudiant", ex)
 
     def update(self, etudiant: Etudiant, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.ETUDIANTS)
+        if denied is not None:
+            return denied
         if etudiant.id_etudiant is None:
             return Result.fail("Étudiant introuvable.", "INTROUVABLE")
         validation = StudentValidator.validate(etudiant)
@@ -91,6 +99,9 @@ class StudentService(ServiceBase):
             return self.failure("Modification d’un étudiant", ex)
 
     def delete(self, id_etudiant: int, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.ETUDIANTS)
+        if denied is not None:
+            return denied
         try:
             existing = self._etudiants.get_by_id(id_etudiant)
             if existing is None:

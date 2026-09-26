@@ -140,9 +140,9 @@ class TestEncaissements(EcoBaseTestCase):
     def test_reçu_unique_et_numérotation(self):
         echeance = self.echeances[0]
         result1 = self.services.ecolage.encaisser(
-            echeance.id_echeance, Decimal("1000"), "Espèces", None, None, "A")
+            echeance.id_echeance, Decimal("1000"), "Espèces", None, None, "CAISSE")
         result2 = self.services.ecolage.encaisser(
-            echeance.id_echeance, Decimal("1000"), "Espèces", None, None, "A")
+            echeance.id_echeance, Decimal("1000"), "Espèces", None, None, "CAISSE")
         self.assertTrue(result1.success and result2.success)
         self.assertNotEqual(result1.value.num_recu, result2.value.num_recu)
 
@@ -150,7 +150,7 @@ class TestEncaissements(EcoBaseTestCase):
         echeance = self.echeances[0]
         for montant in (Decimal("0"), Decimal("-10")):
             result = self.services.ecolage.encaisser(
-                echeance.id_echeance, montant, "Espèces", None, None, "A")
+                echeance.id_echeance, montant, "Espèces", None, None, "CAISSE")
             self.assertFalse(result.success)
 
     def test_annulation_paiement_recalcule_statut(self):

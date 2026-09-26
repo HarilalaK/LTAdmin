@@ -1,13 +1,27 @@
-# Base Access — Gestion scolarité LTA (BTS Hôtellerie & Tourisme)
+# LTAdmin — démarrage rapide (BTS Hôtellerie & Tourisme)
+
+Application **desktop Python (tkinter)** branchée sur `LTA_ADM.accdb`, la base Access
+existante. Aucune migration, aucune recréation de table. Le détail complet est dans
+`README.md`.
 
 ## Installation (2 min)
-1. Access → **Nouvelle base de données vide** → `GESTION_LTA.accdb` (ou `.mdb` si tu veux rester en 2003).
-2. `ALT+F11` → **Fichier > Importer un fichier…** → `GESTION_LTA.bas`.
-3. Menu **Outils > Références…** → cocher *Microsoft Office xx.x Access database engine Object Library* (DAO).
-4. Curseur dans `CREER_BASE_LTA` → **F5**.
-5. `CTRL+G` (fenêtre Exécution) pour voir d'éventuelles erreurs.
 
-Relancer la procédure = remise à zéro (`RAZ = True` en haut du module).
+```powershell
+pip install -r requirements.txt        # pyodbc
+python main.py                         # la base est cherchée automatiquement
+python main.py D:\chemin\LTA_ADM.accdb # chemin explicite
+```
+
+Pré-requis : Python 3.11+ avec tkinter, et le **Microsoft Access Database Engine**
+(ACE 16 ou 12) de la même architecture 32/64 bits que Python.
+
+Ordre de recherche de la base : argument CLI → variable `LTADMIN_DB` → dossier de
+l'exécutable → dossier courant → 5 dossiers parents.
+
+Comptes livrés : `ADMIN`/`admin`, `SCOL`/`scol`, `CAISSE`/`caisse`. **Changez ces mots de
+passe à la première connexion** (ils sont stockés en clair dans la base fournie).
+
+Tests, sans Access ni tkinter : `python -m unittest discover -s tests -t .`
 
 ## Les 33 tables
 
@@ -23,30 +37,47 @@ Relancer la procédure = remise à zéro (`RAZ = True` en haut du module).
 | Bulletins | BULLETIN, BULLETIN_LIGNE, GRILLE_MENTION, RESULTAT_FINAL |
 | Écolage | TARIF, ECHEANCIER, PAIEMENT, PAIE_FORMATEUR |
 
-**1ère / 2ème éval dynamiques** : tout est dans `PERIODE_EVAL`. Tu ajoutes une ligne (3ème éval, rattrapage, examen blanc…) et tout le calcul suit, rien à recoder. Chaque `EVALUATION` a son `BAREME` et son `POIDS` → devoir sur 40 coef 2 mélangé avec une interro sur 10, ça marche.
+Détail des colonnes, clés et index : `analysis/schema_tables.txt`.
 
-## Requêtes livrées
+**1ère / 2ème éval dynamiques** : tout est dans `PERIODE_EVAL`. Une ligne ajoutée
+(3ème éval, rattrapage, examen blanc…) suffit, le calcul suit sans rien recoder. Chaque
+`EVALUATION` porte son `BAREME` et son `POIDS` → un devoir sur 40 coef 2 mélangé à une
+interro sur 10 fonctionne.
+
+## Les 8 états (écran États)
+
 `R_LISTE_ETUDIANT`, `R_MOYENNE_MATIERE`, `R_MOYENNE_PERIODE`, `R_BULLETIN_DETAIL`,
 `R_PAIEMENT_ECHEANCE`, `R_SITUATION_ECOLAGE`, `R_EDT_CLASSE`, `R_ABSENCE_ETUDIANT`.
 
-## Procédures métier
-| Appel | Effet |
+Filtres par classe / période, export CSV (`;`, UTF-8 BOM). Texte des requêtes :
+`analysis/requetes_access.sql`.
+
+## Opérations métier
+
+| Écran | Effet |
 |---|---|
-| `GENERER_BULLETIN(idClasse, idPeriode)` | bulletins + lignes matières + rang + mention + appréciation |
-| `GENERER_RESULTAT_FINAL(idClasse, idSession)` | moyenne CC × POIDS_CC + examen × POIDS_EXAMEN, mention, décision, rang |
-| `GENERER_ECHEANCIER(idInscription)` | découpe les TARIF en tranches mensuelles |
-| `MAJ_STATUT_ECHEANCE(idInscription)` | DU / PARTIEL / SOLDE |
-| `CALCUL_PAIE_FORMATEUR(idFormateur, début, fin)` | heures faites × taux horaire |
-| `NOUVEAU_MATRICULE()` / `NOUVEAU_RECU()` | à mettre en *Valeur par défaut* des champs |
-| `EDT_CONFLIT(jour, idCreneau, idSalle, idProg)` | bloque double réservation salle/formateur |
+| Bulletins → Générer | bulletins + lignes matières + rang (competition, min/max par matière) + mention + appréciation |
+| Examens → Générer résultats | moyenne CC × `POIDS_CC` + examen × `POIDS_EXAMEN`, mention, décision, rang |
+| Écolage → Générer échéancier | découpe le `TARIF` en tranches mensuelles |
+| Écolage → Statut | DU / PARTIEL / SOLDE par échéance |
+| Paie → Calcul | heures faites × taux horaire |
+| Étudiants / Écolage | matricule `ETU-AAAA-####` et numéro de reçu uniques |
+| EDT → Contrôle | refuse les doubles réservations de salle ou de formateur |
 
-Les règles de calcul (moyenne d'admission, note éliminatoire, poids CC/examen, seuil d'absence, devise) sont dans la table `PARAMETRE` — modifiables sans toucher au code.
+Les règles de calcul (moyenne d'admission, note éliminatoire, poids CC/examen, seuil
+d'absence, devise) sont dans la table `PARAMETRE` — modifiables sans toucher au code.
 
-## Données déjà chargées
-Année 2025-2026, filières HOT et TOU, niveaux BTS1/BTS2, 4 classes, 5 salles, 17 matières (cuisine, service, hébergement, hygiène, géo touristique, billetterie, guidage, bureautique…), 4 créneaux, grille de mentions, 3 utilisateurs (`ADMIN/admin`).
+## Données déjà présentes dans `LTA_ADM.accdb`
 
-## Ordre de saisie conseillé
-FORMATEUR → PROGRAMME (coef par matière et par classe) → ETUDIANT → INSCRIPTION → TARIF → `GENERER_ECHEANCIER` → EMPLOI_DU_TEMPS → EVALUATION → NOTE → `GENERER_BULLETIN`.
+Référentiel uniquement : année 2025-2026, filières HOT et TOU, niveaux BTS1/BTS2,
+4 classes, 5 salles, 4 créneaux, 17 matières (cuisine, service, hébergement, hygiène,
+géo touristique, billetterie, guidage, bureautique…), 3 périodes d'évaluation,
+grille de mentions, 7 paramètres, 3 utilisateurs.
 
-## Reste à faire côté interface
-Formulaires (saisie notes en grille par classe/matière), états Bulletin et Reçu de paiement, menu général. Dis-moi lesquels tu veux, je te génère le code des formulaires/états de la même façon.
+**Les tables métier sont vides** (étudiants, inscriptions, notes, évaluations, créneaux
+d'emploi du temps, écolage…). Détail ligne à ligne : `analysis/donnees_initiales.txt`.
+
+## Ordre de saisie
+
+Formateurs → Programmes (coef par matière et par classe) → Étudiants → Inscriptions →
+Tarifs → échéancier → Emploi du temps → Évaluations → Notes → Bulletins.

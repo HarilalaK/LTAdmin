@@ -22,6 +22,8 @@ from ltadmin.models.dto import EcheanceDetail, PaiementCree
 from ltadmin.models.entities import Echeancier, Paiement, Tarif
 from ltadmin.repositories.enrollment_repository import EnrollmentRepository
 from ltadmin.repositories.finance_repository import FinanceRepository
+from ltadmin.services.auth.guard import ensure_allowed, ensure_allowed_value
+from ltadmin.services.auth.habilitations import Modules
 from ltadmin.services.common import ServiceBase
 from ltadmin.services.logging.app_logger import AppLogger
 from ltadmin.services.logging.journal_service import JournalService
@@ -52,6 +54,9 @@ class EcoService(ServiceBase):
             return []
 
     def save_tarif(self, tarif: Tarif, code_utr: str) -> ResultValue[int]:
+        denied = ensure_allowed_value(code_utr, Modules.ECOLAGE)
+        if denied is not None:
+            return denied
         validation = PaymentValidator.validate_tarif(tarif)
         if not validation.is_valid:
             return self.invalid_value(validation)
@@ -75,6 +80,9 @@ class EcoService(ServiceBase):
             return self.failure_value("Enregistrement d’un tarif", ex)
 
     def delete_tarif(self, id_tarif: int, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.ECOLAGE)
+        if denied is not None:
+            return denied
         try:
             tarif = self._finance.get_tarif(id_tarif)
             if tarif is None:
@@ -136,6 +144,9 @@ class EcoService(ServiceBase):
     def generer_echeancier(self, id_inscription: int, id_tarif: int,
                            code_utr: str) -> ResultValue[int]:
         """Génère l'échéancier d'un tarif pour une inscription (idempotent)."""
+        denied = ensure_allowed_value(code_utr, Modules.ECOLAGE)
+        if denied is not None:
+            return denied
         try:
             tarif = self._finance.get_tarif(id_tarif)
             if tarif is None:
@@ -207,6 +218,9 @@ class EcoService(ServiceBase):
     def supprimer_echeancier(self, id_inscription: int, id_tarif: int,
                              code_utr: str) -> Result:
         """Supprime toutes les tranches du tarif pour cette inscription (si rien payé)."""
+        denied = ensure_allowed(code_utr, Modules.ECOLAGE)
+        if denied is not None:
+            return denied
         try:
             for echeance in self._finance.list_echeances_by_inscription(id_inscription):
                 if echeance.id_tarif != id_tarif:
@@ -236,6 +250,9 @@ class EcoService(ServiceBase):
                   ref_externe: Optional[str] = None, observation: Optional[str] = None,
                   code_utr: str = "") -> ResultValue[PaiementCree]:
         """Enregistre un encaissement sur une échéance et met à jour son statut."""
+        denied = ensure_allowed_value(code_utr, Modules.ECOLAGE)
+        if denied is not None:
+            return denied
         try:
             echeance = self._finance.get_echeance(id_echeance)
             if echeance is None:
@@ -285,6 +302,9 @@ class EcoService(ServiceBase):
             return []
 
     def annuler_paiement(self, id_paiement: int, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.ECOLAGE)
+        if denied is not None:
+            return denied
         """Annule un encaissement (remboursement / erreur de saisie)."""
         try:
             paiement = self._finance.get_paiement(id_paiement)
@@ -304,6 +324,9 @@ class EcoService(ServiceBase):
     def accorder_remise(self, id_echeance: int, remise: Optional[Decimal],
                         code_utr: str) -> Result:
         """Accorde (ou retire) une remise sur une échéance, puis recalcule le statut."""
+        denied = ensure_allowed(code_utr, Modules.ECOLAGE)
+        if denied is not None:
+            return denied
         try:
             echeance = self._finance.get_echeance(id_echeance)
             if echeance is None:
