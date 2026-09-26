@@ -29,6 +29,8 @@ from ltadmin.repositories.evaluation_repository import EvaluationRepository
 from ltadmin.repositories.planning_repository import PlanningRepository
 from ltadmin.repositories.referentiel_repository import ReferentielRepository
 from ltadmin.repositories.staff_repository import StaffRepository
+from ltadmin.services.auth.guard import ensure_allowed, ensure_allowed_value
+from ltadmin.services.auth.habilitations import Modules
 from ltadmin.services.business.mention_helper import (
     appreciation_pour,
     rangs_competition,
@@ -98,6 +100,9 @@ class BulletinService(ServiceBase):
             return Result.fail("Bulletin introuvable.", "INTROUVABLE")
         if appreciation and len(appreciation) > 510:
             return Result.fail("Appréciation : 510 caractères maximum.", "VALIDATION")
+        denied = ensure_allowed(code_utr, Modules.BULLETINS)
+        if denied is not None:
+            return denied
         try:
             bulletin.appreciation = appreciation
             self._bulletins.update_appreciation(bulletin)
@@ -111,6 +116,9 @@ class BulletinService(ServiceBase):
 
     def generer(self, id_classe: int, id_periode: int, code_utr: str) -> ResultValue[int]:
         """Génère (ou régénère) les bulletins d'une classe pour une période."""
+        denied = ensure_allowed_value(code_utr, Modules.BULLETINS)
+        if denied is not None:
+            return denied
         try:
             classe = self._referentiel.get_classe(id_classe)
             if classe is None:

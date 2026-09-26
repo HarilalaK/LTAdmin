@@ -15,6 +15,8 @@ from ltadmin.models.entities import Formateur, PaieFormateur
 from ltadmin.repositories.finance_repository import FinanceRepository
 from ltadmin.repositories.planning_repository import PlanningRepository
 from ltadmin.repositories.staff_repository import StaffRepository
+from ltadmin.services.auth.guard import ensure_allowed, ensure_allowed_value
+from ltadmin.services.auth.habilitations import Modules
 from ltadmin.services.common import ServiceBase
 from ltadmin.services.logging.app_logger import AppLogger
 from ltadmin.services.logging.journal_service import JournalService
@@ -64,6 +66,9 @@ class PayrollService(ServiceBase):
     def calculer_paie(self, id_formateur: int, periode: str, debut, fin,
                       code_utr: str) -> ResultValue[int]:
         """Calcule et fige la paie d'un formateur pour une période (≤ 12 mois)."""
+        denied = ensure_allowed_value(code_utr, Modules.PAIE)
+        if denied is not None:
+            return denied
         validation = PayrollValidator.validate_calcul(id_formateur, debut, fin)
         if not validation.is_valid:
             return self.invalid_value(validation)
@@ -112,6 +117,9 @@ class PayrollService(ServiceBase):
             return self.failure_value("Calcul d’une paie", ex)
 
     def marquer_payee(self, id_paie: int, paye: bool, date_paie, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.PAIE)
+        if denied is not None:
+            return denied
         try:
             paie = self._finance.get_paie(id_paie)
             if paie is None:
@@ -131,6 +139,9 @@ class PayrollService(ServiceBase):
             return Result.fail("Paie introuvable.", "INTROUVABLE")
         if observation and len(observation) > 300:
             return Result.fail("Observation : 300 caractères maximum.", "VALIDATION")
+        denied = ensure_allowed(code_utr, Modules.PAIE)
+        if denied is not None:
+            return denied
         try:
             paie.observation = observation
             self._finance.update_paie(paie)
@@ -141,6 +152,9 @@ class PayrollService(ServiceBase):
             return self.failure("Modification d’une observation de paie", ex)
 
     def delete_paie(self, id_paie: int, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.PAIE)
+        if denied is not None:
+            return denied
         try:
             paie = self._finance.get_paie(id_paie)
             if paie is None:

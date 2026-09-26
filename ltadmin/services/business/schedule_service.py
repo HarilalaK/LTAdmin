@@ -14,6 +14,8 @@ from ltadmin.models.entities import Absence, Creneau, EmploiDuTemps, Seance
 from ltadmin.repositories.planning_repository import PlanningRepository
 from ltadmin.repositories.referentiel_repository import ReferentielRepository
 from ltadmin.repositories.staff_repository import StaffRepository
+from ltadmin.services.auth.guard import ensure_allowed, ensure_allowed_value
+from ltadmin.services.auth.habilitations import Modules
 from ltadmin.services.common import ServiceBase
 from ltadmin.services.logging.app_logger import AppLogger
 from ltadmin.services.logging.journal_service import JournalService
@@ -47,6 +49,9 @@ class ScheduleService(ServiceBase):
             return None
 
     def save_creneau(self, creneau: Creneau, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.EMPLOI_DU_TEMPS)
+        if denied is not None:
+            return denied
         validation = PlanningValidator.validate_creneau(creneau)
         if not validation.is_valid:
             return self.invalid(validation)
@@ -65,6 +70,9 @@ class ScheduleService(ServiceBase):
             return self.failure("Enregistrement d’un créneau", ex)
 
     def delete_creneau(self, id_creneau: int, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.EMPLOI_DU_TEMPS)
+        if denied is not None:
+            return denied
         try:
             creneau = self._planning.get_creneau(id_creneau)
             if creneau is None:
@@ -121,6 +129,9 @@ class ScheduleService(ServiceBase):
         return None
 
     def create_slot(self, slot: EmploiDuTemps, code_utr: str) -> ResultValue[int]:
+        denied = ensure_allowed_value(code_utr, Modules.EMPLOI_DU_TEMPS)
+        if denied is not None:
+            return denied
         validation = PlanningValidator.validate_slot(slot)
         if not validation.is_valid:
             return self.invalid_value(validation)
@@ -148,6 +159,9 @@ class ScheduleService(ServiceBase):
             return self.failure_value("Planification d’un créneau", ex)
 
     def update_slot(self, slot: EmploiDuTemps, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.EMPLOI_DU_TEMPS)
+        if denied is not None:
+            return denied
         if slot.id_edt is None:
             return Result.fail("Créneau d’EDT introuvable.", "INTROUVABLE")
         validation = PlanningValidator.validate_slot(slot)
@@ -173,6 +187,9 @@ class ScheduleService(ServiceBase):
             return self.failure("Modification d’un créneau d’EDT", ex)
 
     def delete_slot(self, id_edt: int, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.EMPLOI_DU_TEMPS)
+        if denied is not None:
+            return denied
         try:
             slot = self._planning.get_slot(id_edt)
             if slot is None:
@@ -213,6 +230,9 @@ class ScheduleService(ServiceBase):
             return []
 
     def save_seance(self, seance: Seance, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.EMPLOI_DU_TEMPS)
+        if denied is not None:
+            return denied
         validation = PlanningValidator.validate_seance(seance)
         if not validation.is_valid:
             return self.invalid(validation)
@@ -231,6 +251,9 @@ class ScheduleService(ServiceBase):
             return self.failure("Enregistrement d’une séance", ex)
 
     def delete_seance(self, id_seance: int, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.EMPLOI_DU_TEMPS)
+        if denied is not None:
+            return denied
         try:
             seance = self._planning.get_seance(id_seance)
             if seance is None:
@@ -270,6 +293,9 @@ class ScheduleService(ServiceBase):
             return 0.0
 
     def save_absence(self, absence: Absence, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.ABSENCES)
+        if denied is not None:
+            return denied
         validation = PlanningValidator.validate_absence(absence)
         if not validation.is_valid:
             return self.invalid(validation)
@@ -288,6 +314,9 @@ class ScheduleService(ServiceBase):
             return self.failure("Enregistrement d’une absence", ex)
 
     def delete_absence(self, id_absence: int, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.ABSENCES)
+        if denied is not None:
+            return denied
         try:
             self._planning.delete_absence(id_absence)
             self.journal.log_suppression(code_utr, Tables.ABSENCE, id_absence)

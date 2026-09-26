@@ -14,7 +14,9 @@ from ltadmin.data.access_database import AccessDatabase
 from ltadmin.data.schema import Profils, Tables
 from ltadmin.models.entities import AnneeScolaire, Etablissement, Utilisateur
 from ltadmin.repositories.admin_repository import AdminRepository
-from ltadmin.services.auth.habilitations import PROFILS_CONNUS, normalize_profil
+from ltadmin.services.auth import password_hashing
+from ltadmin.services.auth.guard import ensure_allowed, ensure_allowed_value
+from ltadmin.services.auth.habilitations import PROFILS_CONNUS, Modules, normalize_profil
 from ltadmin.services.common import ServiceBase
 from ltadmin.services.logging.app_logger import AppLogger
 from ltadmin.services.logging.journal_service import JournalService
@@ -68,18 +70,24 @@ class AdminService(ServiceBase):
         utilisateur.profil = profil
         if utilisateur.actif is None:
             utilisateur.actif = True
+        # Habilitation : la gestion des comptes reste réservée à l'administrateur,
+        # même si un écran détourné appelle ce service.
+        denied = ensure_allowed(code_utr, Modules.UTILISATEURS)
+        if denied is not None:
+            return denied
         try:
             existing = self._admin.get_utilisateur(code)
             if existing is None:
-                utilisateur.mot_passe = mot_de_passe or ""
-                if not utilisateur.mot_passe:
+                if not mot_de_passe:
                     return Result.fail(
                         "Mot de passe initial obligatoire (4 caractères minimum).",
                         "VALIDATION")
+                utilisateur.mot_passe = password_hashing.hash_password(mot_de_passe)
                 self._admin.insert_utilisateur(utilisateur)
                 self.journal.log_creation(code_utr, Tables.UTILISATEUR, None, code)
                 return Result.ok(f"Compte « {code} » créé.")
-            utilisateur.mot_passe = mot_de_passe if mot_de_passe else existing.mot_passe
+            utilisateur.mot_passe = (password_hashing.hash_password(mot_de_passe)
+                                     if mot_de_passe else existing.mot_passe)
             self._admin.update_utilisateur(utilisateur)
             self.journal.log_modification(code_utr, Tables.UTILISATEUR, None, code)
             return Result.ok(f"Compte « {code} » enregistré.")
@@ -97,6 +105,9 @@ class AdminService(ServiceBase):
         if code_utr_cible == code_utr and not actif:
             return Result.fail(
                 "Vous ne pouvez pas désactiver votre propre compte.", "GESTION")
+        denied = ensure_allowed(code_utr, Modules.UTILISATEURS)
+        if denied is not None:
+            return denied
         try:
             existing = self._admin.get_utilisateur(code_utr_cible)
             if existing is None:
@@ -116,6 +127,9 @@ class AdminService(ServiceBase):
         if code_utr_cible.upper() == "ADMIN":
             return Result.fail(
                 "Le compte administrateur principal ne peut pas être supprimé.", "GESTION")
+        denied = ensure_allowed(code_utr, Modules.UTILISATEURS)
+        if denied is not None:
+            return denied
         try:
             existing = self._admin.get_utilisateur(code_utr_cible)
             if existing is None:
@@ -145,6 +159,9 @@ class AdminService(ServiceBase):
             return Result.fail("Code établissement obligatoire.", "VALIDATION")
         if not (etablissement.nom_etab or "").strip():
             return Result.fail("Nom de l’établissement obligatoire.", "VALIDATION")
+        denied = ensure_allowed(code_utr, Modules.ADMINISTRATION)
+        if denied is not None:
+            return denied
         try:
             self._admin.update_etablissement(etablissement)
             self.journal.log_modification(
@@ -177,6 +194,9 @@ class AdminService(ServiceBase):
             return ResultValue.fail(
                 "La date de fin doit être postérieure ou égale à la date de début.",
                 "VALIDATION")
+        denied = ensure_allowed_value(code_utr, Modules.ADMINISTRATION)
+        if denied is not None:
+            return denied
         try:
             if annee.id_annee is None:
                 if annee.active is None:
@@ -200,6 +220,9 @@ class AdminService(ServiceBase):
 
     def activer_annee(self, id_annee: int, code_utr: str) -> Result:
         """Active une année scolaire (les autres sont désactivées, en transaction)."""
+        denied = ensure_allowed(code_utr, Modules.ADMINISTRATION)
+        if denied is not None:
+            return denied
         try:
             annee = self._admin.get_annee(id_annee)
             if annee is None:

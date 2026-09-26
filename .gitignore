@@ -5,6 +5,10 @@
 *.user
 *.suo
 *.accdb
+# Exception volontaire : la base de travail est la source de vérité du projet
+# et suit le dépôt (elle est ajoutée explicitement, le motif reste actif pour
+# les autres .accdb, copies et sauvegardes).
+!LTA_ADM.accdb
 # Runtime backups and local database copies
 Sauvegardes/
 **/Sauvegardes/

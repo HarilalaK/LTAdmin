@@ -15,6 +15,8 @@ from ltadmin.models.entities import Epreuve, NoteExamen, ResultatFinal, SessionE
 from ltadmin.repositories.bulletin_repository import BulletinRepository
 from ltadmin.repositories.enrollment_repository import EnrollmentRepository
 from ltadmin.repositories.exam_repository import ExamRepository
+from ltadmin.services.auth.guard import ensure_allowed, ensure_allowed_value
+from ltadmin.services.auth.habilitations import Modules
 from ltadmin.services.business.mention_helper import rangs_competition, trouver
 from ltadmin.services.common import ServiceBase
 from ltadmin.services.logging.app_logger import AppLogger
@@ -49,6 +51,9 @@ class ExamService(ServiceBase):
             return None
 
     def create_session(self, session: SessionExam, code_utr: str) -> ResultValue[int]:
+        denied = ensure_allowed_value(code_utr, Modules.EXAMENS)
+        if denied is not None:
+            return denied
         if session.id_annee is None:
             from ltadmin.repositories.admin_repository import AdminRepository
             annee = AdminRepository(self.db).get_annee_active()
@@ -71,6 +76,9 @@ class ExamService(ServiceBase):
             return self.failure_value("Création d’une session", ex)
 
     def update_session(self, session: SessionExam, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.EXAMENS)
+        if denied is not None:
+            return denied
         if session.id_session is None:
             return Result.fail("Session introuvable.", "INTROUVABLE")
         validation = ExamValidator.validate_session(session)
@@ -87,6 +95,9 @@ class ExamService(ServiceBase):
             return self.failure("Modification d’une session", ex)
 
     def set_session_cloturee(self, id_session: int, cloturee: bool, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.EXAMENS)
+        if denied is not None:
+            return denied
         try:
             session = self._examens.get_session(id_session)
             if session is None:
@@ -103,6 +114,9 @@ class ExamService(ServiceBase):
             return self.failure("Clôture d’une session", ex)
 
     def delete_session(self, id_session: int, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.EXAMENS)
+        if denied is not None:
+            return denied
         try:
             session = self._examens.get_session(id_session)
             if session is None:
@@ -143,6 +157,9 @@ class ExamService(ServiceBase):
             return None
 
     def create_epreuve(self, epreuve: Epreuve, code_utr: str) -> ResultValue[int]:
+        denied = ensure_allowed_value(code_utr, Modules.EXAMENS)
+        if denied is not None:
+            return denied
         if epreuve.bareme is None or epreuve.bareme <= 0:
             epreuve.bareme = self.parametres.bareme_defaut
         if epreuve.coefficient is None or epreuve.coefficient <= 0:
@@ -163,6 +180,9 @@ class ExamService(ServiceBase):
             return self.failure_value("Création d’une épreuve", ex)
 
     def update_epreuve(self, epreuve: Epreuve, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.EXAMENS)
+        if denied is not None:
+            return denied
         if epreuve.id_epreuve is None:
             return Result.fail("Épreuve introuvable.", "INTROUVABLE")
         validation = ExamValidator.validate_epreuve(epreuve)
@@ -179,6 +199,9 @@ class ExamService(ServiceBase):
             return self.failure("Modification d’une épreuve", ex)
 
     def delete_epreuve(self, id_epreuve: int, code_utr: str) -> Result:
+        denied = ensure_allowed(code_utr, Modules.EXAMENS)
+        if denied is not None:
+            return denied
         try:
             epreuve = self._examens.get_epreuve(id_epreuve)
             if epreuve is None:
@@ -210,6 +233,9 @@ class ExamService(ServiceBase):
                     valeur: Optional[float], absent: bool,
                     copie_num: Optional[str], code_utr: str) -> Result:
         """Enregistre la note d'examen d'un inscrit (0 ≤ note ≤ barème)."""
+        denied = ensure_allowed(code_utr, Modules.EXAMENS)
+        if denied is not None:
+            return denied
         try:
             epreuve = self._examens.get_epreuve(id_epreuve)
             if epreuve is None:
@@ -279,6 +305,9 @@ class ExamService(ServiceBase):
         MOYENNE_GEN = CC×POIDS_CC/100 + EXAM×POIDS_EXAMEN/100 (une partie absente
         → l'autre seule ; aucune → NULL). Décision ADMIS/AJOURNÉ selon MOY_ADMISSION.
         """
+        denied = ensure_allowed_value(code_utr, Modules.EXAMENS)
+        if denied is not None:
+            return denied
         try:
             inscrits = self._inscriptions.list_by_classe(id_classe)
             if not inscrits:
