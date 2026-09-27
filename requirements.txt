@@ -1,0 +1,10 @@
+# LTAdmin — dépendances d'exécution.
+# Le cœur (services, SQLite, serveur HTTP, API) n'utilise que la bibliothèque
+# standard de Python 3.11+. pywebview n'est nécessaire que pour la fenêtre
+# native ; sans lui, « python main.py --serve » ouvre l'interface dans le
+# navigateur.
+pywebview>=5.0
+
+# Sous Linux, pywebview a besoin de PyGObject + WebKitGTK (paquets système :
+# python3-gi gir1.2-webkit2-4.1) ; sous Windows, du runtime WebView2 (déjà
+# présent avec Edge) ; sous macOS, rien de plus.

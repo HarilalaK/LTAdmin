@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LTAdmin — Gestion scolaire</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2312304a'/%3E%3Ctext x='16' y='22' font-size='15' font-family='Arial' font-weight='700' text-anchor='middle' fill='%23d9962b'%3ELT%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+
+<!-- Écran de connexion -->
+<section id="connexion">
+  <form id="form-connexion" class="carte-connexion" autocomplete="off">
+    <div class="logo">
+      <span class="logo-badge">LT</span>
+      <div>
+        <h1>LTAdmin</h1>
+        <div class="sous-titre">Institut LTA — gestion scolaire</div>
+      </div>
+    </div>
+    <div class="champ mb">
+      <label for="login">Identifiant</label>
+      <input id="login" type="text" autocapitalize="characters" autocomplete="username" placeholder="Ex. ADMIN">
+    </div>
+    <div class="champ">
+      <label for="mot-de-passe">Mot de passe</label>
+      <input id="mot-de-passe" type="password" autocomplete="current-password">
+    </div>
+    <div id="connexion-erreur" class="erreur"></div>
+    <button id="bouton-connexion" type="submit" class="primaire" style="width:100%;justify-content:center;margin-top:8px">Se connecter</button>
+    <div class="pied">BTS Hôtellerie &amp; Tourisme · Antananarivo</div>
+  </form>
+</section>
+
+<!-- Application -->
+<div id="application" class="hidden">
+  <aside id="menu">
+    <div class="entete">
+      <span class="logo-badge">LT</span>
+      <div>
+        <div class="titre" id="menu-titre">LTAdmin</div>
+        <div class="sous" id="menu-sous">Gestion scolaire</div>
+      </div>
+    </div>
+    <nav id="navigation"></nav>
+    <div class="pied">
+      <div class="utilisateur" id="menu-utilisateur"></div>
+      <div class="role" id="menu-role"></div>
+      <div class="actions">
+        <button type="button" class="petit" onclick="App.changePassword()">Mot de passe</button>
+        <button type="button" class="petit" onclick="App.logout()">Déconnexion</button>
+      </div>
+      <div class="role" id="menu-version" style="margin-top:8px;font-size:11px"></div>
+    </div>
+  </aside>
+  <div id="contenu">
+    <header id="barre">
+      <span class="fil" id="barre-fil"></span>
+      <span class="annee" id="barre-annee"></span>
+    </header>
+    <main id="vue"></main>
+  </div>
+</div>
+
+<div id="modales"></div>
+<div id="notifications"></div>
+<div id="impression"></div>
+
+<script src="core.js"></script>
+<script src="app.js"></script>
+<script src="views/tableau.js"></script>
+<script src="views/etudiants.js"></script>
+<script src="views/inscriptions.js"></script>
+<script src="views/referentiel.js"></script>
+<script src="views/formateurs.js"></script>
+<script src="views/notes.js"></script>
+<script src="views/bulletins.js"></script>
+<script src="views/examens.js"></script>
+<script src="views/edt.js"></script>
+<script src="views/absences.js"></script>
+<script src="views/ecolage.js"></script>
+<script src="views/paie.js"></script>
+<script src="views/statistiques.js"></script>
+<script src="views/rapports.js"></script>
+<script src="views/administration.js"></script>
+<script src="views/utilisateurs.js"></script>
+<script src="views/tables.js"></script>
+</body>
+</html>
