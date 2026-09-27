@@ -1,0 +1,41 @@
+# ---- Python ----
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ---- Base SQLite : la base de travail LTA_ADM.sqlite3 suit le dépôt ----
+# Fichiers temporaires du moteur SQLite (transactions, WAL).
+*.sqlite3-journal
+*.sqlite3-wal
+*.sqlite3-shm
+
+# Sauvegardes créées par l'application (Administration > Sauvegardes, migration,
+# copies de sécurité avant restauration). Exception : la copie de l'original
+# d'avant le renforcement du schéma, conservée volontairement dans le dépôt.
+Sauvegardes/*
+!Sauvegardes/LTA_ADM_avant_migration_20260927_062438.sqlite3
+
+# ---- Journaux et exports locaux ----
+logs/
+*.log
+exports/
+
+# ---- Empaquetage (PyInstaller) ----
+build/
+dist/
+*.spec
+
+# ---- Éditeurs / OS ----
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ---- Outils de test locaux (jsdom, node) ----
+node_modules/
+package-lock.json
